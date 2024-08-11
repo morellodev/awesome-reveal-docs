@@ -11,7 +11,7 @@ export default defineConfig({
     starlight({
       title: "React Awesome Reveal",
       social: {
-        email: "mailto:dennis@morello.dev",
+        email: "mailto:dennismorello@gmail.com",
         github: "https://github.com/awesome-reveal/react-awesome-reveal",
         linkedin: "https://www.linkedin.com/in/dennismorello",
         "x.com": "https://x.com/morellodev",
