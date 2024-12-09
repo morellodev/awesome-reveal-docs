@@ -16,7 +16,7 @@
     "@astrojs/partytown": "^2.1.2",
     "@astrojs/starlight": "^0.29.2",
     "@astrojs/vercel": "^8.0.0",
-    "astro": "^5.0.3",
+    "astro": "^5.0.4",
     "sharp": "^0.33.5"
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.17.0"
+    "typescript-eslint": "^8.18.0"
   },
   "pnpm": {
     "overrides": {
