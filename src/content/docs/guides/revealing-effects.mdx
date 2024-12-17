@@ -1,143 +1,137 @@
 ---
 title: Revealing Effects
+description: Explore the collection of beautiful scroll animations available in React Awesome Reveal
 sidebar:
   order: 2
 ---
 
-**React Awesome Reveal** exports a number of ready-to-use animated primitives to automagically animate your components.
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
-By default, all animations are triggered when the content they wrap enters the viewport.
+## Overview
+
+**React Awesome Reveal** provides a rich set of pre-built animation components inspired by [Animate.css](https://animate.style). These components automatically animate their children when they enter the viewport, creating engaging scroll experiences with minimal code.
 
 ## Available Effects
 
-The default set of effect is inspired by [Animate.css](https://animate.style):
+Choose from these powerful animation components:
 
-- `Bounce`
-- `Fade`
-- `Flip`
-- `Hinge`
-- `JackInTheBox`
-- `Roll`
-- `Rotate`
-- `Slide`
-- `Zoom`
+| Effect         | Description                | Best Used For               |
+| -------------- | -------------------------- | --------------------------- |
+| `Fade`         | Smooth opacity transition  | Text, images, cards         |
+| `Slide`        | Slides in from a direction | Lists, navigation items     |
+| `Bounce`       | Bouncy entrance animation  | Call-to-action buttons      |
+| `Flip`         | 3D flip animation          | Cards, reveals              |
+| `Rotate`       | Rotation entrance          | Icons, badges               |
+| `Zoom`         | Scale transition           | Modal windows, highlights   |
+| `Roll`         | Rolling entrance           | Playful elements            |
+| `JackInTheBox` | Pop-out animation          | Attention-grabbing elements |
+| `Hinge`        | Swinging fall animation    | Exit animations             |
 
-Each of them is a named export, so to import the `Slide` component you simply write:
+## Basic Usage
 
-```ts
+Wrap your content with any effect component:
+
+```tsx
 import { Slide } from "react-awesome-reveal";
+
+function Features() {
+  return (
+    <div>
+      <h2>Our Features</h2>
+
+      {/* Items slide in one after another */}
+      <Slide direction="up" cascade triggerOnce>
+        <div className="feature">🚀 Performance</div>
+        <div className="feature">💡 Simplicity</div>
+        <div className="feature">🎨 Customization</div>
+      </Slide>
+    </div>
+  );
+}
 ```
 
-## Animation Props
+## Customization Options
 
-All animated primitives support the following props to change the animation physics.
+Fine-tune your animations with these props:
 
-### `direction`
-
-Where applicable, this changes the origin of the animation. It can be `"down"`, `"left"`, `"right"` or `"up"`, with some exceptions documented in the component API (see the TSDoc comments).
-
-### `delay`
-
-Time to wait before the animation starts (in _milliseconds_).
-
-Defaults to `0`.
-
-### `duration`
-
-The animation duration (in _milliseconds_).
-
-Defaults to `1000` (one second).
-
-### `fraction`
-
-How much an element should be in the viewport before the animation is triggered.
-
-It must be a number between `0` and `1`, with `0` meaning that the animation starts as soon as the component intersects the vieport, and `1` meaning that the animation does not start unless the component is fully contained in the viewport.
-
-Defaults to `0`.
-
-### `triggerOnce`
-
-Boolean prop that determines if the animation should run only once or everytime an element enters/exits/re-enters the viewport.
-
-Defaults to `false`.
-
-### `cascade`
-
-Boolean prop to stagger the animation (see [Staggered Animations](#staggered-animations)).
-
-It works by assigning a progressive delay to each direct child wrapped by an animated primitive &mdash; this is particularly useful for animating list items.
-
-Defaults to `false`.
-
-### `damping`
-
-Factor that affects the delay that each animated component in a cascade animation will be assigned.
-
-If `damping = 1` then the delay will be equal to the animation duration; if `0 < damping < 1` then the delay will be lower than the animation duration; if `damping > 1` then the delay will be greater than the animation duration.
-
-Defaults to `0.5` (meaning that the delay will be half of the animation duration).
-
-### `className` and `style`
-
-CSS class names and styles to attach to the element that React Awesome Reveal creates to wrap your own components.
-
-### `childClassName` and `childStyle`
-
-CSS class names and styles to attach to the elements that you pass inside any animated primitive.
-
-### `onVisibilityChange`
-
-```ts
-(inView: boolean, entry: IntersectionObserverEntry) => void
-```
-
-Callback executed when the element enters or leaves the viewport.
-
-If an animated primitive directly wraps multiple children, this function is called on each of them, and the `entry` argument holds the reference to the current element.
-
-## Staggered Animations
-
-To chain together multiple animations, set the `cascade` prop to `true`:
+### Direction Control
 
 ```tsx
-<Fade cascade>
-  <p>I enter first...</p>
-  <p>...then comes my turn...</p>
-  <p>...and finally you see me!</p>
+// Choose animation direction
+<Slide direction="left" />  // Slide from left
+<Slide direction="right" /> // Slide from right
+<Slide direction="up" />    // Slide from bottom
+<Slide direction="down" />  // Slide from top
+```
+
+### Timing and Triggers
+
+```tsx
+<Fade
+  delay={200} // Wait before starting
+  duration={1000} // Animation duration
+  fraction={0.5} // Trigger when 50% visible
+  triggerOnce // Animate only once
+/>
+```
+
+### Cascade Effects
+
+The `cascade` prop animates children one after another, with a delay between each item. Use `damping` to control the delay:
+
+```tsx
+<Fade cascade damping={0.2}>
+  <div>First item (no delay)</div>
+  <div>Second item (0.2s delay)</div>
+  <div>Third item (0.4s delay)</div>
 </Fade>
 ```
 
-Play with the `damping` prop to alter the delay by which each child will progressively appear:
+## Animation Props Reference
+
+All animation components accept these common props:
+
+| Prop          | Type                                  | Default | Description                  |
+| ------------- | ------------------------------------- | ------- | ---------------------------- |
+| `direction`   | `"up" \| "down" \| "left" \| "right"` | Varies  | Animation direction          |
+| `delay`       | `number`                              | `0`     | Delay before animation (ms)  |
+| `duration`    | `number`                              | `1000`  | Animation duration (ms)      |
+| `fraction`    | `number`                              | `0`     | Viewport fraction to trigger |
+| `triggerOnce` | `boolean`                             | `false` | Animate only once            |
+| `cascade`     | `boolean`                             | `false` | Cascade to children          |
+| `damping`     | `number`                              | `0.5`   | Delay between cascaded items |
+
+## Best Practices
+
+1. **Performance**: Use `triggerOnce` for elements that don't need to re-animate
+2. **Mobile**: Keep animations subtle on mobile devices
+3. **Accessibility**: Ensure animations respect user preferences with `prefers-reduced-motion`
+4. **Timing**: Use appropriate delays and durations for your content type
+
+## Examples
+
+Here are some common use cases:
+
+### Hero Section
 
 ```tsx
-<Fade cascade damping={0.1}>
-  <p>I enter first...</p>
-  <p>...then comes my turn...</p>
-  <p>...and finally you see me!</p>
+<Fade duration={1500}>
+  <h1>Welcome to Our Site</h1>
+  <Fade delay={500} cascade damping={0.3}>
+    <p>Discover amazing features</p>
+    <button>Get Started</button>
+  </Fade>
 </Fade>
 ```
 
-### Animating Lists
-
-A particularly cool use case for staggered animations is list animation.
-
-**React Awesome Reveal** detects if you pass a `ul` or `ol` element and, if `cascade` is `true`, it automatically creates a staggered animation for each `li` element:
+### Feature List
 
 ```tsx
-<Fade cascade>
-  <ul>
-    <li>I enter first...</li>
-    <li>...then comes my turn...</li>
-    <li>...and finally you see me!</li>
-  </ul>
-</Fade>
-```
-
-### Animating Texts
-
-To animate a text, simple wrap it in an animated primitive and set the `cascade` prop:
-
-```tsx
-<Fade cascade>Each character will appear one by one</Fade>
+<Slide direction="up" cascade damping={0.2} triggerOnce>
+  {features.map((feature) => (
+    <div key={feature.id} className="feature-card">
+      {feature.content}
+    </div>
+  ))}
+</Slide>
 ```
