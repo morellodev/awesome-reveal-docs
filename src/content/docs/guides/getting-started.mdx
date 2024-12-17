@@ -1,58 +1,97 @@
 ---
 title: Getting Started
+description: Learn how to add beautiful scroll animations to your React application in minutes
 sidebar:
   order: 1
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 
-## About
+## Introduction
 
-**React Awesome Reveal** is a library for React apps that provides a set of curated animated primitives.
-They can be used to add revealing animations to your components when they enter the browser viewport as the user scrolls the page.
+**React Awesome Reveal** brings life to your React applications with smooth, performant scroll animations. When elements enter the viewport, they animate into view, creating an engaging and professional user experience.
 
-This project was initially born as a modern (and [more performant](/guides/performances)) replacement for [react-reveal](https://github.com/rnosov/react-reveal), which has been discontinued.
+### Key Benefits
+
+- **Zero Configuration**: Works out of the box with sensible defaults
+- **Optimized Performance**: Uses the Web Animations API for smooth animations
+- **Mobile-Friendly**: Responsive animations that work great on all devices
+- **Tree-Shakeable**: Only import what you need to keep your bundle size small
 
 ## Installation
 
-Inside your React project directory, run the following:
+Choose your preferred package manager to install React Awesome Reveal and its peer dependency:
 
 <Tabs>
   <TabItem label="npm">
-  
-  ```shell
-  npm install react-awesome-reveal @emotion/react
-  ```
+    
+    ```shell
+    npm install react-awesome-reveal @emotion/react
+    ```
   
   </TabItem>
   <TabItem label="pnpm">
   
-  ```shell
-  pnpm add react-awesome-reveal @emotion/react
-  ```
+    ```shell
+    pnpm add react-awesome-reveal @emotion/react
+    ```
   
   </TabItem>
   <TabItem label="yarn">
-    
+  
     ```shell
     yarn add react-awesome-reveal @emotion/react
     ```
-
+  
   </TabItem>
 </Tabs>
 
-## Quick Start
+## Basic Usage
 
-Import any of the animated components and wrap your elements:
+Import any animation component and wrap your content. The element will animate when it enters the viewport:
 
-```jsx
+```tsx
 import { Fade } from "react-awesome-reveal";
 
 function App() {
   return (
-    <Fade>
-      <p>I am an animated text</p>
-    </Fade>
+    <div>
+      <h1>Welcome to my app!</h1>
+
+      <Fade>
+        <p>This content will fade in when scrolled into view</p>
+      </Fade>
+
+      {/* Multiple elements will animate together */}
+      <Fade cascade>
+        <h2>Features</h2>
+        <p>Feature 1</p>
+        <p>Feature 2</p>
+        <p>Feature 3</p>
+      </Fade>
+    </div>
   );
 }
 ```
+
+## Customization Options
+
+Customize your animations with these common props:
+
+```tsx
+<Fade
+  delay={200} // Wait 200ms before starting
+  duration={1000} // Animation lasts 1 second
+  triggerOnce // Only animate once
+  fraction={0.5} // Start animation when element is 50% visible
+>
+  <p>Customized animation</p>
+</Fade>
+```
+
+## Next Steps
+
+- Explore [Revealing Effects](/guides/revealing-effects) for different animation styles
+- Learn about [Custom Animations](/guides/custom-animations)
+- Check out [Performance Tips](/guides/performances) for optimal results
+- View [TypeScript Support](/guides/typescript-support) for type-safe animations
