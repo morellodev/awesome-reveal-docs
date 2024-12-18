@@ -2,9 +2,13 @@ import partytown from "@astrojs/partytown";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 
+const site = "https://react-awesome-reveal.morello.dev";
+const ogUrl = new URL("og.png?v=1", site).href;
+const ogImageAlt = "Add stunning, performant scroll reveal animations to your React applications with zero dependencies.";
+
 // https://astro.build/config
 export default defineConfig({
-  site: "https://react-awesome-reveal.morello.dev",
+  site,
   integrations: [
     starlight({
       title: "React Awesome Reveal",
@@ -36,6 +40,14 @@ export default defineConfig({
           content:
             "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','GTM-PNLQX9W4');",
         },
+        {
+					tag: 'meta',
+					attrs: { property: 'og:image', content: ogUrl },
+				},
+				{
+					tag: 'meta',
+					attrs: { property: 'og:image:alt', content: ogImageAlt },
+				},
       ],
     }),
     partytown({ config: { forward: ["dataLayer.push"] } }),
