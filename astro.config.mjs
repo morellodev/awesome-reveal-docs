@@ -19,6 +19,7 @@ export default defineConfig({
         email: "mailto:dennismorello@gmail.com",
         github: "https://github.com/awesome-reveal/react-awesome-reveal",
         linkedin: "https://www.linkedin.com/in/dennismorello",
+        blueSky: "https://bsky.app/profile/morello.dev",
         "x.com": "https://x.com/morellodev",
       },
       sidebar: [
