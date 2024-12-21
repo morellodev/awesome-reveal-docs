@@ -23,6 +23,9 @@ importers:
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
+      starlight-heading-badges:
+        specifier: ^0.4.0
+        version: 0.4.0(@astrojs/starlight@0.30.3(astro@5.1.1(jiti@2.4.2)(rollup@4.28.1)(typescript@5.7.2)(yaml@2.6.1)))
     devDependencies:
       '@eslint/js':
         specifier: ^9.17.0
@@ -2729,6 +2732,12 @@ packages:
 
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
+
+  starlight-heading-badges@0.4.0:
+    resolution: {integrity: sha512-qHxbZcqaz+01y/XKuA5xfbTncUl5Vo0/kY0f+Wi+xvuJ8MUDefZHhL2io3KdoR0ekRDn8COtj/hwE+zL+QcEGA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@astrojs/starlight': '>=0.30.0'
 
   std-env@3.8.0:
     resolution: {integrity: sha512-Bc3YwwCB+OzldMxOXJIIvC6cPRWr/LxOp48CdQTOkPyk/t4JWWJbrilwBd7RJzKV8QW7tJkcgAmeuLLJugl5/w==}
@@ -6688,6 +6697,15 @@ snapshots:
   space-separated-tokens@2.0.2: {}
 
   sprintf-js@1.0.3: {}
+
+  starlight-heading-badges@0.4.0(@astrojs/starlight@0.30.3(astro@5.1.1(jiti@2.4.2)(rollup@4.28.1)(typescript@5.7.2)(yaml@2.6.1))):
+    dependencies:
+      '@astrojs/markdown-remark': 6.0.1
+      '@astrojs/starlight': 0.30.3(astro@5.1.1(jiti@2.4.2)(rollup@4.28.1)(typescript@5.7.2)(yaml@2.6.1))
+      github-slugger: 2.0.0
+      unist-util-visit: 5.0.0
+    transitivePeerDependencies:
+      - supports-color
 
   std-env@3.8.0: {}
 

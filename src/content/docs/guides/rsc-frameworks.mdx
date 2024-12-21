@@ -1,0 +1,94 @@
+---
+title: RSC Frameworks
+description: Learn how to use React Awesome Reveal with React Server Components (RSC) frameworks like Next.js. Full support for server components with zero configuration required.
+sidebar:
+  order: 7
+  badge:
+    text: New
+    variant: tip
+---
+
+Starting from [version 4.3.1](https://github.com/awesome-reveal/react-awesome-reveal/releases/tag/react-awesome-reveal%404.3.1), **React Awesome Reveal** provides out-of-the-box support for [React Server Components](https://react.dev/reference/rsc/server-components) frameworks like [Next.js](https://nextjs.org), making it even easier to use animations in your RSC-powered applications.
+
+## Historical Support
+
+It's worth noting that React Awesome Reveal has always been compatible with React Server Components, but prior to version 4.3.1, it required manual client-side component wrapping. This was because the animation primitives needed access to browser APIs that are only available on the client.
+
+## Modern Usage :badge[v4.3.1+]{variant=success}
+
+With version 4.3.1 and above, you can use animation primitives directly in your RSC components without any additional setup. Simply import and use them:
+
+```tsx
+// app/features.tsx
+import { Slide } from "react-awesome-reveal";
+
+async function getFeatures() {
+  // ...
+}
+
+export default async function Features() {
+  const features = await getFeatures();
+
+  return (
+    <div>
+      <h2>Our Features</h2>
+
+      <Slide direction="up" cascade triggerOnce>
+        {features.map((feature) => (
+          <div key={feature.id} className="feature-card">
+            {feature.content}
+          </div>
+        ))}
+      </Slide>
+    </div>
+  );
+}
+```
+
+## Legacy Usage :badge[pre-4.3.1]{variant=caution}
+
+Before version 4.3.1, you needed to create client-side wrapper components for each animation primitive you wanted to use. This involved:
+
+1. Creating a separate component file
+2. Adding the `"use client"` directive
+3. Re-exporting the animation primitive
+
+Here's how it looked:
+
+```tsx
+// components/Slide.tsx
+"use client";
+
+import { Slide as SlidePrimitive, type SlideProps } from "react-awesome-reveal";
+
+function Slide(props: SlideProps) {
+  return <SlidePrimitive {...props} />;
+}
+
+export default Slide;
+```
+
+Then using it in your components:
+
+```tsx
+// app/features.tsx
+import Slide from "./components/Slide";
+
+export default async function Features() {
+  return (
+    <div>
+      <h2>Our Features</h2>
+
+      <Slide direction="up" cascade triggerOnce>
+        {features.map((feature) => (
+          <div key={feature.id} className="feature-card">
+            {feature.content}
+          </div>
+        ))}
+      </Slide>
+    </div>
+  );
+}
+```
+
+The new version eliminates this boilerplate while maintaining full compatibility with React Server Components. We recommend upgrading to version 4.3.1 or later to take advantage of this simplified usage.
