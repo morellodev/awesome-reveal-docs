@@ -11,6 +11,9 @@ const ogImageAlt =
 // https://astro.build/config
 export default defineConfig({
   site,
+  experimental: {
+    contentIntellisense: true,
+  },
   integrations: [
     starlight({
       plugins: [starlightHeadingBadges()],
