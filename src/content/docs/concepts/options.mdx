@@ -5,6 +5,10 @@ sidebar:
   order: 2
 ---
 
+import { fade } from "@awesome-reveal/core/keyframes";
+import Demo from "../../../components/demos/Demo.astro";
+import DemoGrid from "../../../components/demos/DemoGrid.astro";
+
 All the packages accept the same reveal options. The framework adapters can add more: for example, React adds [`when`](/react/#control-the-reveal-manually).
 
 | Option          | Description                                                                                                      | Default   |
@@ -18,6 +22,14 @@ All the packages accept the same reveal options. The framework adapters can add 
 | `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.      | `true`    |
 | `reducedMotion` | Skips or plays the animation for users who prefer reduced motion. See [Accessibility](/concepts/accessibility/). | `"user"`  |
 
+The demos on this page reveal with `slide()`, except the text demo. The `duration` demos show three durations. The other demos play for 1,200 ms, two times the default, so that you can see them better. To play a demo again, select its replay button. When your system reduces motion, the demos do not animate and have no replay button.
+
+<DemoGrid>
+  <Demo code="duration: 300" duration={300} />
+  <Demo code="duration: 600" duration={600} />
+  <Demo code="duration: 1500" duration={1500} />
+</DemoGrid>
+
 ## Stagger
 
 `stagger` animates the element children one after the other. The first child starts after `delay`, and each next child starts `stagger` milliseconds after the previous one:
@@ -29,6 +41,11 @@ All the packages accept the same reveal options. The framework adapters can add 
   <li>...and finally you see me!</li>
 </Reveal>
 ```
+
+<DemoGrid>
+  <Demo code="stagger: 80" stagger={80} />
+  <Demo code="stagger: 200" stagger={200} />
+</DemoGrid>
 
 `stagger` animates element children only. It does not animate text nodes.
 
@@ -49,6 +66,15 @@ Transforms do not apply to non-replaced inline elements, such as `span` or `a`. 
 
 `visually-hidden` is your class that hides content visually, but keeps it for screen readers. Screen readers read the full text one time, and skip the animated characters.
 
+<DemoGrid>
+  <Demo
+    code="keyframes: fade(), stagger: 30"
+    keyframes={fade()}
+    stagger={30}
+    text="Hello, world!"
+  />
+</DemoGrid>
+
 ## Viewport
 
 An element is revealed when it enters the viewport:
@@ -56,6 +82,13 @@ An element is revealed when it enters the viewport:
 - With `threshold`, the element must be visible by this fraction. `0.3` reveals the element when 30% of it is visible.
 - `rootMargin` changes the viewport area. A negative margin, such as `"0px 0px -100px 0px"`, reveals the element when its top edge is 100px inside the viewport.
 - With `once: false`, the element hides again when it leaves the viewport, and the animation plays at each entry.
+
+To compare `once`, scroll these demos out of view and back:
+
+<DemoGrid>
+  <Demo code="once: true" threshold={0} />
+  <Demo code="once: false" once={false} threshold={0} />
+</DemoGrid>
 
 ## Option changes
 

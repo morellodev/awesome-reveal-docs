@@ -1,0 +1,28 @@
+---
+interface Props {
+  /** The maximum number of columns. */
+  columns?: number;
+}
+
+const { columns = 3 } = Astro.props;
+---
+
+<div class="demo-grid not-content" style={`--columns: ${columns}`}>
+  <slot />
+</div>
+
+<style>
+  .demo-grid {
+    --gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(
+        max(10rem, (100% - (var(--columns) - 1) * var(--gap)) / var(--columns)),
+        1fr
+      )
+    );
+    gap: var(--gap);
+    margin-block: 1.5rem;
+  }
+</style>

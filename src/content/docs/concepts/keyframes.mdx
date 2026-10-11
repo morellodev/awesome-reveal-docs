@@ -5,6 +5,24 @@ sidebar:
   order: 1
 ---
 
+import {
+  blur,
+  enter,
+  fade,
+  pop,
+  scale,
+  slide,
+  spring,
+} from "@awesome-reveal/core/keyframes";
+import Demo from "../../../components/demos/Demo.astro";
+import DemoGrid from "../../../components/demos/DemoGrid.astro";
+import {
+  dropDefault,
+  flyIn,
+  spinTwice,
+  wipe,
+} from "../../../components/demos/keyframes";
+
 The `keyframes` option sets the animation of a reveal. Its value is an array of [Web Animations keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats). The animation does not stay applied after it finishes, so the last keyframe must be the resting style of the element.
 
 The examples on this page import from `@awesome-reveal/react/keyframes`. With `@awesome-reveal/core`, import from `@awesome-reveal/core/keyframes`. The two entry points export the same functions. They do not touch the DOM, so you can call them on the server. You can also give their result to `element.animate()` directly.
@@ -34,6 +52,20 @@ import { slide } from "@awesome-reveal/react/keyframes";
 - `opacity` is the start opacity. The default is `0`. Set it to `1` for movement with no fade.
 - `from` is the start scale.
 
+The demos on this page play for 1,200 ms, two times the default, so that you can see them better. To play a demo again, select its replay button. When your system reduces motion, the demos do not animate and have no replay button.
+
+<DemoGrid>
+  <Demo code="fade()" keyframes={fade()} />
+  <Demo code="slide()" keyframes={slide()} />
+  <Demo
+    code='slide({ direction: "left", distance: 40 })'
+    keyframes={slide({ direction: "left", distance: 40 })}
+  />
+  <Demo code="scale()" keyframes={scale()} />
+  <Demo code="blur()" keyframes={blur()} />
+  <Demo code="pop()" keyframes={pop()} />
+</DemoGrid>
+
 `enter()` combines start values in one animation:
 
 ```jsx
@@ -42,6 +74,17 @@ import { enter } from "@awesome-reveal/react/keyframes";
 <Reveal keyframes={enter({ y: 40, scale: 0.9 })}>…</Reveal>; // rise and grow
 <Reveal keyframes={enter({ x: "-100%", rotate: -120 })}>…</Reveal>; // roll in from the left
 ```
+
+<DemoGrid>
+  <Demo
+    code="enter({ y: 40, scale: 0.9 })"
+    keyframes={enter({ y: 40, scale: 0.9 })}
+  />
+  <Demo
+    code='enter({ x: "-100%", rotate: -120 })'
+    keyframes={enter({ x: "-100%", rotate: -120 })}
+  />
+</DemoGrid>
 
 `blur()` animates `filter`. Chromium and Safari composite `filter`, but other engines repaint it on each frame. Use it on small and medium elements.
 
@@ -60,6 +103,21 @@ import { slide, spring } from "@awesome-reveal/react/keyframes";
 ```
 
 `bounce` sets the overshoot, from `0` (no overshoot) to `0.8`. The default is `0.3`.
+
+<DemoGrid>
+  <Demo
+    code="scale({ from: 0.5, easing: spring({ bounce: 0 }) })"
+    keyframes={scale({ from: 0.5, easing: spring({ bounce: 0 }) })}
+  />
+  <Demo
+    code="scale({ from: 0.5, easing: spring() })"
+    keyframes={scale({ from: 0.5, easing: spring() })}
+  />
+  <Demo
+    code="scale({ from: 0.5, easing: spring({ bounce: 0.8 }) })"
+    keyframes={scale({ from: 0.5, easing: spring({ bounce: 0.8 }) })}
+  />
+</DemoGrid>
 
 `spring()` returns a CSS `linear()` easing. Chrome before 113, Firefox before 112 and Safari before 17.2 do not support `linear()`:
 
@@ -94,6 +152,10 @@ const spin = defineKeyframes(({ turns = 1 }) => ({
 - In TypeScript, give the options type: `defineKeyframes<{ turns?: number }>(…)`.
 
 Each call of the factory samples the function again. In a component that renders often, call the factory one time outside the component, for example `const spinTwice = spin({ turns: 2 });`.
+
+<DemoGrid>
+  <Demo code="spin({ turns: 2 })" keyframes={spinTwice} />
+</DemoGrid>
 
 ### Keyframes arrays
 
@@ -139,3 +201,9 @@ An empty last keyframe (`{}`) is an implicit keyframe: the browser uses the curr
   …
 </Reveal>
 ```
+
+<DemoGrid>
+  <Demo label="The first keyframes array" keyframes={flyIn} />
+  <Demo code="drop()" keyframes={dropDefault} />
+  <Demo label="The clip-path keyframes" keyframes={wipe} />
+</DemoGrid>

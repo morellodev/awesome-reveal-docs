@@ -39,7 +39,18 @@ hero:
 ---
 
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import {
+  blur,
+  enter,
+  fade,
+  pop,
+  scale,
+  slide,
+} from "@awesome-reveal/core/keyframes";
+import Demo from "../../components/demos/Demo.astro";
+import DemoGrid from "../../components/demos/DemoGrid.astro";
 import FeatureCard from "../../components/FeatureCard.astro";
+import FeatureGrid from "../../components/FeatureGrid.astro";
 
 ## Reveal anything in a few lines of code
 
@@ -55,9 +66,25 @@ import { Reveal } from "@awesome-reveal/react";
 
 By default, the element fades in and slides up. To use [another animation](/concepts/keyframes/), set one prop.
 
+## See it in action
+
+Each tile uses a built-in animation. The caption shows the call that creates its keyframes.
+
+<DemoGrid>
+  <Demo code="fade()" keyframes={fade()} />
+  <Demo code="slide()" keyframes={slide()} />
+  <Demo code="scale()" keyframes={scale()} />
+  <Demo code="blur()" keyframes={blur()} />
+  <Demo code="pop()" keyframes={pop()} />
+  <Demo
+    code="enter({ x: -40, rotate: -10 })"
+    keyframes={enter({ x: -40, rotate: -10 })}
+  />
+</DemoGrid>
+
 ## Why Awesome Reveal
 
-<CardGrid>
+<FeatureGrid>
   <FeatureCard color="orange" title="Tiny and dependency-free" icon="feather">
     Under 2 kB gzipped for the whole React package, with zero third-party
     dependencies. Tree-shaking keeps only the animations that you import.
@@ -102,7 +129,7 @@ By default, the element fades in and slides up. To use [another animation](/conc
     The packages ship [agent skills](/agent-skills/), so Claude Code, Cursor and
     other agents add animations and migrate v4 code the right way.
   </FeatureCard>
-</CardGrid>
+</FeatureGrid>
 
 ## Packages
 
