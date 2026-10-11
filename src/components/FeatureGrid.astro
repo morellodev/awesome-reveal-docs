@@ -1,25 +1,10 @@
 ---
-import { hiddenStyle } from "@awesome-reveal/core";
+import { Reveal } from "@awesome-reveal/astro";
 ---
 
-<div
-  class="feature-grid"
-  style={hiddenStyle}
-  data-reveal="hidden"
-  data-feature-grid
->
+<Reveal class="feature-grid" duration={1000} stagger={150}>
   <slot />
-</div>
-
-<script>
-  import { reveal } from "@awesome-reveal/core";
-
-  for (const grid of document.querySelectorAll<HTMLElement>(
-    "[data-feature-grid]",
-  )) {
-    reveal(grid, { duration: 1000, stagger: 150 });
-  }
-</script>
+</Reveal>
 
 <style>
   /* The same grid as the Starlight CardGrid, which cannot render the hidden state on the server. */

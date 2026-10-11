@@ -1,6 +1,6 @@
 ---
 import RotateCcw from "@lucide/astro/icons/rotate-ccw";
-import { hiddenStyle, type RevealOptions } from "@awesome-reveal/core";
+import { Reveal, type RevealOptions } from "@awesome-reveal/astro";
 
 interface Props extends Pick<
   RevealOptions,
@@ -28,40 +28,38 @@ const {
 const caption = code ?? label;
 ---
 
-<figure
-  class="demo"
-  data-demo={JSON.stringify({ ...options, duration, threshold })}
->
+<figure class="demo" data-demo>
   <div class="stage">
     {text ? (
-      <span
+      <Reveal
+        as="span"
         class="text"
-        style={hiddenStyle}
-        data-reveal="hidden"
-        data-demo-target
         aria-hidden="true"
+        duration={duration}
+        threshold={threshold}
+        {...options}
       >
         {[...text].map((char) => (
           <span>{char}</span>
         ))}
-      </span>
+      </Reveal>
     ) : options.stagger ? (
-      <div
+      <Reveal
         class="bars"
-        style={hiddenStyle}
-        data-reveal="hidden"
-        data-demo-target
+        duration={duration}
+        threshold={threshold}
+        {...options}
       >
         {Array.from({ length: items }, () => (
           <div class="bar" />
         ))}
-      </div>
+      </Reveal>
     ) : (
-      <div
+      <Reveal
         class="box"
-        style={hiddenStyle}
-        data-reveal="hidden"
-        data-demo-target
+        duration={duration}
+        threshold={threshold}
+        {...options}
       />
     )}
     <button type="button" class="replay" title={`Replay ${caption}`} hidden>
@@ -73,27 +71,33 @@ const caption = code ?? label;
 </figure>
 
 <script>
-  import { observe, play, reveal } from "@awesome-reveal/core";
-
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  for (const demo of document.querySelectorAll<HTMLElement>("[data-demo]")) {
-    const target = demo.querySelector<HTMLElement>("[data-demo-target]")!;
-    const button = demo.querySelector("button")!;
-    const options = JSON.parse(demo.dataset.demo!);
-    let cancel = () => {};
+  if (!reducedMotion)
+    for (const demo of document.querySelectorAll<HTMLElement>("[data-demo]")) {
+      const button = demo.querySelector("button")!;
+      const host = () => demo.querySelector("awesome-reveal")!;
+      // Before the reveal, a replay would animate a hidden element.
+      const showButton = () => {
+        button.hidden =
+          host().firstElementChild!.getAttribute("data-reveal") === "hidden";
+      };
+      const observer = new MutationObserver(showButton);
+      const watch = () => {
+        observer.disconnect();
+        observer.observe(host().firstElementChild!, {
+          attributeFilter: ["data-reveal"],
+        });
+        showButton();
+      };
 
-    reveal(target, options);
-    // Before the reveal, a replay would animate a hidden element.
-    if (!reducedMotion)
-      observe(target, options, (inView) => {
-        button.hidden = !inView;
+      watch();
+      button.addEventListener("click", () => {
+        // A new <awesome-reveal> element hides its child and reveals it again.
+        host().replaceWith(host().cloneNode(true));
+        watch();
       });
-    button.addEventListener("click", () => {
-      cancel();
-      cancel = play(target, options);
-    });
-  }
+    }
 </script>
 
 <style>
@@ -174,7 +178,7 @@ const caption = code ?? label;
     display: none;
   }
   @media print {
-    [data-demo-target] {
+    .stage :global([data-reveal]) {
       opacity: 1 !important;
     }
   }

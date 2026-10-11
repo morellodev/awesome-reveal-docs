@@ -116,12 +116,6 @@ export default defineConfig({
           tag: "link",
           attrs: { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
         },
-        {
-          // Without JavaScript, nothing reveals the elements that the server renders hidden.
-          tag: "noscript",
-          content:
-            '<style>[data-reveal="hidden"] { opacity: 1 !important; }</style>',
-        },
       ],
     }),
     partytown({ config: { forward: ["dataLayer.push"] } }),

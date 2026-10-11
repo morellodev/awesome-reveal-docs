@@ -1,7 +1,7 @@
 import {
   defineKeyframes,
   type KeyframesFactory,
-} from "@awesome-reveal/core/keyframes";
+} from "@awesome-reveal/astro/keyframes";
 
 // The same keyframes as the samples on the Keyframes page.
 const spin = defineKeyframes(({ turns = 1 }: { turns?: number }) => ({
