@@ -15,7 +15,7 @@
     "@astrojs/check": "^0.9.10",
     "@astrojs/partytown": "^2.1.8",
     "@astrojs/starlight": "^0.42.6",
-    "@awesome-reveal/core": "1.0.0-next.2",
+    "@awesome-reveal/astro": "1.0.0-next.4",
     "astro": "^7.3.8",
     "sharp": "^0.35.5",
     "starlight-heading-badges": "^0.8.0",

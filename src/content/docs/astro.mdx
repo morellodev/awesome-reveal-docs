@@ -1,0 +1,125 @@
+---
+title: Astro
+description: "Scroll reveal animations for Astro with the Reveal component: keyframes, options, the ClientRouter, server islands, CSP, and pages without JavaScript."
+head:
+  - tag: title
+    content: "Astro Scroll Reveal Animations: the Reveal Component"
+  - tag: meta
+    attrs:
+      property: og:title
+      content: "Astro Scroll Reveal Animations: the Reveal Component"
+---
+
+`@awesome-reveal/astro` has the `Reveal` component. It renders one element on the server, and animates it when it enters the viewport. Your pages need no client framework.
+
+## Install
+
+```sh
+pnpm add @awesome-reveal/astro
+```
+
+The package needs Astro 6 or 7.
+
+## Entry points
+
+| Import path                       | Contents                                                                            |
+| --------------------------------- | ----------------------------------------------------------------------------------- |
+| `@awesome-reveal/astro`           | The `Reveal` component, and the `RevealProps` and `RevealOptions` types.            |
+| `@awesome-reveal/astro/keyframes` | The [built-in keyframes](/concepts/keyframes/), `defineKeyframes`, and their types. |
+
+## The `Reveal` component
+
+`Reveal` renders one element around its default slot. `as` sets the tag, and the default is `div`. `Reveal` gives its other attributes to that element:
+
+```astro
+---
+import { Reveal } from "@awesome-reveal/astro";
+import { fade, slide } from "@awesome-reveal/astro/keyframes";
+---
+
+<Reveal as="section" keyframes={slide()} class="hero" id="intro">
+  <h1>Welcome</h1>
+</Reveal>
+
+<Reveal as="article" keyframes={fade()} threshold={0.3}>
+  …
+</Reveal>
+```
+
+Without `keyframes`, the element fades in and moves up, as with `slide()`. The keyframes factories run on the server, when Astro renders the page.
+
+The children animate together. To animate them one after the other, use [`stagger`](/concepts/options/#stagger).
+
+`Reveal` is an Astro component. In a React island, use [`@awesome-reveal/react`](/react/). In a Vue island, use [`@awesome-reveal/vue`](/vue/).
+
+## Options
+
+`Reveal` accepts the [reveal options](/concepts/options/) as props, and the `when` option.
+
+### Control the reveal manually
+
+With `when`, your code controls the reveal, and nothing observes the viewport. `threshold`, `rootMargin` and `once` have no effect.
+
+`Reveal` writes its options into the `options` attribute of the `<awesome-reveal>` element, as JSON. To change them in the browser, set that attribute to new JSON. The new value replaces all the options, so merge your change into the current value. A change of `when`, `threshold`, `rootMargin` or `once` applies at once. The other options apply at the next reveal.
+
+```astro
+<button id="show">Show</button>
+<Reveal id="details" when={false}>
+  …
+</Reveal>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    document.querySelector("#show")?.addEventListener("click", () => {
+      const host = document.querySelector("#details")?.parentElement;
+      const options = JSON.parse(host?.getAttribute("options") ?? "{}");
+      host?.setAttribute("options", JSON.stringify({ ...options, when: true }));
+    });
+  });
+</script>
+```
+
+Astro runs a bundled script once. The `<ClientRouter />` fires `astro:page-load` on the first load and after each navigation, so the listener comes back on the new page. Without the router, run the code directly.
+
+## How it works
+
+`Reveal` renders your element inside an `<awesome-reveal>` custom element:
+
+```html
+<awesome-reveal options='{"duration":800}'>
+  <section class="hero" data-reveal="hidden">…</section>
+</awesome-reveal>
+```
+
+- The custom element reveals its first element child. Astro bundles the script that defines it, and adds the script once to the page.
+- The options go through JSON, so pass only plain values. The keyframes factories return plain values.
+- The custom element starts when it enters the page, so `Reveal` works with the `<ClientRouter />` and with server islands.
+- A `transition:persist` element keeps its state, and does not play again after a navigation. You can put `transition:persist` on `Reveal` or on an ancestor.
+- On a page that the browser prerenders, the animation waits until the user opens the page.
+
+### Layout
+
+`<awesome-reveal>` has `display: contents`, so it adds no box to the layout. But it is still an element in the DOM:
+
+- Your element is the first child of `<awesome-reveal>`, so a sibling selector such as `h2 + div` or `* + *` does not match it. The selector can match `<awesome-reveal>`, but a margin on it has no effect. Give your element its own margin. For example, the Starlight content spacing does not apply to it.
+- Do not put `Reveal` directly in a `<table>`, `<tbody>` or `<tr>`. The HTML parser moves the `<awesome-reveal>` element out of the table. Put `Reveal` around the table, or inside a cell.
+- `stagger` cannot animate framework islands that are direct children, because `<astro-island>` also has `display: contents`. Put each island in an element.
+
+### Content Security Policy
+
+`Reveal` works with the `security.csp` option of Astro. The server markup has no `style` attribute: `data-reveal="hidden"` and a stylesheet rule hide the element. Astro does not support `security.csp` with the `<ClientRouter />`.
+
+## Pages without JavaScript
+
+The stylesheet rule that hides the element applies only in `@media (scripting: enabled)`. When JavaScript is off, the content shows. You do not need the [`<noscript>` style](/concepts/accessibility/#pages-without-javascript) of the other packages.
+
+The `scripting` media feature needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the element shows until the script hides it. Then the reveal animation plays as usual.
+
+## TypeScript
+
+`@awesome-reveal/astro` exports these types:
+
+- `RevealProps<Tag>`: the props of `Reveal`, where `Tag` is the tag in `as`. The attributes follow the tag.
+- `RevealOptions`: the reveal options and `when`.
+
+`@awesome-reveal/astro/keyframes` exports the keyframes types, such as `KeyframesFactory` and `SlideOptions`. See [Keyframes](/concepts/keyframes/).
