@@ -73,7 +73,7 @@ export default defineConfig({
         },
         {
           label: "Packages",
-          items: ["react", "core"],
+          items: ["react", "vue", "astro", "core"],
         },
         {
           label: "Guides",

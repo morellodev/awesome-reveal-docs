@@ -1,0 +1,135 @@
+---
+title: Vue
+description: "Scroll reveal animations for Vue with the v-reveal directive and the Reveal component: options, manual reveals, global registration, TypeScript and SSR."
+head:
+  - tag: title
+    content: "Vue Scroll Reveal Animations: v-reveal and Reveal"
+  - tag: meta
+    attrs:
+      property: og:title
+      content: "Vue Scroll Reveal Animations: v-reveal and Reveal"
+---
+
+`@awesome-reveal/vue` has two APIs with the same options:
+
+- The `v-reveal` directive animates your own element or component, with no wrapper.
+- The `Reveal` component renders one element and animates it.
+
+## Install
+
+```sh
+pnpm add @awesome-reveal/vue
+```
+
+The package needs Vue 3.5 or later.
+
+## Entry points
+
+| Import path                     | Contents                                                                            |
+| ------------------------------- | ----------------------------------------------------------------------------------- |
+| `@awesome-reveal/vue`           | The `v-reveal` directive, the `Reveal` component, and their types.                  |
+| `@awesome-reveal/vue/keyframes` | The [built-in keyframes](/concepts/keyframes/), `defineKeyframes`, and their types. |
+
+`@awesome-reveal/vue/keyframes` does not import Vue.
+
+## The `v-reveal` directive
+
+`v-reveal` animates the element that it is on. Its value is an object with the [reveal options](/concepts/options/). On a component, it animates the root element of the component:
+
+```vue
+<script setup>
+import { vReveal } from "@awesome-reveal/vue";
+import { fade, slide } from "@awesome-reveal/vue/keyframes";
+
+const fromLeft = slide({ direction: "left" });
+</script>
+
+<template>
+  <p v-reveal>I gently appear as I enter the viewport</p>
+  <section v-reveal="{ keyframes: fromLeft, duration: 800 }">…</section>
+  <article v-reveal="{ keyframes: fade(), threshold: 0.3 }">…</article>
+</template>
+```
+
+Without `keyframes`, the element fades in and moves up, as with `slide()`.
+
+While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, so an inline `opacity` of your own does not stay. Set your opacity in a class.
+
+### Register the directive globally
+
+In `<script setup>`, the import of `vReveal` makes `v-reveal` available. To use it in all components, register it on the app:
+
+```ts
+import { createApp } from "vue";
+import { vReveal } from "@awesome-reveal/vue";
+import App from "./App.vue";
+
+createApp(App).directive("reveal", vReveal).mount("#app");
+
+// Types v-reveal in the templates of all components.
+declare module "vue" {
+  interface GlobalDirectives {
+    vReveal: typeof vReveal;
+  }
+}
+```
+
+## The `Reveal` component
+
+`Reveal` renders one element around its default slot. `as` sets the tag, and the default is `div`. `Reveal` gives its other attributes to that element:
+
+```vue
+<script setup>
+import { Reveal } from "@awesome-reveal/vue";
+import { slide } from "@awesome-reveal/vue/keyframes";
+</script>
+
+<template>
+  <Reveal as="section" :keyframes="slide()" class="hero" id="intro">
+    <h1>Welcome</h1>
+  </Reveal>
+</template>
+```
+
+`Reveal` keeps your own `style`. Until the reveal, the hidden `opacity: 0` overrides your opacity.
+
+The children animate together. To animate them one after the other, use [`stagger`](/concepts/options/#stagger).
+
+## Options
+
+`Reveal` accepts the [reveal options](/concepts/options/) as props, and `v-reveal` accepts them as one object. Both also accept the `when` option.
+
+`once` and `when` are optional. Without a value, they keep the default behavior: `<Reveal>` reveals once, and observes the viewport.
+
+Option changes apply at the next reveal. They do not play an animation again.
+
+### Control the reveal manually
+
+With `when`, your code controls the reveal, and nothing observes the viewport:
+
+- `:when="false"` hides the element.
+- `:when="true"` reveals the element and plays the animation.
+- A change from `true` to `false` hides the element again.
+
+```vue
+<Reveal as="ul" :when="data !== undefined" :stagger="50">
+  <li v-for="item in data" :key="item.id">{{ item.name }}</li>
+</Reveal>
+```
+
+With `when`, `threshold`, `rootMargin` and `once` have no effect.
+
+## TypeScript
+
+`@awesome-reveal/vue` exports these types:
+
+- `RevealProps`: the props of `Reveal`.
+- `RevealOptions`: the reveal options and `when`, for `v-reveal`.
+
+`@awesome-reveal/vue/keyframes` exports the keyframes types, such as `KeyframesFactory` and `SlideOptions`. See [Keyframes](/concepts/keyframes/).
+
+## SSR
+
+On the server, `v-reveal` and `Reveal` render the element hidden, with `opacity: 0` and `data-reveal="hidden"`, unless `when` is `true`. The animation starts in the browser, when the element enters the viewport. If JavaScript does not run, the element stays hidden. To show it, add the [`<noscript>` style](/concepts/accessibility/#pages-without-javascript).
+
+On the server, `v-reveal` also renders `data-allow-mismatch="style"`. The client render of the element does not have the hidden style. Without this attribute, a `style` binding on the element causes a hydration mismatch warning. The attribute allows a style mismatch on that element only.

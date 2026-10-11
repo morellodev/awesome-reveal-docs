@@ -1,13 +1,13 @@
 ---
 title: Getting started
-description: "Install awesome-reveal with pnpm and add scroll reveal animations to your React app: reveal an element, choose an animation, and animate your own element."
+description: "Install awesome-reveal and add scroll reveal animations to a React, Vue or Astro app: reveal an element, choose an animation, and animate your own element."
 head:
   - tag: title
-    content: "Install Awesome Reveal: Scroll Animations for React"
+    content: "Install Awesome Reveal for React, Vue and Astro"
   - tag: meta
     attrs:
       property: og:title
-      content: "Install Awesome Reveal: Scroll Animations for React"
+      content: "Install Awesome Reveal for React, Vue and Astro"
 ---
 
 import {
@@ -21,6 +21,11 @@ import {
 import reactChooseAnimation from "../../examples/react/choose-animation.jsx?raw";
 import reactReveal from "../../examples/react/reveal.jsx?raw";
 import reactUseReveal from "../../examples/react/use-reveal.jsx?raw";
+import vueChooseAnimation from "../../examples/vue/choose-animation.vue?raw";
+import vueReveal from "../../examples/vue/reveal.vue?raw";
+import vueRevealComponent from "../../examples/vue/reveal-component.vue?raw";
+import astroChooseAnimation from "../../examples/astro/choose-animation.astro?raw";
+import astroReveal from "../../examples/astro/reveal.astro?raw";
 
 awesome-reveal hides an element until it enters the viewport, and then animates it. Each framework has its own package. Choose your framework in the tabs below.
 
@@ -28,14 +33,22 @@ awesome-reveal hides an element until it enters the viewport, and then animates 
 
 <Tabs syncKey="framework">
   <TabItem label="React" icon="seti:react">
-    <Code code="pnpm add @awesome-reveal/react@next" lang="shell" />
+    <Code code="pnpm add @awesome-reveal/react" lang="shell" />
     The package needs React 18 or later.
+  </TabItem>
+  <TabItem label="Vue" icon="seti:vue">
+    <Code code="pnpm add @awesome-reveal/vue" lang="shell" />
+    The package needs Vue 3.5 or later.
+  </TabItem>
+  <TabItem label="Astro" icon="astro">
+    <Code code="pnpm add @awesome-reveal/astro" lang="shell" />
+    The package needs Astro 6 or 7.
   </TabItem>
 </Tabs>
 
 <Aside>
-  Version 1.0 is a prerelease on the `next` tag. Until 1.0.0, the `latest` tag
-  installs an old placeholder version, so add `@next` to the package name.
+  Version 1.0 is a prerelease. Until 1.0.0, the `latest` tag installs the newest
+  prerelease.
 </Aside>
 
 ## Reveal an element
@@ -45,6 +58,22 @@ awesome-reveal hides an element until it enters the viewport, and then animates 
     Put the content in a `Reveal` component:
 
     <Code code={reactReveal} lang="jsx" />
+
+    `Reveal` renders a `div` around its children. With no `keyframes`, the `div` fades in and moves up.
+
+  </TabItem>
+  <TabItem label="Vue" icon="seti:vue">
+    Put the `v-reveal` directive on the element:
+
+    <Code code={vueReveal} lang="vue" />
+
+    With no `keyframes`, the element fades in and moves up.
+
+  </TabItem>
+  <TabItem label="Astro" icon="astro">
+    Put the content in a `Reveal` component:
+
+    <Code code={astroReveal} lang="astro" />
 
     `Reveal` renders a `div` around its children. With no `keyframes`, the `div` fades in and moves up.
 
@@ -61,6 +90,22 @@ Each package has a `keyframes` entry point with the same keyframes factories. Gi
 
     - `as` sets the tag of the rendered element. `Reveal` gives its other props and its `ref` to that element.
     - `slide({ direction: "left" })` moves the element to the left as it fades in.
+    - `duration` is in milliseconds. The default is `600`.
+
+  </TabItem>
+  <TabItem label="Vue" icon="seti:vue">
+    <Code code={vueChooseAnimation} lang="vue" />
+
+    - The value of `v-reveal` is an object with the options.
+    - `slide({ direction: "left" })` moves the element to the left as it fades in.
+    - `duration` is in milliseconds. The default is `600`.
+
+  </TabItem>
+  <TabItem label="Astro" icon="astro">
+    <Code code={astroChooseAnimation} lang="astro" />
+
+    - `as` sets the tag of the rendered element. `Reveal` gives its other attributes to that element.
+    - `slide({ direction: "left" })` moves the element to the left as it fades in. The factory runs on the server.
     - `duration` is in milliseconds. The default is `600`.
 
   </TabItem>
@@ -82,6 +127,20 @@ The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`. Se
     `style` hides the element until the reveal. `threshold: 0.3` reveals the element when 30% of it is visible.
 
   </TabItem>
+  <TabItem label="Vue" icon="seti:vue">
+    `v-reveal` already animates your own element, with no wrapper. On a component, it animates the root element of the component.
+
+    To render the element from a component instead, use `Reveal`:
+
+    <Code code={vueRevealComponent} lang="vue" />
+
+    `threshold: 0.3` reveals the element when 30% of it is visible.
+
+  </TabItem>
+  <TabItem label="Astro" icon="astro">
+    Astro has no hook or directive. `Reveal` renders the element: set the tag with `as`, and give your attributes to `Reveal`. See [Astro](/astro/).
+
+  </TabItem>
 </Tabs>
 
 ## Next steps
@@ -96,6 +155,16 @@ The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`. Se
     title="React"
     description="Reveal, useReveal, manual reveals, SSR and Server Components."
     href="/react/"
+  />
+  <LinkCard
+    title="Vue"
+    description="v-reveal, Reveal, manual reveals and SSR."
+    href="/vue/"
+  />
+  <LinkCard
+    title="Astro"
+    description="Reveal, the ClientRouter, server islands and CSP."
+    href="/astro/"
   />
   <LinkCard
     title="Migrate from v4"
