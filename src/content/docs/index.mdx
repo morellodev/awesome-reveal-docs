@@ -38,7 +38,13 @@ hero:
       variant: minimal
 ---
 
-import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import {
+  CardGrid,
+  Code,
+  LinkCard,
+  TabItem,
+  Tabs,
+} from "@astrojs/starlight/components";
 import {
   blur,
   enter,
@@ -51,20 +57,31 @@ import Demo from "../../components/demos/Demo.astro";
 import DemoGrid from "../../components/demos/DemoGrid.astro";
 import FeatureCard from "../../components/FeatureCard.astro";
 import FeatureGrid from "../../components/FeatureGrid.astro";
+import astroReveal from "../../examples/astro/reveal.astro?raw";
+import jsReveal from "../../examples/javascript/reveal.js?raw";
+import reactReveal from "../../examples/react/reveal.jsx?raw";
+import vueReveal from "../../examples/vue/reveal.vue?raw";
 
 ## Reveal anything in a few lines of code
 
-Wrap any element in `Reveal`. It animates as soon as it scrolls into view, with no CSS to write and no layout shift.
+Wrap an element in `Reveal`, put `v-reveal` on it, or call `reveal()`. It animates as soon as it scrolls into view, with no CSS to write and no layout shift.
 
-```jsx
-import { Reveal } from "@awesome-reveal/react";
+<Tabs syncKey="framework">
+  <TabItem label="React" icon="seti:react">
+    <Code code={reactReveal} lang="jsx" />
+  </TabItem>
+  <TabItem label="Vue" icon="seti:vue">
+    <Code code={vueReveal} lang="vue" />
+  </TabItem>
+  <TabItem label="Astro" icon="astro">
+    <Code code={astroReveal} lang="astro" />
+  </TabItem>
+  <TabItem label="JavaScript" icon="seti:javascript">
+    <Code code={jsReveal} lang="js" />
+  </TabItem>
+</Tabs>
 
-<Reveal>
-  <p>I gently appear as I enter the viewport</p>
-</Reveal>;
-```
-
-By default, the element fades in and slides up. To use [another animation](/concepts/keyframes/), set one prop.
+By default, the element fades in and slides up. To use [another animation](/concepts/keyframes/), set one option.
 
 ## See it in action
 
@@ -111,11 +128,12 @@ Each tile uses a built-in animation. The caption shows the call that creates its
   </FeatureCard>
   <FeatureCard
     color="blue"
-    title="SSR and React Server Components"
+    title="Server rendering with no flash"
     icon="server"
   >
-    Content renders hidden on the server, so it never flashes before the
-    animation. Create keyframes directly in Server Components.
+    React, Vue and Astro render content hidden on the server, so it never
+    flashes before the animation. Create keyframes in React Server Components or
+    in the Astro frontmatter.
   </FeatureCard>
   <FeatureCard color="blue" title="Built for TypeScript" icon="seti:typescript">
     Strict types for every option, element and keyframe, with full autocomplete
@@ -137,7 +155,17 @@ Each tile uses a built-in animation. The caption shows the call that creates its
   <LinkCard
     title="@awesome-reveal/react"
     description="The Reveal component and the useReveal hook for React 18 or later."
-    href="/getting-started/"
+    href="/react/"
+  />
+  <LinkCard
+    title="@awesome-reveal/vue"
+    description="The v-reveal directive and the Reveal component for Vue 3.5 or later."
+    href="/vue/"
+  />
+  <LinkCard
+    title="@awesome-reveal/astro"
+    description="The Reveal component for Astro 6 or 7, with no client framework."
+    href="/astro/"
   />
   <LinkCard
     title="@awesome-reveal/core"
