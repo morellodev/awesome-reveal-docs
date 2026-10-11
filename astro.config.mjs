@@ -112,6 +112,12 @@ export default defineConfig({
           tag: "meta",
           attrs: { property: "og:image:height", content: "630" },
         },
+        {
+          // Without JavaScript, nothing reveals the elements that the server renders hidden.
+          tag: "noscript",
+          content:
+            '<style>[data-reveal="hidden"] { opacity: 1 !important; }</style>',
+        },
       ],
     }),
     partytown({ config: { forward: ["dataLayer.push"] } }),
