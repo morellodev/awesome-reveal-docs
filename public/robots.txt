@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://react-awesome-reveal.morello.dev
+Host: https://awesome-reveal.morello.dev
 
 # Sitemaps
-Sitemap: https://react-awesome-reveal.morello.dev/sitemap-index.xml
+Sitemap: https://awesome-reveal.morello.dev/sitemap-index.xml

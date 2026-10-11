@@ -3,7 +3,7 @@ import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
 
-const site = "https://react-awesome-reveal.morello.dev";
+const site = "https://awesome-reveal.morello.dev";
 const ogUrl = new URL("og.png?v=1", site).href;
 const ogImageAlt =
   "Add stunning, performant scroll reveal animations to your React applications with zero dependencies.";
@@ -20,7 +20,7 @@ export default defineConfig({
       title: "React Awesome Reveal",
       social: {
         email: "mailto:dennismorello@gmail.com",
-        github: "https://github.com/awesome-reveal/react-awesome-reveal",
+        github: "https://github.com/awesome-reveal/awesome-reveal",
         linkedin: "https://www.linkedin.com/in/dennismorello",
         blueSky: "https://bsky.app/profile/morello.dev",
         "x.com": "https://x.com/morellodev",
