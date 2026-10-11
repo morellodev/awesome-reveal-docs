@@ -1,0 +1,6 @@
+{
+  "starlightVersions.outdated.label": "This page is for {{label}} of the legacy <code>react-awesome-reveal</code> package.",
+  "starlightVersions.link.latest": "Read the <a href={{link}}>Awesome Reveal docs</a> for the new <code>@awesome-reveal/*</code> packages.",
+  "starlightVersions.search.outdated.label": "Search limited to {{label}} of <code>react-awesome-reveal</code>.",
+  "starlightVersions.search.link.latest": "Search the <a href={{link}}>Awesome Reveal docs</a> for the new packages."
+}
