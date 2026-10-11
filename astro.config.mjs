@@ -5,9 +5,11 @@ import starlightHeadingBadges from "starlight-heading-badges";
 import starlightVersions from "starlight-versions";
 
 const site = "https://awesome-reveal.morello.dev";
-const ogUrl = new URL("og.png?v=1", site).href;
+const ogUrl = new URL("og.png?v=2", site).href;
+const description =
+  "Reveal-on-scroll animations for many frameworks, with the Intersection Observer API and the Web Animations API.";
 const ogImageAlt =
-  "Add stunning, performant scroll reveal animations to your React applications with zero dependencies.";
+  "Awesome Reveal: reveal-on-scroll animations for many frameworks.";
 
 // https://astro.build/config
 export default defineConfig({
@@ -24,7 +26,8 @@ export default defineConfig({
           versions: [{ slug: "v4", redirect: "root" }],
         }),
       ],
-      title: "React Awesome Reveal",
+      title: "Awesome Reveal",
+      description,
       social: [
         {
           icon: "email",
