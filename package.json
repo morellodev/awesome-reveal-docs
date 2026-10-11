@@ -16,7 +16,7 @@
     "@astrojs/partytown": "^2.1.8",
     "@astrojs/starlight": "^0.42.6",
     "astro": "^7.3.8",
-    "sharp": "^0.33.5",
+    "sharp": "^0.35.5",
     "starlight-heading-badges": "^0.8.0"
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^5.8.2",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.26.0"
   }
 }
