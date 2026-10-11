@@ -21,7 +21,7 @@ export default defineConfig({
         starlightHeadingBadges(),
         starlightVersions({
           current: { label: "1.x", redirect: "root" },
-          versions: [{ slug: "v4", label: "v4", redirect: "root" }],
+          versions: [{ slug: "v4", label: "4.x", redirect: "root" }],
         }),
       ],
       title: "React Awesome Reveal",
