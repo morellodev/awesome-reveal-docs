@@ -1,0 +1,20 @@
+---
+title: Browser support
+description: The browsers that awesome-reveal supports, and what older browsers show.
+sidebar:
+  order: 4
+---
+
+The packages support Chrome 84, Firefox 75 and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes.
+
+## Fallbacks
+
+In browsers without a necessary API, the content still shows:
+
+- Without `IntersectionObserver`, elements are revealed immediately.
+- Without `Element.animate`, elements appear with no animation.
+- When the browser rejects a keyframe value, the element appears with no animation. For example, browsers without CSS `linear()` reject a [`spring()`](/concepts/keyframes/#springs) easing that the server created.
+
+## Implicit keyframes in Safari
+
+The built-in keyframes end with an empty keyframe (`{}`). The browser fills it with the current style of the element. [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#browser_compatibility) marks the support of Safari for these implicit keyframes as partial. If a custom animation looks wrong in Safari, give explicit values to each keyframe.

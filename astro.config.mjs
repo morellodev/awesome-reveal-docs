@@ -52,6 +52,15 @@ export default defineConfig({
         { icon: "x.com", label: "X", href: "https://x.com/morellodev" },
       ],
       sidebar: [
+        "getting-started",
+        {
+          label: "Concepts",
+          items: [{ autogenerate: { directory: "concepts" } }],
+        },
+        {
+          label: "Packages",
+          items: ["core"],
+        },
         {
           label: "Guides",
           items: [{ autogenerate: { directory: "guides" } }],

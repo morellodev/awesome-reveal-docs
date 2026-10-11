@@ -1,0 +1,45 @@
+---
+title: Accessibility
+description: Reduced motion, hidden content, pages without JavaScript, and Content Security Policy.
+sidebar:
+  order: 3
+---
+
+## Reduced motion
+
+By default, the element appears with no animation when the user prefers reduced motion. The `reducedMotion` option changes this:
+
+| Value      | Behavior                                                                    |
+| ---------- | --------------------------------------------------------------------------- |
+| `"user"`   | Skips the animation when the operating system setting asks for less motion. |
+| `"always"` | Always skips the animation.                                                 |
+| `"never"`  | Always plays the animation.                                                 |
+
+Keep `"user"` unless you have a strong reason. Motion makes some people ill, and they set this option in their operating system.
+
+## Hidden content
+
+Until the reveal, the element has an inline `opacity: 0` style. It stays in the accessibility tree, and the browser's find-in-page finds its text.
+
+## Pages without JavaScript
+
+The server renders hidden elements with `opacity: 0`. If JavaScript does not run, they stay hidden. To show them, put this in the document head:
+
+```html
+<noscript>
+  <style>
+    [data-reveal="hidden"] {
+      opacity: 1 !important;
+    }
+  </style>
+</noscript>
+```
+
+Hidden elements have the `data-reveal="hidden"` attribute:
+
+- The React `Reveal` component and the core `reveal` function set it.
+- With the React `useReveal` hook, set it yourself. See [`useReveal`](/react/#the-usereveal-hook).
+
+## Content Security Policy
+
+The library adds no `<style>` elements. Under a strict Content Security Policy, the inline `opacity: 0` style in the server markup needs `style-src-attr 'unsafe-inline'`.

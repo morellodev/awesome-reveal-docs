@@ -1,0 +1,86 @@
+---
+title: Core
+description: Use @awesome-reveal/core with plain DOM code, or to write an adapter for another framework.
+---
+
+import { Code, Tabs, TabItem } from "@astrojs/starlight/components";
+
+`@awesome-reveal/core` is the framework-independent part of awesome-reveal. The framework adapters use it. If your app uses React, install [`@awesome-reveal/react`](/getting-started/) instead.
+
+Use this package with plain DOM code, or to write an adapter for another framework.
+
+## Install
+
+<Tabs syncKey="pkg">
+  <TabItem label="npm">
+    <Code code="npm install @awesome-reveal/core@next" lang="shell" />
+  </TabItem>
+  <TabItem label="pnpm">
+    <Code code="pnpm add @awesome-reveal/core@next" lang="shell" />
+  </TabItem>
+  <TabItem label="yarn">
+    <Code code="yarn add @awesome-reveal/core@next" lang="shell" />
+  </TabItem>
+</Tabs>
+
+## Reveal an element
+
+```js
+import { reveal } from "@awesome-reveal/core";
+import { slide } from "@awesome-reveal/core/keyframes";
+
+const controller = reveal(document.querySelector(".hero"), {
+  keyframes: slide({ direction: "left" }),
+  duration: 800,
+});
+
+// Later, for example when the element leaves the page:
+controller.destroy();
+```
+
+The options are the same as in the adapters. See [Options](/concepts/options/).
+
+## Entry points
+
+| Import path                      | Contents                                                    |
+| -------------------------------- | ----------------------------------------------------------- |
+| `@awesome-reveal/core`           | `reveal`, `observe`, `play` and `hiddenStyle`.              |
+| `@awesome-reveal/core/keyframes` | The built-in keyframes, `defineKeyframes`, and their types. |
+
+## API
+
+### `reveal(element, options?)`
+
+Hides the element, and plays the keyframes when the element enters the viewport. While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, so an inline `opacity` of your own does not stay.
+
+`reveal` returns a controller:
+
+- `revealed`: `true` after the reveal.
+- `update(options)`: replaces the options. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+- `destroy()`: stops the observation and cancels the animation. The element keeps its current style.
+
+### `observe(element, options, onChange)`
+
+Calls `onChange(true)` when the element enters the viewport. When `once` is `false`, it also calls `onChange(false)` when the element leaves the viewport. It uses `threshold`, `rootMargin` and `once`, and returns a function that stops the observation.
+
+### `play(element, options?)`
+
+Plays the keyframes on the element, or on its children with `stagger`. It uses `keyframes`, `duration`, `delay`, `stagger` and `reducedMotion`, and returns a function that cancels the animation.
+
+Call `play` in the same frame that removes the hidden style. If you do not, the element shows at its resting style for one frame.
+
+### `hiddenStyle`
+
+The style that hides an element until the reveal: `{ opacity: "0" }`. A server renderer applies it to the markup, so that the element does not show before the client code runs.
+
+## Write an adapter
+
+Use `reveal` when your code owns the element. When your framework renders the style of the element, use `observe`, `play` and `hiddenStyle`:
+
+1. Render the element with `hiddenStyle` and `data-reveal="hidden"`.
+2. Call `observe` on the element. Store the `inView` value that `onChange` gets.
+3. When `inView` is `true`, render the element without `hiddenStyle` and `data-reveal`.
+4. In the same frame, call `play` on the element.
+5. Call the functions that `observe` and `play` return when the element leaves the page.
+
+The React adapter, [`useReveal`](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/src/useReveal.ts), follows these steps in about 50 lines.

@@ -1,0 +1,141 @@
+---
+title: Keyframes
+description: The built-in keyframes factories, spring easing, and custom keyframes for awesome-reveal.
+sidebar:
+  order: 1
+---
+
+The `keyframes` option sets the animation of a reveal. Its value is an array of [Web Animations keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats). The animation does not stay applied after it finishes, so the last keyframe must be the resting style of the element.
+
+The examples on this page import from `@awesome-reveal/react/keyframes`. With `@awesome-reveal/core`, import from `@awesome-reveal/core/keyframes`. The two entry points export the same functions. They do not touch the DOM, so you can call them on the server.
+
+## Built-in keyframes
+
+Each factory takes its options, which you can leave out, and returns a new keyframes array. Without `keyframes`, a reveal plays `slide()`.
+
+```jsx
+import { slide } from "@awesome-reveal/react/keyframes";
+
+<Reveal keyframes={slide()} />;
+<Reveal keyframes={slide({ direction: "left", distance: 40 })} />;
+```
+
+| Factory   | Effect                                     | Options                                                                                                               |
+| --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `fade()`  | Fades in.                                  | `easing`                                                                                                              |
+| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `24`), `opacity`, `easing` |
+| `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
+| `blur()`  | Fades in and removes a blur.               | `amount` (default `8`), `opacity`, `easing`                                                                           |
+| `pop()`   | Fades in, grows past its size and settles. | `from` (default `0.8`), `opacity`, `easing`                                                                           |
+| `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
+
+- `direction` is the direction in which the element moves. `"up"` starts below the resting position.
+- A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle, for example `"100%"`.
+- `opacity` is the start opacity. The default is `0`. Set it to `1` for movement with no fade.
+- `from` is the start scale.
+
+`enter()` combines start values in one animation:
+
+```jsx
+import { enter } from "@awesome-reveal/react/keyframes";
+
+<Reveal keyframes={enter({ y: 40, scale: 0.9 })}>…</Reveal>; // rise and grow
+<Reveal keyframes={enter({ x: "-100%", rotate: -120 })}>…</Reveal>; // roll in from the left
+```
+
+`blur()` animates `filter`. Chromium and Safari composite `filter`, but other engines repaint it on each frame. Use it on small and medium elements.
+
+## Easing
+
+The default easing of the factories is `"cubic-bezier(0.22, 1, 0.36, 1)"`, a fast start and a slow end. The default easing of `pop()` is `"cubic-bezier(0.34, 1.56, 0.64, 1)"`. Its values go out of the 0–1 range, so the element grows past its size and settles. Each factory accepts any CSS easing in `easing`.
+
+### Springs
+
+`spring()` returns an easing that follows a spring. Give it to the `easing` option of a factory:
+
+```jsx
+import { slide, spring } from "@awesome-reveal/react/keyframes";
+
+<Reveal keyframes={slide({ easing: spring({ bounce: 0.5 }) })}>…</Reveal>;
+```
+
+`bounce` sets the overshoot, from `0` (no overshoot) to `0.8`. The default is `0.3`.
+
+`spring()` returns a CSS `linear()` easing. Chrome before 113, Firefox before 112 and Safari before 17.2 do not support `linear()`:
+
+- In the browser, `spring()` checks the support. Without it, `spring()` returns the default easing.
+- On the server, `spring()` cannot check the support, and always returns `linear()`. A browser without `linear()` then shows the element with no animation.
+
+## Custom keyframes
+
+### `defineKeyframes`
+
+`defineKeyframes` builds a factory from a function of the animation progress. Your function gets the options and returns a `keyframe(t, u)` function. `t` is the progress from 0 to 1, and `u` is `1 - t`. The factory samples `keyframe` into a keyframes array:
+
+```jsx
+import { defineKeyframes } from "@awesome-reveal/react/keyframes";
+
+const spin = defineKeyframes(({ turns = 1 }) => ({
+  keyframe: (t, u) => ({
+    opacity: t,
+    transform: `rotate(${u * turns * 360}deg)`,
+  }),
+  easing: (t) => 1 - (1 - t) ** 3,
+  steps: 30,
+}));
+
+<Reveal keyframes={spin({ turns: 2 })}>…</Reveal>;
+```
+
+- At `t = 1`, return the resting style of the element.
+- `easing` is optional. It is a JavaScript function that maps the linear progress to the eased progress. The default is `(t) => t`.
+- `steps` is optional. It is the number of samples. The default is `30`.
+- Your function gets the options as the caller gives them, so give a default for each option.
+- In TypeScript, give the options type: `defineKeyframes<{ turns?: number }>(…)`.
+
+Each call of the factory samples the function again. In a component that renders often, call the factory one time outside the component, for example `const spinTwice = spin({ turns: 2 });`.
+
+### Keyframes arrays
+
+You can also give a keyframes array directly:
+
+```jsx
+<Reveal
+  keyframes={[
+    { opacity: 0, transform: "translate(-200px, -100px)", easing: "ease-out" },
+    { opacity: 1, transform: "none" },
+  ]}
+>
+  …
+</Reveal>
+```
+
+Web Animations eases each keyframe linearly by default. Set `easing` on a keyframe to change the easing up to the next keyframe.
+
+To write a reusable factory with options, type it with `KeyframesFactory`:
+
+```ts
+import type { KeyframesFactory } from "@awesome-reveal/react/keyframes";
+
+export const drop: KeyframesFactory<{ height?: number }> = ({
+  height = 40,
+} = {}) => [
+  { opacity: 0, transform: `translateY(${-height}px)`, easing: "ease-out" },
+  {},
+];
+```
+
+An empty last keyframe (`{}`) is an implicit keyframe: the browser uses the current style of the element. The built-in factories also end with `{}`. For the browser support of implicit keyframes, see [Browser support](/concepts/browser-support/).
+
+`clip-path` paints on the main thread in most engines, so use it on small elements:
+
+```jsx
+<Reveal
+  keyframes={[
+    { clipPath: "inset(0 100% 0 0)", easing: "ease-out" },
+    { clipPath: "inset(0)" },
+  ]}
+>
+  …
+</Reveal>
+```
