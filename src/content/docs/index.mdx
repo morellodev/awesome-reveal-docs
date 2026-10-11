@@ -1,63 +1,107 @@
 ---
 title: Awesome Reveal
-description: Reveal-on-scroll animations for many frameworks, with the Intersection Observer API and the Web Animations API.
+description: Add smooth scroll reveal animations to your React app in a few lines. Under 2 kB, zero dependencies, accessible, SSR-ready and built on native browser APIs.
 head:
   - tag: title
-    content: Awesome Reveal - Reveal-on-scroll animations for many frameworks
+    content: "Awesome Reveal: Scroll Reveal Animations for React"
+  - tag: meta
+    attrs:
+      property: og:title
+      content: "Awesome Reveal: Scroll Reveal Animations for React"
+  - tag: meta
+    attrs:
+      property: og:type
+      content: website
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: '{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"Awesome Reveal","description":"Scroll reveal animations for React and the web. Under 2 kB, zero dependencies, accessible, SSR-ready and built on native browser APIs.","url":"https://awesome-reveal.morello.dev/","codeRepository":"https://github.com/awesome-reveal/awesome-reveal","programmingLanguage":"TypeScript","license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"Dennis Morello","url":"https://morello.dev"}}'
 template: splash
 banner:
   content: |
     ⭐️ If you find this library helpful, consider
     <a target="_blank" href="https://github.com/sponsors/morellodev">supporting its development</a>.
 hero:
-  tagline: Reveal-on-scroll animations for many frameworks. The Intersection Observer API detects the reveal, and the Web Animations API animates it.
+  title: Beautiful scroll reveal animations for React
+  tagline: Make content fade, slide and pop in as it scrolls into view. Under 2 kB, zero dependencies, and built on native browser APIs that work in every major browser.
   actions:
     - text: Get started
       icon: right-arrow
       link: /getting-started/
       variant: primary
+    - text: View on GitHub
+      icon: github
+      link: https://github.com/awesome-reveal/awesome-reveal
+      variant: secondary
     - text: Migrate from v4
       link: /migrate-from-v4/
       variant: minimal
 ---
 
-import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import FeatureCard from "../../components/FeatureCard.astro";
+
+## Reveal anything in a few lines of code
+
+Wrap any element in `Reveal`. It animates as soon as it scrolls into view, with no CSS to write and no layout shift.
 
 ```jsx
 import { Reveal } from "@awesome-reveal/react";
-import { slide } from "@awesome-reveal/react/keyframes";
 
-<Reveal keyframes={slide({ direction: "left" })}>
+<Reveal>
   <p>I gently appear as I enter the viewport</p>
 </Reveal>;
 ```
 
-## Features
+By default, the element fades in and slides up. To use [another animation](/concepts/keyframes/), set one prop.
+
+## Why Awesome Reveal
 
 <CardGrid>
-  <Card title="No dependencies" icon="puzzle">
-    The packages have no third-party dependencies. Each keyframes factory is a
-    small function, so your bundle includes only the factories that you import.
-  </Card>
-  <Card title="Native APIs" icon="rocket">
-    Intersection Observer detects the reveal. Web Animations runs it on the
-    compositor where possible.
-  </Card>
-  <Card title="Accessible" icon="approve-check">
-    It respects `prefers-reduced-motion` by default. Hidden content stays in the
-    accessibility tree.
-  </Card>
-  <Card title="SSR and Server Components" icon="laptop">
-    Content renders hidden on the server. You can create keyframes in React
-    Server Components.
-  </Card>
-  <Card title="TypeScript" icon="seti:typescript">
-    Strict types for the options, the elements and the keyframes.
-  </Card>
-  <Card title="Many frameworks" icon="setting">
-    `@awesome-reveal/core` has no framework code. Each framework gets a small
-    adapter on top of it.
-  </Card>
+  <FeatureCard color="orange" title="Tiny and dependency-free" icon="feather">
+    Under 2 kB gzipped for the whole React package, with zero third-party
+    dependencies. Tree-shaking keeps only the animations that you import.
+  </FeatureCard>
+  <FeatureCard color="orange" title="Smooth, native performance" icon="zap">
+    Intersection Observer detects the reveal, with no scroll listeners. The Web
+    Animations API runs it on the compositor where possible.
+  </FeatureCard>
+  <FeatureCard
+    color="green"
+    title="Works in every major browser"
+    icon="app-window"
+  >
+    Built on [Baseline Widely available](/concepts/browser-support/) web APIs
+    that Chrome, Edge, Firefox and Safari have supported for years.
+  </FeatureCard>
+  <FeatureCard
+    color="green"
+    title="Accessible by default"
+    icon="person-standing"
+  >
+    Respects `prefers-reduced-motion` out of the box. Hidden content stays in
+    the accessibility tree and in find-in-page.
+  </FeatureCard>
+  <FeatureCard
+    color="blue"
+    title="SSR and React Server Components"
+    icon="server"
+  >
+    Content renders hidden on the server, so it never flashes before the
+    animation. Create keyframes directly in Server Components.
+  </FeatureCard>
+  <FeatureCard color="blue" title="Built for TypeScript" icon="seti:typescript">
+    Strict types for every option, element and keyframe, with full autocomplete
+    in your editor.
+  </FeatureCard>
+  <FeatureCard color="purple" title="Custom animations" icon="spline">
+    Six built-in animations, spring easing, and custom keyframes from any
+    function of time. See [Keyframes](/concepts/keyframes/).
+  </FeatureCard>
+  <FeatureCard color="purple" title="Ready for AI coding agents" icon="bot">
+    The packages ship [agent skills](/agent-skills/), so Claude Code, Cursor and
+    other agents add animations and migrate v4 code the right way.
+  </FeatureCard>
 </CardGrid>
 
 ## Packages
@@ -70,12 +114,9 @@ import { slide } from "@awesome-reveal/react/keyframes";
   />
   <LinkCard
     title="@awesome-reveal/core"
-    description="The framework-independent controller and keyframes, for plain DOM code and for adapters."
+    description="The framework-independent core, for plain JavaScript and for adapters to other frameworks."
     href="/core/"
   />
-  <LinkCard
-    title="react-awesome-reveal"
-    description="Version 5 re-exports @awesome-reveal/react, for v4 users."
-    href="/migrate-from-v4/"
-  />
 </CardGrid>
+
+Coming from `react-awesome-reveal`? Awesome Reveal is its successor. Read the [migration guide](/migrate-from-v4/).
