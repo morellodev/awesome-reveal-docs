@@ -1,0 +1,62 @@
+---
+title: Options
+description: Set the timing of a reveal, stagger the children, and choose when an element enters the viewport.
+sidebar:
+  order: 2
+---
+
+All the packages accept the same reveal options. The framework adapters can add more: for example, React adds [`when`](/react/#control-the-reveal-manually).
+
+| Option          | Description                                                                                                      | Default   |
+| --------------- | ---------------------------------------------------------------------------------------------------------------- | --------- |
+| `keyframes`     | The animation. See [Keyframes](/concepts/keyframes/).                                                            | `slide()` |
+| `duration`      | Animation duration, in milliseconds.                                                                             | `600`     |
+| `delay`         | Delay before the animation starts, in milliseconds.                                                              | `0`       |
+| `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.    | –         |
+| `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                     | `0`       |
+| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                     | `"0px"`   |
+| `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.      | `true`    |
+| `reducedMotion` | Skips or plays the animation for users who prefer reduced motion. See [Accessibility](/concepts/accessibility/). | `"user"`  |
+
+## Stagger
+
+`stagger` animates the element children one after the other. The first child starts after `delay`, and each next child starts `stagger` milliseconds after the previous one:
+
+```jsx
+<Reveal as="ul" keyframes={slide()} stagger={80}>
+  <li>I enter first...</li>
+  <li>...then comes my turn...</li>
+  <li>...and finally you see me!</li>
+</Reveal>
+```
+
+`stagger` animates element children only. It does not animate text nodes.
+
+Transforms do not apply to non-replaced inline elements, such as `span` or `a`. Give these children `display: inline-block`. For example, to show a text one character at a time:
+
+```jsx
+<p>
+  <span className="visually-hidden">{text}</span>
+  <Reveal as="span" keyframes={fade()} stagger={30} aria-hidden>
+    {[...text].map((char, index) => (
+      <span key={index} style={{ display: "inline-block", whiteSpace: "pre" }}>
+        {char}
+      </span>
+    ))}
+  </Reveal>
+</p>
+```
+
+`visually-hidden` is your class that hides content visually, but keeps it for screen readers. Screen readers read the full text one time, and skip the animated characters.
+
+## Viewport
+
+An element is revealed when it enters the viewport:
+
+- With `threshold`, the element must be visible by this fraction. `0.3` reveals the element when 30% of it is visible.
+- `rootMargin` changes the viewport area. A negative margin, such as `"0px 0px -100px 0px"`, reveals the element when its top edge is 100px inside the viewport.
+- With `once: false`, the element hides again when it leaves the viewport, and the animation plays at each entry.
+
+## Option changes
+
+A change of `threshold`, `rootMargin` or `once` restarts the observation of the viewport. The other options apply at the next reveal. A change does not replay an animation that already played.

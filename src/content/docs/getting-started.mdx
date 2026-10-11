@@ -1,0 +1,103 @@
+---
+title: Getting started
+description: Install the awesome-reveal package for your framework, and reveal your first element when it enters the viewport.
+---
+
+import {
+  Aside,
+  Code,
+  LinkCard,
+  CardGrid,
+  Tabs,
+  TabItem,
+} from "@astrojs/starlight/components";
+import reactChooseAnimation from "../../examples/react/choose-animation.jsx?raw";
+import reactReveal from "../../examples/react/reveal.jsx?raw";
+import reactUseReveal from "../../examples/react/use-reveal.jsx?raw";
+
+awesome-reveal hides an element until it enters the viewport, and then animates it. Each framework has its own package. Choose your framework in the tabs below.
+
+## Install
+
+<Tabs syncKey="framework">
+  <TabItem label="React" icon="seti:react">
+    <Code code="pnpm add @awesome-reveal/react@next" lang="shell" />
+    The package needs React 18 or later.
+  </TabItem>
+</Tabs>
+
+<Aside>
+  Version 1.0 is a prerelease on the `next` tag. Until 1.0.0, the `latest` tag
+  installs an old placeholder version, so add `@next` to the package name.
+</Aside>
+
+## Reveal an element
+
+<Tabs syncKey="framework">
+  <TabItem label="React" icon="seti:react">
+    Put the content in a `Reveal` component:
+
+    <Code code={reactReveal} lang="jsx" />
+
+    `Reveal` renders a `div` around its children. With no `keyframes`, the `div` fades in and moves up.
+
+  </TabItem>
+</Tabs>
+
+## Choose an animation
+
+Each package has a `keyframes` entry point with the same keyframes factories. Give the result of a factory to the `keyframes` option:
+
+<Tabs syncKey="framework">
+  <TabItem label="React" icon="seti:react">
+    <Code code={reactChooseAnimation} lang="jsx" />
+
+    - `as` sets the tag of the rendered element. `Reveal` gives its other props and its `ref` to that element.
+    - `slide({ direction: "left" })` moves the element to the left as it fades in.
+    - `duration` is in milliseconds. The default is `600`.
+
+  </TabItem>
+</Tabs>
+
+The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`. See [Keyframes](/concepts/keyframes/).
+
+## Animate your own element
+
+<Tabs syncKey="framework">
+  <TabItem label="React" icon="seti:react">
+    To animate your own element or component with no wrapper, use the `useReveal` hook:
+
+    1. Attach `ref` to the element.
+    2. Spread `style` last into the element style.
+
+    <Code code={reactUseReveal} lang="jsx" />
+
+    `style` hides the element until the reveal. `threshold: 0.3` reveals the element when 30% of it is visible.
+
+  </TabItem>
+</Tabs>
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Keyframes"
+    description="The built-in animations, springs and custom keyframes."
+    href="/concepts/keyframes/"
+  />
+  <LinkCard
+    title="React"
+    description="Reveal, useReveal, manual reveals, SSR and Server Components."
+    href="/react/"
+  />
+  <LinkCard
+    title="Migrate from v4"
+    description="Move from react-awesome-reveal v4 to the new packages."
+    href="/migrate-from-v4/"
+  />
+  <LinkCard
+    title="Agent skills"
+    description="Skills that teach coding agents to use the packages."
+    href="/agent-skills/"
+  />
+</CardGrid>

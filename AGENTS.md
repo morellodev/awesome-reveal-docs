@@ -6,6 +6,7 @@ The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.m
 
 - `src/content/docs/`: the current docs.
 - `src/content/docs/v4/` and `src/content/versions/v4.json`: the archived docs of `react-awesome-reveal` v4. `starlight-versions` generates them.
+- `src/examples/<framework>/`: code samples that the pages import with `?raw`, inside framework tabs.
 - `src/content/i18n/en.json`: overrides of the UI strings, such as the notice on archived pages.
 - `astro.config.mjs`: the site URL, the sidebar, the archived versions and the head tags (analytics and Open Graph).
 

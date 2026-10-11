@@ -5,6 +5,17 @@ import starlightHeadingBadges from "starlight-heading-badges";
 import starlightVersions from "starlight-versions";
 
 const site = "https://awesome-reveal.morello.dev";
+// The v4 README and old links point to these root URLs.
+const v4Guides = [
+  "attention-seekers",
+  "custom-animations",
+  "getting-started",
+  "older-browsers",
+  "performances",
+  "revealing-effects",
+  "rsc-frameworks",
+  "typescript-support",
+];
 const ogUrl = new URL("og.png?v=2", site).href;
 const description =
   "Reveal-on-scroll animations for many frameworks, with the Intersection Observer API and the Web Animations API.";
@@ -14,6 +25,9 @@ const ogImageAlt =
 // https://astro.build/config
 export default defineConfig({
   site,
+  redirects: Object.fromEntries(
+    v4Guides.map((page) => [`/guides/${page}`, `/v4/guides/${page}`]),
+  ),
   experimental: {
     contentIntellisense: true,
   },
@@ -52,9 +66,18 @@ export default defineConfig({
         { icon: "x.com", label: "X", href: "https://x.com/morellodev" },
       ],
       sidebar: [
+        "getting-started",
+        {
+          label: "Concepts",
+          items: [{ autogenerate: { directory: "concepts" } }],
+        },
+        {
+          label: "Packages",
+          items: ["react", "core"],
+        },
         {
           label: "Guides",
-          items: [{ autogenerate: { directory: "guides" } }],
+          items: ["migrate-from-v4", "agent-skills"],
         },
       ],
       head: [
