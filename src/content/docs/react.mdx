@@ -12,12 +12,14 @@ To install the package, see [Getting started](/getting-started/).
 
 ## Entry points
 
-| Import path                       | Contents                                                    |
-| --------------------------------- | ----------------------------------------------------------- |
-| `@awesome-reveal/react`           | The `Reveal` component and the `useReveal` hook.            |
-| `@awesome-reveal/react/keyframes` | The built-in keyframes, `defineKeyframes`, and their types. |
+| Import path                       | Contents                                                                            |
+| --------------------------------- | ----------------------------------------------------------------------------------- |
+| `@awesome-reveal/react`           | The `Reveal` component and the `useReveal` hook.                                    |
+| `@awesome-reveal/react/keyframes` | The [built-in keyframes](/concepts/keyframes/), `defineKeyframes`, and their types. |
 
-`@awesome-reveal/react/keyframes` does not import React. See [Keyframes](/concepts/keyframes/).
+:::tip
+`@awesome-reveal/react/keyframes` does not import React, so you can call the factories in a Server Component. See [React Server Components](#react-server-components).
+:::
 
 ## The `Reveal` component
 
