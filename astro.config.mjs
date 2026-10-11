@@ -26,7 +26,7 @@ const ogImageAlt =
 export default defineConfig({
   site,
   redirects: Object.fromEntries(
-    v4Guides.map((page) => [`/guides/${page}`, `/v4/guides/${page}`]),
+    v4Guides.map((page) => [`/guides/${page}`, `/v4/guides/${page}/`]),
   ),
   experimental: {
     contentIntellisense: true,
