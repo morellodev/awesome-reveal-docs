@@ -1,6 +1,6 @@
 ---
 import { Aside } from "@astrojs/starlight/components";
-import { sponsorUrl } from "../sponsor";
+import { siteConfig } from "../site.config";
 
 interface Props {
   title: string;
@@ -11,6 +11,6 @@ const { title } = Astro.props;
 
 <Aside type="tip" icon="heart" title={title}>
   Awesome Reveal is free and open source. A{" "}
-  <a href={sponsorUrl}>sponsorship on GitHub</a>, from $1 a month, helps to keep
-  it maintained and up to date.
+  <a href={siteConfig.sponsorUrl}>sponsorship on GitHub</a>, from $1 a month,
+  helps to keep it maintained and up to date.
 </Aside>
