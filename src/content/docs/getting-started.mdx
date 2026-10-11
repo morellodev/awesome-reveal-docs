@@ -1,13 +1,13 @@
 ---
 title: Getting started
-description: "Install awesome-reveal and add scroll reveal animations to a React, Vue or Astro app: reveal an element, choose an animation, and animate your own element."
+description: "Install awesome-reveal and add scroll reveal animations with React, Vue, Astro or plain JavaScript: reveal an element, choose an animation, animate your own."
 head:
   - tag: title
-    content: "Install Awesome Reveal for React, Vue and Astro"
+    content: "Install Awesome Reveal for React, Vue, Astro and JavaScript"
   - tag: meta
     attrs:
       property: og:title
-      content: "Install Awesome Reveal for React, Vue and Astro"
+      content: "Install Awesome Reveal for React, Vue, Astro and JavaScript"
 ---
 
 import {
@@ -26,8 +26,11 @@ import vueReveal from "../../examples/vue/reveal.vue?raw";
 import vueRevealComponent from "../../examples/vue/reveal-component.vue?raw";
 import astroChooseAnimation from "../../examples/astro/choose-animation.astro?raw";
 import astroReveal from "../../examples/astro/reveal.astro?raw";
+import jsChooseAnimation from "../../examples/javascript/choose-animation.js?raw";
+import jsReveal from "../../examples/javascript/reveal.js?raw";
+import jsRevealAll from "../../examples/javascript/reveal-all.js?raw";
 
-awesome-reveal hides an element until it enters the viewport, and then animates it. Each framework has its own package. Choose your framework in the tabs below.
+awesome-reveal hides an element until it enters the viewport, and then animates it. Each framework has its own package. Choose your framework in the tabs below. For a page with no framework, choose JavaScript.
 
 ## Install
 
@@ -43,6 +46,10 @@ awesome-reveal hides an element until it enters the viewport, and then animates 
   <TabItem label="Astro" icon="astro">
     <Code code="pnpm add @awesome-reveal/astro" lang="shell" />
     The package needs Astro 6 or 7.
+  </TabItem>
+  <TabItem label="JavaScript" icon="seti:javascript">
+    <Code code="pnpm add @awesome-reveal/core" lang="shell" />
+    The package is ESM-only. Load it with a bundler, such as Vite.
   </TabItem>
 </Tabs>
 
@@ -78,6 +85,14 @@ awesome-reveal hides an element until it enters the viewport, and then animates 
     `Reveal` renders a `div` around its children. With no `keyframes`, the `div` fades in and moves up.
 
   </TabItem>
+  <TabItem label="JavaScript" icon="seti:javascript">
+    Call `reveal` with the element:
+
+    <Code code={jsReveal} lang="js" />
+
+    With no `keyframes`, the element fades in and moves up. `reveal` hides the element when the script runs, so the element can show before that. To hide it from the first paint, see [Avoid a flash on page load](/core/#avoid-a-flash-on-page-load).
+
+  </TabItem>
 </Tabs>
 
 ## Choose an animation
@@ -106,6 +121,14 @@ Each package has a `keyframes` entry point with the same keyframes factories. Gi
 
     - `as` sets the tag of the rendered element. `Reveal` gives its other attributes to that element.
     - `slide({ direction: "left" })` moves the element to the left as it fades in. The factory runs on the server.
+    - `duration` is in milliseconds. The default is `600`.
+
+  </TabItem>
+  <TabItem label="JavaScript" icon="seti:javascript">
+    <Code code={jsChooseAnimation} lang="js" />
+
+    - The second argument of `reveal` is an object with the options.
+    - `slide({ direction: "left" })` moves the element to the left as it fades in.
     - `duration` is in milliseconds. The default is `600`.
 
   </TabItem>
@@ -141,6 +164,14 @@ The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`. Se
     Astro has no hook or directive. `Reveal` renders the element: set the tag with `as`, and give your attributes to `Reveal`. See [Astro](/astro/).
 
   </TabItem>
+  <TabItem label="JavaScript" icon="seti:javascript">
+    `reveal` already animates your own element, with no wrapper. Call it once for each element:
+
+    <Code code={jsRevealAll} lang="js" />
+
+    `threshold: 0.3` reveals each card when 30% of it is visible.
+
+  </TabItem>
 </Tabs>
 
 ## Next steps
@@ -165,6 +196,11 @@ The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`. Se
     title="Astro"
     description="Reveal, the ClientRouter, server islands and CSP."
     href="/astro/"
+  />
+  <LinkCard
+    title="JavaScript"
+    description="reveal(), a hidden state with no flash, and the API for adapters."
+    href="/core/"
   />
   <LinkCard
     title="Migrate from v4"

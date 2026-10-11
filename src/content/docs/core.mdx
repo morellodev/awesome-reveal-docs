@@ -37,6 +37,28 @@ controller.destroy();
 
 The options are the same as in the adapters. See [Options](/concepts/options/).
 
+The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script type="module">`. To use the bare `@awesome-reveal/core` specifiers there, add an import map.
+
+## Avoid a flash on page load
+
+`reveal` hides the element only when the script runs. Until then, the browser shows the HTML, so an element can show, disappear and then animate in. To hide it from the first paint, put the hidden state in the HTML. The reveal removes the inline `opacity` and the `data-reveal` attribute:
+
+```html
+<section class="card" style="opacity: 0" data-reveal="hidden">…</section>
+```
+
+- Put the hidden state only on elements that your script reveals. An element that no `reveal` call finds stays hidden.
+- Do not hide the content at the top of the page. It then waits for the script, which can delay the Largest Contentful Paint.
+- If JavaScript does not run, the content stays hidden. To show it, add the [`<noscript>` style](/concepts/accessibility/#pages-without-javascript).
+
+Under a strict Content Security Policy, the inline `opacity: 0` style needs `style-src-attr 'unsafe-inline'`. To avoid it, put only `data-reveal="hidden"` in the HTML, and add this rule to your stylesheet. `reveal` sets its own styles through `element.style`, which the policy does not block.
+
+```css
+[data-reveal="hidden"] {
+  opacity: 0;
+}
+```
+
 ## Entry points
 
 | Import path                      | Contents                                                    |

@@ -12,12 +12,28 @@ head:
 
 The packages include [agent skills](https://agentskills.io): instructions that teach a coding agent, such as Claude Code, to use the package. The skills are in the `skills` folder of the package, and they match the installed version.
 
-| Package                 | Skill                      | Use                                                      |
-| ----------------------- | -------------------------- | -------------------------------------------------------- |
-| `@awesome-reveal/core`  | `adding-reveal-animations` | Add reveal animations to plain DOM code with `reveal()`. |
-| `@awesome-reveal/react` | `adding-reveal-animations` | Add reveal animations with `Reveal` and `useReveal`.     |
-| `@awesome-reveal/react` | `migrating-from-v4`        | Migrate code from `react-awesome-reveal` v4.             |
-| `react-awesome-reveal`  | `migrating-from-v4`        | The same skill, for projects that upgrade to version 5.  |
+## Skills
+
+### @awesome-reveal/react
+
+- `adding-reveal-animations`: add reveal animations with `Reveal` and `useReveal`.
+- `migrating-from-v4`: migrate code from `react-awesome-reveal` v4.
+
+### @awesome-reveal/vue
+
+- `adding-reveal-animations`: add reveal animations with `v-reveal` and `Reveal`.
+
+### @awesome-reveal/astro
+
+- `adding-reveal-animations`: add reveal animations with the `Reveal` component.
+
+### @awesome-reveal/core
+
+- `adding-reveal-animations`: add reveal animations to plain DOM code with `reveal()`.
+
+### react-awesome-reveal
+
+- `migrating-from-v4`: the same skill as in `@awesome-reveal/react`, for projects that upgrade `react-awesome-reveal` to version 5.
 
 ## pnpm
 
@@ -38,4 +54,4 @@ pnpm adds a `.gitignore` to each skill folder, so the links stay out of Git. Glo
 
 Copy or link the skill folders from `node_modules/<package>/skills/` into the skills folder of your agent. For Claude Code, this folder is `.claude/skills/`.
 
-`@awesome-reveal/core` and `@awesome-reveal/react` both have an `adding-reveal-animations` skill, so their folders have the same name. Copy only the skill of the package that your code imports. A React project gets `@awesome-reveal/core` as a dependency of `@awesome-reveal/react`, but it needs only the React skill.
+`@awesome-reveal/core` and each adapter have an `adding-reveal-animations` skill, so their folders have the same name. Copy only the skill of the package that your code imports. A project gets `@awesome-reveal/core` as a dependency of the adapter, but it needs only the skill of the adapter.
