@@ -68,7 +68,10 @@ The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`.
 
 ## Animate your own element
 
-To animate your own element or component with no wrapper, use the `useReveal` hook. Attach `ref` to the element, and spread `style` last into its style:
+To animate your own element or component with no wrapper, use the `useReveal` hook:
+
+1. Attach `ref` to the element.
+2. Spread `style` last into the element style.
 
 ```tsx
 import { useReveal } from "@awesome-reveal/react";

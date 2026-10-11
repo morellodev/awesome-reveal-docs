@@ -13,7 +13,7 @@ In browsers without a necessary API, the content still shows:
 
 - Without `IntersectionObserver`, elements are revealed immediately.
 - Without `Element.animate`, elements appear with no animation.
-- When the browser rejects a keyframe value, the element appears with no animation. For example, browsers without CSS `linear()` reject a [`spring()`](/concepts/keyframes/#springs) easing that the server created.
+- When `element.animate` throws, the element appears with no animation. For example, browsers without CSS `linear()` throw on a [`spring()`](/concepts/keyframes/#springs) easing that the server created. A property value that the browser does not support does not throw: the browser ignores it.
 
 ## Implicit keyframes in Safari
 

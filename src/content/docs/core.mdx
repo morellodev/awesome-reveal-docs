@@ -25,11 +25,11 @@ Use this package with plain DOM code, or to write an adapter for another framewo
 
 ## Reveal an element
 
-```js
+```ts
 import { reveal } from "@awesome-reveal/core";
 import { slide } from "@awesome-reveal/core/keyframes";
 
-const controller = reveal(document.querySelector(".hero"), {
+const controller = reveal(document.querySelector<HTMLElement>(".hero")!, {
   keyframes: slide({ direction: "left" }),
   duration: 800,
 });
@@ -55,9 +55,9 @@ Hides the element, and plays the keyframes when the element enters the viewport.
 
 `reveal` returns a controller:
 
-- `revealed`: `true` after the reveal.
+- `revealed`: `true` while the element is revealed. With `once: false`, it goes back to `false` when the element leaves the viewport.
 - `update(options)`: replaces the options. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
-- `destroy()`: stops the observation and cancels the animation. The element keeps its current style.
+- `destroy()`: stops the observation and cancels the animation. The element keeps its current style, so an element that is not revealed stays hidden. After `destroy()`, `update()` does nothing.
 
 ### `observe(element, options, onChange)`
 
@@ -73,14 +73,23 @@ Call `play` in the same frame that removes the hidden style. If you do not, the 
 
 The style that hides an element until the reveal: `{ opacity: "0" }`. A server renderer applies it to the markup, so that the element does not show before the client code runs.
 
+## TypeScript
+
+`@awesome-reveal/core` exports the types of its API:
+
+- `RevealOptions` and `RevealController` for `reveal`.
+- `ObserveOptions` for `observe`, and `PlayOptions` for `play`.
+
+`@awesome-reveal/core/keyframes` exports `RevealKeyframe`, `KeyframesFactory`, `KeyframesDefinition`, `SpringOptions`, and the options type of each factory, such as `SlideOptions`.
+
 ## Write an adapter
 
 Use `reveal` when your code owns the element. When your framework renders the style of the element, use `observe`, `play` and `hiddenStyle`:
 
 1. Render the element with `hiddenStyle` and `data-reveal="hidden"`.
 2. Call `observe` on the element. Store the `inView` value that `onChange` gets.
-3. When `inView` is `true`, render the element without `hiddenStyle` and `data-reveal`.
-4. In the same frame, call `play` on the element.
+3. Render `hiddenStyle` and `data-reveal` only while `inView` is `false`. With `once: false`, `inView` can go back to `false`.
+4. When `inView` becomes `true`, call `play` on the element in the same frame.
 5. Call the functions that `observe` and `play` return when the element leaves the page.
 
-The React adapter, [`useReveal`](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/src/useReveal.ts), follows these steps in about 50 lines.
+The React adapter follows these steps: [`useReveal.ts`](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/src/useReveal.ts) observes and plays, and [`Reveal.ts`](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/src/Reveal.ts) sets `data-reveal`.

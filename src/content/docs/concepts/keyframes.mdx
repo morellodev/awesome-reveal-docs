@@ -7,7 +7,7 @@ sidebar:
 
 The `keyframes` option sets the animation of a reveal. Its value is an array of [Web Animations keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats). The animation does not stay applied after it finishes, so the last keyframe must be the resting style of the element.
 
-The examples on this page import from `@awesome-reveal/react/keyframes`. With `@awesome-reveal/core`, import from `@awesome-reveal/core/keyframes`. The two entry points export the same functions. They do not touch the DOM, so you can call them on the server.
+The examples on this page import from `@awesome-reveal/react/keyframes`. With `@awesome-reveal/core`, import from `@awesome-reveal/core/keyframes`. The two entry points export the same functions. They do not touch the DOM, so you can call them on the server. You can also give their result to `element.animate()` directly.
 
 ## Built-in keyframes
 
@@ -30,7 +30,7 @@ import { slide } from "@awesome-reveal/react/keyframes";
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
 
 - `direction` is the direction in which the element moves. `"up"` starts below the resting position.
-- A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle, for example `"100%"`.
+- A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle. For example, `distance`, `x` and `y` accept `"100%"`.
 - `opacity` is the start opacity. The default is `0`. Set it to `1` for movement with no fade.
 - `from` is the start scale.
 
@@ -63,14 +63,14 @@ import { slide, spring } from "@awesome-reveal/react/keyframes";
 
 `spring()` returns a CSS `linear()` easing. Chrome before 113, Firefox before 112 and Safari before 17.2 do not support `linear()`:
 
-- In the browser, `spring()` checks the support. Without it, `spring()` returns the default easing.
+- In the browser, `spring()` checks the support. Without it, `spring()` returns `"cubic-bezier(0.22, 1, 0.36, 1)"`, also for `pop()`.
 - On the server, `spring()` cannot check the support, and always returns `linear()`. A browser without `linear()` then shows the element with no animation.
 
 ## Custom keyframes
 
 ### `defineKeyframes`
 
-`defineKeyframes` builds a factory from a function of the animation progress. Your function gets the options and returns a `keyframe(t, u)` function. `t` is the progress from 0 to 1, and `u` is `1 - t`. The factory samples `keyframe` into a keyframes array:
+`defineKeyframes` builds a factory from a function of the animation progress. Your function gets the options, and returns an object with a `keyframe(t, u)` function. `t` is the progress after the easing, and `u` is `1 - t`. The factory samples `keyframe` into a keyframes array:
 
 ```jsx
 import { defineKeyframes } from "@awesome-reveal/react/keyframes";
@@ -87,8 +87,8 @@ const spin = defineKeyframes(({ turns = 1 }) => ({
 <Reveal keyframes={spin({ turns: 2 })}>…</Reveal>;
 ```
 
-- At `t = 1`, return the resting style of the element.
-- `easing` is optional. It is a JavaScript function that maps the linear progress to the eased progress. The default is `(t) => t`.
+- At `t = 1`, return the resting style of the element. An easing that overshoots gives values of `t` above 1.
+- `easing` is optional. It is a JavaScript function that maps the linear progress, from 0 to 1, to the eased progress `t`. The default is `(t) => t`.
 - `steps` is optional. It is the number of samples. The default is `30`.
 - Your function gets the options as the caller gives them, so give a default for each option.
 - In TypeScript, give the options type: `defineKeyframes<{ turns?: number }>(…)`.
