@@ -13,7 +13,8 @@ description: Archives the current docs as a version with starlight-versions, so 
 4. Run `pnpm build`. When `astro dev` or `astro build` starts and `src/content/docs/<slug>/` does not exist, the plugin writes it and `src/content/versions/<slug>.json`. It creates one new version at a time. Keep a copy of `dist/` for step 6.
 5. Run `pnpm exec prettier --write src/content/docs/<slug>`.
 6. Run `pnpm build` again. Check that the rendered text of each archived page did not change, for example with a text diff of the built HTML against the copy.
-7. Read the notices in `src/content/i18n/en.json`. One key serves all archived versions through `{{slug}}`, so the text must fit each of them. If it names the package of one version only, rewrite it.
+7. Remove the `head` entries for `<title>` and `og:title` from the archived pages. The plugin copies the frontmatter, so the archived pages have the same search titles as the current pages. Without the entries, the archived pages use their short `title`.
+8. Read the notices in `src/content/i18n/en.json`. One key serves all archived versions through `{{slug}}`, so the text must fit each of them. If it names the package of one version only, rewrite it.
 
 ## Check
 
