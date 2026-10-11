@@ -3,10 +3,10 @@ paths:
   - "src/content/docs/**/*.mdx"
 ---
 
-# Prettier and fenced code in JSX
+# Prettier and code in JSX
 
-Put an empty line between a JSX tag (for example `<TabItem>`) and a fenced code block inside it. Do not use whitespace-only lines there. Without the empty line, Prettier 3.9 merges the fence into one line, for example ` ```shell pnpm add x ``` `. `prettier --check` and `pnpm build` both pass on the broken output, so compare the rendered page.
+Inside a JSX tag, such as `<TabItem>`, write code with the Starlight `<Code code="..." lang="..." />` component, not with a fenced code block. Prettier formats `<Code>` like other JSX.
 
-`starlight-versions` prints each page again when it creates a version snapshot (`src/content/docs/<version>/`). Its printer removes these empty lines. Add them again in the snapshot before you run `prettier --write`.
+Prettier 3.9 and the 4.0 alpha still parse MDX with an old MDX parser. They merge a fenced code block inside a JSX tag into one line, for example ` ```shell pnpm add x ``` `. `prettier --check` and `pnpm build` both pass on that output. An empty line around the fence prevents it, but `starlight-versions` removes that empty line when it creates a snapshot.
 
-Prettier formats all content, the snapshots included. Do not add content paths to `.prettierignore`.
+Format with `pnpm exec prettier --write`. Do not edit a file by hand to satisfy `--check`. Prettier formats all content, the snapshots included, so do not add content paths to `.prettierignore`.
