@@ -3,7 +3,7 @@ title: Migrate from v4
 description: Move from react-awesome-reveal v4 to @awesome-reveal/react, or to react-awesome-reveal v5.
 ---
 
-import { Aside, Code, Tabs, TabItem } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
 `react-awesome-reveal` v4 is now `@awesome-reveal/react`. The new package has no effect components, such as `Fade` or `Slide`, and it does not use Emotion. Instead, `Reveal` takes a [keyframes factory](/concepts/keyframes/).
 
@@ -17,29 +17,10 @@ import { Aside, Code, Tabs, TabItem } from "@astrojs/starlight/components";
 
 Replace `react-awesome-reveal` with `@awesome-reveal/react`, and remove `@emotion/react` if your app does not use it:
 
-<Tabs syncKey="pkg">
-  <TabItem label="npm">
-    <Code
-      code="npm uninstall react-awesome-reveal @emotion/react
-npm install @awesome-reveal/react@next"
-      lang="shell"
-    />
-  </TabItem>
-  <TabItem label="pnpm">
-    <Code
-      code="pnpm remove react-awesome-reveal @emotion/react
-pnpm add @awesome-reveal/react@next"
-      lang="shell"
-    />
-  </TabItem>
-  <TabItem label="yarn">
-    <Code
-      code="yarn remove react-awesome-reveal @emotion/react
-yarn add @awesome-reveal/react@next"
-      lang="shell"
-    />
-  </TabItem>
-</Tabs>
+```sh
+pnpm remove react-awesome-reveal @emotion/react
+pnpm add @awesome-reveal/react@next
+```
 
 The new package needs React 18 or later.
 
