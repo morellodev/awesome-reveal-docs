@@ -1,0 +1,40 @@
+---
+import { hiddenStyle } from "@awesome-reveal/core";
+---
+
+<div
+  class="feature-grid"
+  style={hiddenStyle}
+  data-reveal="hidden"
+  data-feature-grid
+>
+  <slot />
+</div>
+
+<script>
+  import { reveal } from "@awesome-reveal/core";
+
+  for (const grid of document.querySelectorAll<HTMLElement>(
+    "[data-feature-grid]",
+  )) {
+    reveal(grid, { stagger: 80 });
+  }
+</script>
+
+<style>
+  /* The same grid as the Starlight CardGrid, which cannot render the hidden state on the server. */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 100%;
+    gap: 1rem;
+  }
+  .feature-grid > :global(*) {
+    margin-top: 0 !important;
+  }
+  @media (min-width: 50rem) {
+    .feature-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+import RotateCcw from "@lucide/astro/icons/rotate-ccw";
+import { hiddenStyle } from "@awesome-reveal/core";
+import {
+  blur,
+  enter,
+  fade,
+  pop,
+  scale,
+  slide,
+} from "@awesome-reveal/core/keyframes";
+
+const demos = [
+  { call: "fade()", keyframes: fade() },
+  { call: "slide()", keyframes: slide() },
+  { call: "scale()", keyframes: scale() },
+  { call: "blur()", keyframes: blur() },
+  { call: "pop()", keyframes: pop() },
+  {
+    call: "enter({ x: -40, rotate: -10 })",
+    keyframes: enter({ x: -40, rotate: -10 }),
+  },
+];
+---
+
+<div class="demos not-content">
+  {demos.map(({ call, keyframes }) => (
+    <figure class="demo" data-demo>
+      <div class="stage">
+        <div
+          class="box"
+          style={hiddenStyle}
+          data-reveal="hidden"
+          data-keyframes={JSON.stringify(keyframes)}
+        />
+        <button type="button" class="replay" title="Replay" hidden>
+          <RotateCcw size="1em" />
+          <span class="sr-only">Replay {call}</span>
+        </button>
+      </div>
+      <figcaption>
+        <code>{call}</code>
+      </figcaption>
+    </figure>
+  ))}
+</div>
+
+<script>
+  import { play, reveal } from "@awesome-reveal/core";
+
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  for (const demo of document.querySelectorAll("[data-demo]")) {
+    const box = demo.querySelector<HTMLElement>("[data-keyframes]")!;
+    const button = demo.querySelector("button")!;
+    const keyframes = JSON.parse(box.dataset.keyframes!);
+    const controller = reveal(box, { keyframes, threshold: 0.5 });
+    let cancel = () => {};
+
+    button.hidden = reducedMotion;
+    button.addEventListener("click", () => {
+      if (!controller.revealed) return;
+      cancel();
+      cancel = play(box, { keyframes });
+    });
+  }
+</script>
+
+<style>
+  .demos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  @media (min-width: 50rem) {
+    .demos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+  .demo {
+    margin: 0;
+    border: 1px solid var(--sl-color-gray-5);
+    background-color: var(--sl-color-black);
+  }
+  .stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 9rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+  .box {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(
+      135deg,
+      var(--sl-color-accent),
+      var(--sl-color-accent-high)
+    );
+  }
+  figcaption {
+    padding: 0.75rem;
+  }
+  code {
+    font-family: var(--__sl-font-mono);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-white);
+  }
+  .replay {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: grid;
+    place-items: center;
+    padding: 0.375rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 999rem;
+    background: none;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    cursor: pointer;
+  }
+  .replay:hover {
+    border-color: var(--sl-color-accent);
+    color: var(--sl-color-white);
+  }
+  .replay[hidden] {
+    display: none;
+  }
+</style>
