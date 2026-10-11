@@ -33,7 +33,7 @@ const demos = [
           data-reveal="hidden"
           data-keyframes={JSON.stringify(keyframes)}
         />
-        <button type="button" class="replay" title="Replay" hidden>
+        <button type="button" class="replay" title={`Replay ${call}`} hidden>
           <RotateCcw size="1em" />
           <span class="sr-only">Replay {call}</span>
         </button>
@@ -46,20 +46,22 @@ const demos = [
 </div>
 
 <script>
-  import { play, reveal } from "@awesome-reveal/core";
+  import { observe, play, reveal } from "@awesome-reveal/core";
 
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const threshold = 0.5;
 
   for (const demo of document.querySelectorAll("[data-demo]")) {
     const box = demo.querySelector<HTMLElement>("[data-keyframes]")!;
     const button = demo.querySelector("button")!;
     const keyframes = JSON.parse(box.dataset.keyframes!);
-    const controller = reveal(box, { keyframes, threshold: 0.5 });
     let cancel = () => {};
 
-    button.hidden = reducedMotion;
+    reveal(box, { keyframes, threshold });
+    // Before the reveal, a replay would animate a hidden box.
+    if (!reducedMotion)
+      observe(box, { threshold }, () => (button.hidden = false));
     button.addEventListener("click", () => {
-      if (!controller.revealed) return;
       cancel();
       cancel = play(box, { keyframes });
     });
@@ -123,11 +125,17 @@ const demos = [
     font-size: var(--sl-text-sm);
     cursor: pointer;
   }
-  .replay:hover {
+  .replay:hover,
+  .replay:focus-visible {
     border-color: var(--sl-color-accent);
     color: var(--sl-color-white);
   }
   .replay[hidden] {
     display: none;
+  }
+  @media print {
+    .box {
+      opacity: 1 !important;
+    }
   }
 </style>
