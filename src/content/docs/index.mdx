@@ -35,12 +35,13 @@ Wrap any element in `Reveal`. It animates as soon as it scrolls into view, with 
 
 ```jsx
 import { Reveal } from "@awesome-reveal/react";
-import { slide } from "@awesome-reveal/react/keyframes";
 
-<Reveal keyframes={slide({ direction: "left" })}>
+<Reveal>
   <p>I gently appear as I enter the viewport</p>
 </Reveal>;
 ```
+
+By default, the element fades in and slides up. To use [another animation](/concepts/keyframes/), set one prop.
 
 ## Why Awesome Reveal
 
