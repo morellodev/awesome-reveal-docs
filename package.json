@@ -12,12 +12,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/partytown": "^2.1.4",
-    "@astrojs/starlight": "^0.32.2",
-    "astro": "^5.4.2",
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/partytown": "^2.1.8",
+    "@astrojs/starlight": "^0.42.6",
+    "astro": "^7.3.8",
     "sharp": "^0.33.5",
-    "starlight-heading-badges": "^0.5.0"
+    "starlight-heading-badges": "^0.8.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.7",

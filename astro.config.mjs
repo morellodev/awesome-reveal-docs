@@ -18,17 +18,33 @@ export default defineConfig({
     starlight({
       plugins: [starlightHeadingBadges()],
       title: "React Awesome Reveal",
-      social: {
-        email: "mailto:dennismorello@gmail.com",
-        github: "https://github.com/awesome-reveal/awesome-reveal",
-        linkedin: "https://www.linkedin.com/in/dennismorello",
-        blueSky: "https://bsky.app/profile/morello.dev",
-        "x.com": "https://x.com/morellodev",
-      },
+      social: [
+        {
+          icon: "email",
+          label: "Email",
+          href: "mailto:dennismorello@gmail.com",
+        },
+        {
+          icon: "github",
+          label: "GitHub",
+          href: "https://github.com/awesome-reveal/awesome-reveal",
+        },
+        {
+          icon: "linkedin",
+          label: "LinkedIn",
+          href: "https://www.linkedin.com/in/dennismorello",
+        },
+        {
+          icon: "blueSky",
+          label: "Bluesky",
+          href: "https://bsky.app/profile/morello.dev",
+        },
+        { icon: "x.com", label: "X", href: "https://x.com/morellodev" },
+      ],
       sidebar: [
         {
           label: "Guides",
-          autogenerate: { directory: "guides" },
+          items: [{ autogenerate: { directory: "guides" } }],
         },
       ],
       head: [
