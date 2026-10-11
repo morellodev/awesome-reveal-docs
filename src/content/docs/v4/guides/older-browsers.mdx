@@ -5,7 +5,7 @@ sidebar:
 slug: v4/guides/older-browsers
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code, Tabs, TabItem } from "@astrojs/starlight/components";
 
 Older browsers _might_ be supported, depending on the React version you are using. React 18 [dropped support for Internet Explorer](https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#dropping-support-for-internet-explorer), but you can keep using React 17 to overcome this.
 
@@ -19,27 +19,15 @@ You can add the [polyfill for the Intersection Observer API](https://www.npmjs.c
 
 <Tabs>
   <TabItem label="npm">
-
-    ```shell
-    npm install intersection-observer
-    ```
-
+    <Code code="npm install intersection-observer" lang="shell" />
   </TabItem>
 
-  <TabItem label="pnpm">
-
-    ```shell
-    pnpm add intersection-observer
-    ```
-
-  </TabItem>
+<TabItem label="pnpm">
+  <Code code="pnpm add intersection-observer" lang="shell" />
+</TabItem>
 
   <TabItem label="yarn">
-
-    ```shell
-    yarn add intersection-observer
-    ```
-
+    <Code code="yarn add intersection-observer" lang="shell" />
   </TabItem>
 </Tabs>
 
