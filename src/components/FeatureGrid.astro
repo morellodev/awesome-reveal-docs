@@ -12,6 +12,8 @@ import { Reveal } from "@awesome-reveal/astro";
     display: grid;
     grid-template-columns: 100%;
     gap: 1rem;
+    /* Starlight spaces siblings with `* + *`, which skips the child of the `display: contents` host. */
+    margin-top: 1rem;
   }
   .feature-grid > :global(*) {
     margin-top: 0 !important;
