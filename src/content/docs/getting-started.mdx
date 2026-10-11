@@ -1,0 +1,119 @@
+---
+title: Getting started
+description: Install @awesome-reveal/react and reveal your first element when it enters the viewport.
+---
+
+import {
+  Aside,
+  Code,
+  LinkCard,
+  CardGrid,
+  Tabs,
+  TabItem,
+} from "@astrojs/starlight/components";
+
+`@awesome-reveal/react` hides an element until it enters the viewport, and then animates it. It needs React 18 or later.
+
+## Install
+
+<Tabs syncKey="pkg">
+  <TabItem label="npm">
+    <Code code="npm install @awesome-reveal/react@next" lang="shell" />
+  </TabItem>
+  <TabItem label="pnpm">
+    <Code code="pnpm add @awesome-reveal/react@next" lang="shell" />
+  </TabItem>
+  <TabItem label="yarn">
+    <Code code="yarn add @awesome-reveal/react@next" lang="shell" />
+  </TabItem>
+</Tabs>
+
+<Aside>
+  Version 1.0 is a prerelease on the `next` tag. Until 1.0.0, the `latest` tag
+  installs an old placeholder version, so add `@next` to the package name.
+</Aside>
+
+## Reveal an element
+
+Put the content in a `Reveal` component:
+
+```jsx
+import { Reveal } from "@awesome-reveal/react";
+
+<Reveal>
+  <p>I gently appear as I enter the viewport</p>
+</Reveal>;
+```
+
+`Reveal` renders a `div` around its children. With no `keyframes`, the `div` fades in and moves up.
+
+## Choose an animation
+
+Import a keyframes factory from `@awesome-reveal/react/keyframes`, and give its result to `keyframes`:
+
+```jsx
+import { Reveal } from "@awesome-reveal/react";
+import { slide } from "@awesome-reveal/react/keyframes";
+
+<Reveal as="section" keyframes={slide({ direction: "left" })} duration={800}>
+  …
+</Reveal>;
+```
+
+- `as` sets the tag of the rendered element. `Reveal` gives its other props and its `ref` to that element.
+- `slide({ direction: "left" })` moves the element to the left as it fades in.
+- `duration` is in milliseconds. The default is `600`.
+
+The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`.
+
+## Animate your own element
+
+To animate your own element or component with no wrapper, use the `useReveal` hook. Attach `ref` to the element, and spread `style` last into its style:
+
+```tsx
+import { useReveal } from "@awesome-reveal/react";
+import { fade } from "@awesome-reveal/react/keyframes";
+
+function Card() {
+  const { ref, style, revealed } = useReveal({
+    keyframes: fade(),
+    threshold: 0.3,
+  });
+  return (
+    <article
+      ref={ref}
+      style={{ padding: 16, ...style }}
+      data-reveal={revealed ? undefined : "hidden"}
+    >
+      …
+    </article>
+  );
+}
+```
+
+`style` hides the element until the reveal. `threshold: 0.3` reveals the element when 30% of it is visible.
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Keyframes"
+    description="The built-in animations, springs and custom keyframes."
+    href="/concepts/keyframes/"
+  />
+  <LinkCard
+    title="React"
+    description="Reveal, useReveal, manual reveals, SSR and Server Components."
+    href="/react/"
+  />
+  <LinkCard
+    title="Migrate from v4"
+    description="Move from react-awesome-reveal v4 to the new packages."
+    href="/migrate-from-v4/"
+  />
+  <LinkCard
+    title="Agent skills"
+    description="Skills that teach coding agents to use the packages."
+    href="/agent-skills/"
+  />
+</CardGrid>
