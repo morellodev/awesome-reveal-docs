@@ -1,44 +1,81 @@
 ---
-title: React Awesome Reveal
-description: Add stunning, performant scroll reveal animations to your React applications with zero dependencies. Simple to use, highly customizable, and optimized for performance.
+title: Awesome Reveal
+description: Reveal-on-scroll animations for many frameworks, with the Intersection Observer API and the Web Animations API.
 head:
   - tag: title
-    content: React Awesome Reveal - Beautiful Scroll Animations for React
+    content: Awesome Reveal - Reveal-on-scroll animations for many frameworks
 template: splash
 banner:
   content: |
     ⭐️ If you find this library helpful, consider
     <a target="_blank" href="https://github.com/sponsors/morellodev">supporting its development</a>.
 hero:
-  tagline: Create stunning scroll reveal animations in your React apps with just a few lines of code
+  tagline: Reveal-on-scroll animations for many frameworks. The Intersection Observer API detects the reveal, and the Web Animations API animates it.
   actions:
-    - text: Get Started
+    - text: Get started
       icon: right-arrow
-      link: /guides/getting-started
+      link: /getting-started/
       variant: primary
-    - text: Try it Live
-      icon: external
+    - text: Migrate from v4
+      link: /migrate-from-v4/
       variant: minimal
-      link: https://codesandbox.io/s/react-awesome-reveal-typescript-177uom?file=/src/App.tsx
 ---
 
-import { Card, CardGrid } from "@astrojs/starlight/components";
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
 
-<CardGrid stagger>
-  <Card title="Lightweight & Zero Dependencies" icon="puzzle">
-    Only 5kb gzipped. No external dependencies means faster load times and
-    better performance for your app.
+```jsx
+import { Reveal } from "@awesome-reveal/react";
+import { slide } from "@awesome-reveal/react/keyframes";
+
+<Reveal keyframes={slide({ direction: "left" })}>
+  <p>I gently appear as I enter the viewport</p>
+</Reveal>;
+```
+
+## Features
+
+<CardGrid>
+  <Card title="No dependencies" icon="puzzle">
+    The packages have no third-party dependencies. Each keyframes factory is a
+    small function, so your bundle includes only the factories that you import.
   </Card>
-  <Card title="Built for Performance" icon="rocket">
-    Powered by the native Web Animations API for silky smooth animations that
-    won't impact your app's performance.
+  <Card title="Native APIs" icon="rocket">
+    Intersection Observer detects the reveal. Web Animations runs it on the
+    compositor where possible.
   </Card>
-  <Card title="Developer-Friendly" icon="star">
-    Simple, intuitive API that lets you add beautiful animations with minimal
-    code. Perfect for both beginners and experts.
+  <Card title="Accessible" icon="approve-check">
+    It respects `prefers-reduced-motion` by default. Hidden content stays in the
+    accessibility tree.
   </Card>
-  <Card title="Highly Customizable" icon="open-book">
-    Fine-tune everything from timing to easing functions. Create custom
-    animations to match your brand's unique style.
+  <Card title="SSR and Server Components" icon="laptop">
+    Content renders hidden on the server. You can create keyframes in React
+    Server Components.
   </Card>
+  <Card title="TypeScript" icon="seti:typescript">
+    Strict types for the options, the elements and the keyframes.
+  </Card>
+  <Card title="Many frameworks" icon="setting">
+    `@awesome-reveal/core` has no framework code. Each framework gets a small
+    adapter on top of it.
+  </Card>
+</CardGrid>
+
+## Packages
+
+<CardGrid>
+  <LinkCard
+    title="@awesome-reveal/react"
+    description="The Reveal component and the useReveal hook for React 18 or later."
+    href="/getting-started/"
+  />
+  <LinkCard
+    title="@awesome-reveal/core"
+    description="The framework-independent controller and keyframes, for plain DOM code and for adapters."
+    href="/concepts/"
+  />
+  <LinkCard
+    title="react-awesome-reveal"
+    description="Version 5 re-exports @awesome-reveal/react, for v4 users."
+    href="/migrate-from-v4/"
+  />
 </CardGrid>
