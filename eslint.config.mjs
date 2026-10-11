@@ -23,4 +23,12 @@ export default [
       },
     },
   },
+  {
+    files: ["src/examples/javascript/**"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
+  },
 ];
