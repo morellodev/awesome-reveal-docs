@@ -3,6 +3,7 @@ import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
 import starlightVersions from "starlight-versions";
+import { siteConfig } from "./src/site.config";
 
 const site = "https://awesome-reveal.morello.dev";
 // The v4 README and old links point to these root URLs.
@@ -42,7 +43,11 @@ export default defineConfig({
       ],
       title: "Awesome Reveal",
       description,
+      components: {
+        Footer: "./src/components/Footer.astro",
+      },
       social: [
+        { icon: "heart", label: "Sponsor", href: siteConfig.sponsorUrl },
         {
           icon: "email",
           label: "Email",

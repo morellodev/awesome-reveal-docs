@@ -1,0 +1,31 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+import Default from "@astrojs/starlight/components/Footer.astro";
+import { siteConfig } from "../site.config";
+---
+
+<Default />
+<p class="sponsor">
+  <Icon name="heart" />
+  <span>
+    Awesome Reveal is free and open source.{" "}
+    <a href={siteConfig.sponsorUrl}>Sponsor it on GitHub</a>.
+  </span>
+</p>
+
+<style>
+  .sponsor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    margin-top: 2rem;
+    text-align: center;
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+  .sponsor :global(svg) {
+    flex-shrink: 0;
+    color: var(--sl-color-red);
+  }
+</style>
