@@ -50,6 +50,7 @@ const demos = [
 
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const threshold = 0.5;
+  const duration = 1200;
 
   for (const demo of document.querySelectorAll("[data-demo]")) {
     const box = demo.querySelector<HTMLElement>("[data-keyframes]")!;
@@ -57,13 +58,13 @@ const demos = [
     const keyframes = JSON.parse(box.dataset.keyframes!);
     let cancel = () => {};
 
-    reveal(box, { keyframes, threshold });
+    reveal(box, { keyframes, duration, threshold });
     // Before the reveal, a replay would animate a hidden box.
     if (!reducedMotion)
       observe(box, { threshold }, () => (button.hidden = false));
     button.addEventListener("click", () => {
       cancel();
-      cancel = play(box, { keyframes });
+      cancel = play(box, { keyframes, duration });
     });
   }
 </script>
