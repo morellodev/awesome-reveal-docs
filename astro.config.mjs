@@ -42,6 +42,7 @@ export default defineConfig({
       ],
       title: "Awesome Reveal",
       description,
+      routeMiddleware: "./src/routeData.ts",
       social: [
         {
           icon: "email",
