@@ -1,0 +1,139 @@
+---
+title: Revealing Effects
+description: Explore the collection of beautiful scroll animations available in
+  React Awesome Reveal
+sidebar:
+  order: 2
+slug: v4/guides/revealing-effects
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Overview
+
+**React Awesome Reveal** provides a rich set of pre-built animation components inspired by [Animate.css](https://animate.style). These components automatically animate their children when they enter the viewport, creating engaging scroll experiences with minimal code.
+
+## Available Effects
+
+Choose from these powerful animation components:
+
+| Effect         | Description                | Best Used For               |
+| -------------- | -------------------------- | --------------------------- |
+| `Fade`         | Smooth opacity transition  | Text, images, cards         |
+| `Slide`        | Slides in from a direction | Lists, navigation items     |
+| `Bounce`       | Bouncy entrance animation  | Call-to-action buttons      |
+| `Flip`         | 3D flip animation          | Cards, reveals              |
+| `Rotate`       | Rotation entrance          | Icons, badges               |
+| `Zoom`         | Scale transition           | Modal windows, highlights   |
+| `Roll`         | Rolling entrance           | Playful elements            |
+| `JackInTheBox` | Pop-out animation          | Attention-grabbing elements |
+| `Hinge`        | Swinging fall animation    | Exit animations             |
+
+## Basic Usage
+
+Wrap your content with any effect component:
+
+```tsx
+import { Slide } from "react-awesome-reveal";
+
+function Features() {
+  return (
+    <div>
+      <h2>Our Features</h2>
+
+      {/* Items slide in one after another */}
+      <Slide direction="up" cascade triggerOnce>
+        <div className="feature">🚀 Performance</div>
+        <div className="feature">💡 Simplicity</div>
+        <div className="feature">🎨 Customization</div>
+      </Slide>
+    </div>
+  );
+}
+```
+
+## Customization Options
+
+Fine-tune your animations with these props:
+
+### Direction Control
+
+```tsx
+// Choose animation direction
+<Slide direction="left" />  // Slide from left
+<Slide direction="right" /> // Slide from right
+<Slide direction="up" />    // Slide from bottom
+<Slide direction="down" />  // Slide from top
+```
+
+### Timing and Triggers
+
+```tsx
+<Fade
+  delay={200} // Wait before starting
+  duration={1000} // Animation duration
+  fraction={0.5} // Trigger when 50% visible
+  triggerOnce // Animate only once
+/>
+```
+
+### Cascade Effects
+
+The `cascade` prop animates children one after another, with a delay between each item. Use `damping` to control the delay:
+
+```tsx
+<Fade cascade damping={0.2}>
+  <div>First item (no delay)</div>
+  <div>Second item (0.2s delay)</div>
+  <div>Third item (0.4s delay)</div>
+</Fade>
+```
+
+## Animation Props Reference
+
+All animation components accept these common props:
+
+| Prop          | Type                                  | Default | Description                  |
+| ------------- | ------------------------------------- | ------- | ---------------------------- |
+| `direction`   | `"up" \| "down" \| "left" \| "right"` | Varies  | Animation direction          |
+| `delay`       | `number`                              | `0`     | Delay before animation (ms)  |
+| `duration`    | `number`                              | `1000`  | Animation duration (ms)      |
+| `fraction`    | `number`                              | `0`     | Viewport fraction to trigger |
+| `triggerOnce` | `boolean`                             | `false` | Animate only once            |
+| `cascade`     | `boolean`                             | `false` | Cascade to children          |
+| `damping`     | `number`                              | `0.5`   | Delay between cascaded items |
+
+## Best Practices
+
+1. **Performance**: Use `triggerOnce` for elements that don't need to re-animate
+2. **Mobile**: Keep animations subtle on mobile devices
+3. **Accessibility**: Ensure animations respect user preferences with `prefers-reduced-motion`
+4. **Timing**: Use appropriate delays and durations for your content type
+
+## Examples
+
+Here are some common use cases:
+
+### Hero Section
+
+```tsx
+<Fade duration={1500}>
+  <h1>Welcome to Our Site</h1>
+  <Fade delay={500} cascade damping={0.3}>
+    <p>Discover amazing features</p>
+    <button>Get Started</button>
+  </Fade>
+</Fade>
+```
+
+### Feature List
+
+```tsx
+<Slide direction="up" cascade damping={0.2} triggerOnce>
+  {features.map((feature) => (
+    <div key={feature.id} className="feature-card">
+      {feature.content}
+    </div>
+  ))}
+</Slide>
+```

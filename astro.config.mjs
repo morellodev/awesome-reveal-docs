@@ -2,6 +2,7 @@ import partytown from "@astrojs/partytown";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
+import starlightVersions from "starlight-versions";
 
 const site = "https://awesome-reveal.morello.dev";
 const ogUrl = new URL("og.png?v=1", site).href;
@@ -16,7 +17,13 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      plugins: [starlightHeadingBadges()],
+      plugins: [
+        starlightHeadingBadges(),
+        starlightVersions({
+          current: { redirect: "root" },
+          versions: [{ slug: "v4", redirect: "root" }],
+        }),
+      ],
       title: "React Awesome Reveal",
       social: [
         {
