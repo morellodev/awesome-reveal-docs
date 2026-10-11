@@ -60,7 +60,7 @@ The children animate together. To animate them one after the other, use [`stagge
 
 With `when`, your code controls the reveal, and nothing observes the viewport. `threshold`, `rootMargin` and `once` have no effect.
 
-`Reveal` writes its options into the `options` attribute of the `<awesome-reveal>` element, as JSON. To change them in the browser, set that attribute to new JSON. The new value replaces all the options, so merge your change into the current value. A change of `when` applies at once. The other changes apply at the next reveal.
+`Reveal` writes its options into the `options` attribute of the `<awesome-reveal>` element, as JSON. To change them in the browser, set that attribute to new JSON. The new value replaces all the options, so merge your change into the current value. A change of `when`, `threshold`, `rootMargin` or `once` applies at once. The other options apply at the next reveal.
 
 ```astro
 <button id="show">Show</button>

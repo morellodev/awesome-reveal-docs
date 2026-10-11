@@ -101,7 +101,7 @@ The children animate together. To animate them one after the other, use [`stagge
 
 `once` and `when` are optional. Without a value, they keep the default behavior: `<Reveal>` reveals once, and observes the viewport.
 
-Option changes apply at the next reveal. They do not play an animation again.
+A change of `threshold`, `rootMargin` or `once` restarts the observation of the viewport. The other options apply at the next reveal. A change does not replay an animation that already played.
 
 ### Control the reveal manually
 
