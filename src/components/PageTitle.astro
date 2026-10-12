@@ -1,9 +1,11 @@
 ---
 import Default from "@astrojs/starlight/components/PageTitle.astro";
+import VersionNotice from "starlight-versions/components/VersionNotice.astro";
 import PageActions from "./PageActions.astro";
 
 const { id } = Astro.locals.starlightRoute;
 ---
 
+<VersionNotice />
 <Default />
 {id !== "404" && <PageActions />}

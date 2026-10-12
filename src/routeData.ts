@@ -1,33 +1,7 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
-import { markdownSlug } from "./lib/markdown-slug";
-import { siteConfig } from "./site.config";
-
-const plainText = (markdown: string) =>
-  markdown
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    .replace(/[`*]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-// The FAQ page is the single source of its structured data.
-const faqPage = (body: string) => ({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: body
-    .split(/^## /m)
-    .slice(1)
-    .map((section) => {
-      const [question = "", ...answer] = section.split("\n");
-      return {
-        "@type": "Question",
-        name: plainText(question),
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: plainText(answer.join(" ")),
-        },
-      };
-    }),
-});
+import { markdownPath, markdownSlug } from "./lib/markdown-slug";
+import { structuredData } from "./lib/structured-data";
+import { isArchived } from "./site.config";
 
 export const onRequest = defineRouteMiddleware((context) => {
   const { id, head, entry } = context.locals.starlightRoute;
@@ -38,49 +12,31 @@ export const onRequest = defineRouteMiddleware((context) => {
       attrs: {
         rel: "alternate",
         type: "text/markdown",
-        href: `/${markdownSlug(id)}.md`,
+        href: markdownPath(id),
       },
     },
     { tag: "link", attrs: { rel: "describedby", href: "/llms.txt" } },
   );
 
-  // The landing page has its own structured data, and v4 is an archive.
-  if (id === "index" || id.startsWith("v4/")) return;
+  if (isArchived(id)) return;
 
-  const url = new URL(context.url.pathname, context.site).href;
-  const trail = [
-    { name: siteConfig.name, item: new URL("/", context.site).href },
-    { name: entry.data.title, item: url },
-  ];
+  // The search title is the better headline than the short sidebar title.
+  const searchTitle = entry.data.head.find((tag) => tag.tag === "title");
   head.push({
     tag: "script",
     attrs: { type: "application/ld+json" },
-    content: JSON.stringify([
-      ...(id === "faq" && entry.body ? [faqPage(entry.body)] : []),
-      {
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        headline: entry.data.title,
+    content: JSON.stringify(
+      structuredData({
+        id: markdownSlug(id),
+        title:
+          typeof searchTitle?.content === "string"
+            ? searchTitle.content
+            : entry.data.title,
         description: entry.data.description,
-        url,
-        inLanguage: "en",
-        author: siteConfig.author,
-        publisher: siteConfig.author,
-        isPartOf: {
-          "@type": "WebSite",
-          name: siteConfig.name,
-          url: new URL("/", context.site).href,
-        },
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: trail.map((item, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          ...item,
-        })),
-      },
-    ]),
+        body: entry.body,
+        url: new URL(context.url.pathname, context.site).href,
+        siteUrl: new URL("/", context.site).href,
+      }),
+    ),
   });
 });

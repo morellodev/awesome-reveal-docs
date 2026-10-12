@@ -19,8 +19,6 @@ const v4Guides = [
   "typescript-support",
 ];
 const ogUrl = new URL("og.png?v=3", site).href;
-const description =
-  "Reveal-on-scroll animations for many frameworks, with the Intersection Observer API and the Web Animations API.";
 const ogImageAlt = `${siteConfig.name}: scroll reveal animations for React, Vue, Astro and JavaScript.`;
 
 // https://astro.build/config
@@ -45,7 +43,7 @@ export default defineConfig({
           optionalLinks: [
             {
               label: "GitHub",
-              url: "https://github.com/awesome-reveal/awesome-reveal",
+              url: siteConfig.repoUrl,
               description: "Source code, issues and discussions",
             },
           ],
@@ -58,7 +56,7 @@ export default defineConfig({
         }),
       ],
       title: siteConfig.name,
-      description,
+      description: siteConfig.description,
       routeMiddleware: "./src/routeData.ts",
       components: {
         Footer: "./src/components/Footer.astro",
@@ -77,7 +75,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/awesome-reveal/awesome-reveal",
+          href: siteConfig.repoUrl,
         },
         {
           icon: "linkedin",
@@ -151,7 +149,7 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             name: "robots",
-            content: "index, follow, max-image-preview:large, max-snippet:-1",
+            content: "max-image-preview:large, max-snippet:-1",
           },
         },
         {
