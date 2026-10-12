@@ -1,6 +1,6 @@
 ---
 title: FAQ
-description: "Answers about Awesome Reveal: scroll animations in React, Vue and Astro, Next.js and SSR, reduced motion, bundle size, browser support, SEO and alternatives."
+description: "Answers about Awesome Reveal: scroll animations in React, Vue and Astro, Next.js and SSR, reduced motion, accessibility, bundle size, browser support and alternatives."
 head:
   - tag: title
     content: "Awesome Reveal FAQ: Scroll Animations for React, Vue, Astro"
@@ -34,17 +34,17 @@ Set `once: false`. The element then hides when it leaves the viewport, and the a
 
 Yes. By default, the element appears with no animation when the user prefers reduced motion. The `reducedMotion` option changes this. See [Accessibility](/concepts/accessibility/#reduced-motion).
 
-## Does hiding content with a scroll animation hurt SEO or accessibility?
+## Is the content of a scroll animation accessible?
 
-The content stays in the HTML. Hidden elements use `opacity: 0` only, so they stay in the accessibility tree, and the browser's find-in-page finds their text. If JavaScript does not run, a `<noscript>` style shows the content. The Astro component needs no `<noscript>` style. See [Accessibility](/concepts/accessibility/).
+The content stays in the server HTML. Hidden elements use `opacity: 0` only, so they stay in the accessibility tree, and the browser's find-in-page finds their text. If JavaScript does not run, a `<noscript>` style that you add shows the content. The Astro component needs no `<noscript>` style. See [Accessibility](/concepts/accessibility/).
 
 ## How big is the library?
 
-About 2 kB gzipped for `Reveal` with one animation. It has no third-party dependencies, and tree-shaking keeps only the animations that you import.
+About 2 kB gzipped or less for `Reveal` with one animation, depending on the package. It has no third-party dependencies, and tree-shaking keeps only the animations that you import.
 
 ## Which browsers does it support?
 
-Chrome 84, Firefox 75 and Safari 13.1, or later. It uses Intersection Observer and the Web Animations API, which are Baseline Widely available. In a browser without a necessary API, the content still shows. See [Browser support](/concepts/browser-support/).
+Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. It uses Intersection Observer and the Web Animations API, which are Baseline Widely available. In a browser without a necessary API, the content still shows. See [Browser support](/concepts/browser-support/).
 
 ## Can I make my own animation?
 

@@ -29,7 +29,7 @@ import DemoGrid from "../../../components/demos/DemoGrid.astro";
 
 ## Word by word
 
-Split the text on spaces. Give each word `display: inline-block`, because transforms do not apply to inline elements:
+Split the text on spaces. Give each word and the `Reveal` itself `display: inline-block`, because transforms do not apply to inline elements. Without it, the text only fades:
 
 ```jsx
 import { Reveal } from "@awesome-reveal/react";
@@ -39,7 +39,13 @@ function Headline({ text }) {
   return (
     <h2>
       <span className="visually-hidden">{text}</span>
-      <Reveal as="span" keyframes={slide()} stagger={60} aria-hidden>
+      <Reveal
+        as="span"
+        keyframes={slide()}
+        stagger={60}
+        style={{ display: "inline-block" }}
+        aria-hidden
+      >
         {text.split(" ").map((word, index) => (
           <span key={index} style={{ display: "inline-block" }}>
             {word}&nbsp;

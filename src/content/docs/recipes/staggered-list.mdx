@@ -46,7 +46,7 @@ Scroll the demo into view to see the effect:
 
 ## Why one `Reveal` is better than one for each item
 
-One `Reveal` for the whole list uses one observer, and it writes the options once. A `Reveal` around each item creates an observer for each item, and the items reveal at different times as the user scrolls.
+One `Reveal` for the whole list creates one observer and keeps one copy of the options. A `Reveal` around each item creates an observer for each item, and the items reveal at different times as the user scrolls.
 
 With `stagger`, the children reveal together as the list enters the viewport. If the list is long, the last items can start their animation below the fold. Split the list into groups.
 

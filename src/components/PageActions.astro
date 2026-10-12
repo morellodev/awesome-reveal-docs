@@ -12,11 +12,11 @@ const prompt = encodeURIComponent(
 );
 ---
 
-<div class="actions" data-markdown-ignore>
+<div class="actions" data-markdown-ignore data-pagefind-ignore>
   <button type="button" data-copy={markdownPath}>
     <Copy class="idle" />
     <Check class="done" />
-    <span>Copy page</span>
+    <span aria-live="polite">Copy page</span>
   </button>
   <a href={markdownPath}>
     <FileText /> View as Markdown

@@ -2,18 +2,6 @@ import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 import { markdownSlug } from "./lib/markdown-slug";
 import { siteConfig } from "./site.config";
 
-const sections: Record<string, string> = {
-  concepts: "Concepts",
-  recipes: "Recipes",
-  react: "Packages",
-  vue: "Packages",
-  astro: "Packages",
-  core: "Packages",
-  "migrate-from-v4": "Guides",
-  "agent-skills": "Guides",
-  faq: "Guides",
-};
-
 const plainText = (markdown: string) =>
   markdown
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
@@ -60,11 +48,9 @@ export const onRequest = defineRouteMiddleware((context) => {
   if (id === "index" || id.startsWith("v4/")) return;
 
   const url = new URL(context.url.pathname, context.site).href;
-  const section = sections[id.split("/")[0] ?? id];
   const trail = [
-    { name: siteConfig.name, url: new URL("/", context.site).href },
-    ...(section ? [{ name: section }] : []),
-    { name: entry.data.title, url },
+    { name: siteConfig.name, item: new URL("/", context.site).href },
+    { name: entry.data.title, item: url },
   ];
   head.push({
     tag: "script",
