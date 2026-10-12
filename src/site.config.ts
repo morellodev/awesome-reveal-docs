@@ -13,5 +13,8 @@ export const siteConfig = {
   sponsorUrl: "https://github.com/sponsors/morellodev",
 };
 
+/** Pages with no Markdown export: their content is interactive, so the export has no controls. */
+export const interactivePages = ["playground"];
+
 /** The archived versions have a slug prefix, such as `v4`. */
 export const isArchived = (id: string) => id === "v4" || id.startsWith("v4/");

@@ -1,0 +1,263 @@
+---
+import RotateCcw from "@lucide/astro/icons/rotate-ccw";
+import Link from "@lucide/astro/icons/link";
+import { Reveal } from "@awesome-reveal/astro";
+import { headline, defaults, revealOptionsOf, scenes } from "../lib/playground";
+import "./demos/shapes.css";
+
+const options = revealOptionsOf(defaults);
+---
+
+<div class="stage-sticky">
+  <div class="stage">
+    <div class="stage-bar">
+      <div class="choices" role="radiogroup" aria-label="Content">
+        {scenes.map((scene) => (
+          <label class="chip">
+            <input
+              type="radio"
+              name="scene"
+              value={scene}
+              checked={scene === defaults.scene}
+            />
+            <span>{scene}</span>
+          </label>
+        ))}
+      </div>
+      <div class="stage-actions">
+        <button type="button" class="action" data-replay>
+          <RotateCcw size="1em" />
+          Replay
+        </button>
+        <button type="button" class="action" data-share>
+          <Link size="1em" />
+          <span data-share-label>Copy link</span>
+        </button>
+        <span class="sr-only" role="status" data-share-status></span>
+      </div>
+    </div>
+    <div class="canvas">
+      <div
+        class="scene"
+        data-scene="shapes"
+        hidden={defaults.scene !== "shapes"}
+        role="img"
+        aria-label="Animation preview with a circle, square and triangle"
+      >
+        <Reveal class="shapes" aria-hidden="true" {...options}>
+          <div class="shape demo-shape demo-shape-circle"></div>
+          <div class="shape demo-shape demo-shape-square"></div>
+          <div class="shape demo-shape demo-shape-triangle"></div>
+        </Reveal>
+      </div>
+      <div
+        class="scene"
+        data-scene="list"
+        hidden={defaults.scene !== "list"}
+        role="img"
+        aria-label="Animation preview with three horizontal bars"
+      >
+        <Reveal as="ul" class="rows" aria-hidden="true" {...options}>
+          <li class="demo-shape demo-shape-pill"></li>
+          <li class="demo-shape demo-shape-pill"></li>
+          <li class="demo-shape demo-shape-pill"></li>
+        </Reveal>
+      </div>
+      <div class="scene" data-scene="text" hidden={defaults.scene !== "text"}>
+        <p class="headline">
+          <span class="sr-only">{headline}</span>
+          <Reveal as="span" class="words" aria-hidden="true" {...options}>
+            {headline.split(" ").map((word) => (
+              <span>{word}</span>
+            ))}
+          </Reveal>
+        </p>
+      </div>
+    </div>
+  </div>
+  <p class="note" data-reduced-motion hidden>
+    Your system reduces motion, so the preview does not animate. The code below
+    still follows the controls.
+  </p>
+</div>
+
+<style>
+  .stage-sticky {
+    --pg-bg: var(--sl-color-bg);
+    --pg-card: var(--sl-color-bg-nav);
+    --pg-edge: var(--sl-color-gray-5);
+    --pg-text: var(--sl-color-white);
+    --pg-muted: var(--sl-color-text);
+    --pg-accent: var(--sl-color-text-accent);
+  }
+  .stage-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-inline-start: auto;
+  }
+  [data-share] {
+    justify-content: center;
+  }
+  @container (min-width: 40rem) {
+    .canvas {
+      min-height: 28rem;
+    }
+    .stage-sticky {
+      position: sticky;
+      top: calc(var(--sl-nav-height) + 1rem);
+    }
+  }
+
+  .stage {
+    overflow: hidden;
+    border: 1px solid var(--pg-edge);
+    background-color: var(--pg-bg);
+    color: var(--pg-text);
+  }
+  .stage-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--pg-edge);
+    background-color: var(--pg-card);
+  }
+  @container (max-width: 30rem) or (min-width: 40rem) {
+    .stage-bar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.625rem;
+      padding: 0.75rem;
+    }
+    .stage-bar .choices {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .stage-bar .chip {
+      justify-content: center;
+      min-block-size: 2.25rem;
+    }
+    .stage-actions {
+      margin-inline-start: 0;
+    }
+    .stage-actions .action {
+      flex: 1;
+      justify-content: center;
+      min-block-size: 2.25rem;
+    }
+  }
+  .stage .chip {
+    border-color: var(--pg-edge);
+    color: var(--pg-muted);
+    text-transform: capitalize;
+  }
+  .stage .chip:hover {
+    color: var(--pg-text);
+  }
+  .stage .chip:has(input:checked) {
+    border-color: var(--pg-accent);
+    background-color: color-mix(in srgb, var(--pg-accent) 18%, transparent);
+    color: var(--pg-text);
+  }
+  .canvas {
+    display: grid;
+    place-items: center;
+    min-height: 20rem;
+    padding: 2rem;
+    /* A faint grid makes the distance of a slide readable. */
+    background:
+      linear-gradient(
+          color-mix(in srgb, var(--pg-edge) 35%, transparent) 1px,
+          transparent 1px
+        )
+        0 0 / 2rem 2rem,
+      linear-gradient(
+          90deg,
+          color-mix(in srgb, var(--pg-edge) 35%, transparent) 1px,
+          transparent 1px
+        )
+        0 0 / 2rem 2rem;
+  }
+  .scene {
+    width: 100%;
+    display: grid;
+    place-items: center;
+  }
+  .shapes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-items: center;
+    align-items: center;
+    gap: 1rem;
+    width: min(100%, 16rem);
+  }
+  .shape {
+    inline-size: 100%;
+    max-inline-size: 4rem;
+    aspect-ratio: 1;
+  }
+  .rows {
+    display: grid;
+    gap: 0.625rem;
+    width: min(100%, 16rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .rows li {
+    margin: 0;
+    block-size: 2rem;
+  }
+  .rows li:nth-child(2) {
+    inline-size: 85%;
+  }
+  .rows li:nth-child(3) {
+    inline-size: 70%;
+  }
+  .headline {
+    margin: 0;
+    text-align: center;
+    text-wrap: balance;
+  }
+  .words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 0.3em;
+    font-size: clamp(1.75rem, 4cqi, 2.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--pg-text);
+  }
+  .scene[hidden] {
+    display: none;
+  }
+  .stage .action {
+    border-color: var(--pg-edge);
+    color: var(--pg-muted);
+  }
+  .stage .action:hover {
+    border-color: var(--pg-accent);
+    color: var(--pg-text);
+  }
+  @media (pointer: coarse) {
+    .stage-bar .chip,
+    .stage-actions .action {
+      min-block-size: 2.75rem;
+    }
+  }
+  @container (max-width: 30rem) {
+    .stage-bar .chip,
+    .stage-actions .action {
+      min-block-size: 2.75rem;
+    }
+  }
+  @media print {
+    .stage :global([data-reveal]) {
+      opacity: 1 !important;
+    }
+  }
+</style>

@@ -4,7 +4,7 @@ import { defineConfig } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
 import starlightLlmsTxt from "starlight-llms-txt";
 import starlightVersions from "starlight-versions";
-import { siteConfig } from "./src/site.config";
+import { interactivePages, siteConfig } from "./src/site.config";
 
 const site = "https://awesome-reveal.morello.dev";
 // The v4 README and old links point to these root URLs.
@@ -47,7 +47,7 @@ export default defineConfig({
               description: "Source code, issues and discussions",
             },
           ],
-          exclude: ["v4/**"],
+          exclude: ["v4/**", ...interactivePages],
           customSelectors: { all: ["[data-markdown-ignore]"] },
         }),
         starlightVersions({
@@ -91,6 +91,7 @@ export default defineConfig({
       ],
       sidebar: [
         "getting-started",
+        "playground",
         {
           label: "Concepts",
           items: [{ autogenerate: { directory: "concepts" } }],

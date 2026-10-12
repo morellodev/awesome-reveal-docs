@@ -1,6 +1,7 @@
 ---
 import RotateCcw from "@lucide/astro/icons/rotate-ccw";
 import { Reveal, type RevealOptions } from "@awesome-reveal/astro";
+import "./shapes.css";
 
 interface Props extends Pick<
   RevealOptions,
@@ -51,12 +52,12 @@ const caption = code ?? label;
         {...options}
       >
         {Array.from({ length: items }, () => (
-          <div class="bar" />
+          <div class="bar demo-shape demo-shape-pill" />
         ))}
       </Reveal>
     ) : (
       <Reveal
-        class="box"
+        class="box demo-shape demo-shape-square"
         duration={duration}
         threshold={threshold}
         {...options}
@@ -114,18 +115,9 @@ const caption = code ?? label;
     overflow: hidden;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
-  .box,
-  .bar {
-    background: linear-gradient(
-      135deg,
-      var(--sl-color-accent),
-      var(--sl-color-accent-high)
-    );
-  }
   .box {
     width: 3.5rem;
     height: 3.5rem;
-    border-radius: 0.75rem;
   }
   .bars {
     display: grid;
@@ -134,7 +126,6 @@ const caption = code ?? label;
   }
   .bar {
     height: 1rem;
-    border-radius: 999rem;
   }
   .text {
     font-size: var(--sl-text-2xl);

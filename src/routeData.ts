@@ -1,22 +1,22 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 import { markdownPath, markdownSlug } from "./lib/markdown-slug";
 import { structuredData } from "./lib/structured-data";
-import { isArchived } from "./site.config";
+import { interactivePages, isArchived } from "./site.config";
 
 export const onRequest = defineRouteMiddleware((context) => {
   const { id, head, entry } = context.locals.starlightRoute;
   if (id === "404") return;
-  head.push(
-    {
+  if (!interactivePages.includes(id)) {
+    head.push({
       tag: "link",
       attrs: {
         rel: "alternate",
         type: "text/markdown",
         href: markdownPath(id),
       },
-    },
-    { tag: "link", attrs: { rel: "describedby", href: "/llms.txt" } },
-  );
+    });
+  }
+  head.push({ tag: "link", attrs: { rel: "describedby", href: "/llms.txt" } });
 
   if (isArchived(id)) return;
 

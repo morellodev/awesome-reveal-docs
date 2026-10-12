@@ -1,6 +1,6 @@
 ---
+import ChevronDown from "@lucide/astro/icons/chevron-down";
 import Copy from "@lucide/astro/icons/copy";
-import FileText from "@lucide/astro/icons/file-text";
 import { markdownPath } from "../lib/markdown-slug";
 import { isArchived } from "../site.config";
 
@@ -19,54 +19,136 @@ const askLinks = isArchived(id)
 ---
 
 <div class="actions" data-markdown-ignore data-pagefind-ignore>
-  <button type="button" data-copy={markdown} hidden>
-    <Copy size="1em" />
-    <span>Copy page</span>
-  </button>
-  <a href={markdown}>
-    <FileText size="1em" /> View as Markdown
-  </a>
-  {askLinks.map(([name, url]) => (
-    <a
-      href={url + prompt}
-      rel="noopener noreferrer"
-      target="_blank"
-      aria-label={`Ask ${name} about this page (opens in a new tab)`}
-    >
-      Ask {name}
-    </a>
-  ))}
+  <div class="split">
+    <button type="button" class="copy" data-copy={markdown}>
+      <Copy size="1em" />
+      <span>Copy page</span>
+    </button>
+    <details class="more">
+      <summary aria-label="More page actions">
+        <ChevronDown size="1em" />
+      </summary>
+      <ul class="menu">
+        <li>
+          <a href={markdown}>View as Markdown</a>
+        </li>
+        {askLinks.map(([name, url]) => (
+          <li>
+            <a
+              href={url + prompt}
+              rel="noopener noreferrer"
+              target="_blank"
+              aria-label={`Ask ${name} about this page (opens in a new tab)`}
+            >
+              Ask {name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  </div>
   <span class="status" role="status" data-status></span>
+  <noscript>
+    <style is:inline>
+      /* The copy button needs JavaScript. Without it, only the menu shows, so the menu needs a label. */
+      .actions .copy {
+        display: none;
+      }
+      .actions .more {
+        margin-left: 0;
+      }
+      .actions summary {
+        border-radius: 0.5rem;
+      }
+      .actions summary::before {
+        content: "Page actions";
+      }
+    </style>
+  </noscript>
 </div>
 
 <style>
   .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-block: 0.75rem 1.5rem;
+    margin: 0.5rem 0 0;
   }
-  button,
-  a {
+  .split {
+    display: inline-flex;
+  }
+  .copy,
+  summary {
     display: inline-flex;
     align-items: center;
     gap: 0.35em;
-    padding: 0.25rem 0.65rem;
+    box-sizing: border-box;
+    height: 1.875rem;
+    padding: 0 0.65rem;
     border: 1px solid var(--sl-color-hairline);
-    border-radius: 0.5rem;
     background: var(--sl-color-bg-nav);
     color: var(--sl-color-gray-2);
     font: inherit;
     font-size: var(--sl-text-xs);
     line-height: 1.4;
-    text-decoration: none;
     cursor: pointer;
   }
-  button:hover,
-  a:hover,
-  button:focus-visible,
-  a:focus-visible {
+  .copy {
+    position: relative;
+    border-radius: 0.5rem 0 0 0.5rem;
+  }
+  summary {
+    list-style: none;
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  /* The halves overlap by one border, and the active half sits on top to show its whole outline. */
+  .more {
+    position: relative;
+    margin-left: -1px;
+  }
+  .copy:hover,
+  .copy:focus-visible,
+  .more:hover,
+  .more:focus-within,
+  .more[open] {
+    z-index: 1;
+  }
+  .copy:hover,
+  .copy:focus-visible,
+  summary:hover,
+  summary:focus-visible,
+  .more[open] summary {
     border-color: var(--sl-color-accent);
+    color: var(--sl-color-white);
+  }
+  .menu {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    z-index: 2;
+    min-width: 12rem;
+    margin: 0;
+    padding: 0.25rem;
+    list-style: none;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg-nav);
+    box-shadow: var(--sl-shadow-md);
+  }
+  .menu li {
+    margin: 0;
+  }
+  .menu a {
+    display: block;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.25rem;
+    color: var(--sl-color-gray-1);
+    font-size: var(--sl-text-sm);
+    text-decoration: none;
+  }
+  .menu a:hover,
+  .menu a:focus-visible {
+    background: var(--sl-color-gray-6);
     color: var(--sl-color-white);
   }
   .status {
@@ -75,16 +157,6 @@ const askLinks = isArchived(id)
     height: 1px;
     overflow: hidden;
     clip-path: inset(50%);
-  }
-  @media (max-width: 34rem) {
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    button,
-    a {
-      justify-content: center;
-    }
   }
 </style>
 
@@ -107,7 +179,6 @@ const askLinks = isArchived(id)
       }, 2000);
     };
 
-    button.hidden = false;
     button.addEventListener("click", async () => {
       try {
         const response = await fetch(button.dataset.copy!);
@@ -116,6 +187,23 @@ const askLinks = isArchived(id)
         show("Copied", "Page copied as Markdown");
       } catch {
         show("Copy failed", "Copy failed");
+      }
+    });
+  }
+
+  const menu = document.querySelector<HTMLDetailsElement>(".actions .more");
+  if (menu) {
+    const close = () => (menu.open = false);
+    document.addEventListener("click", (event) => {
+      if (!menu.contains(event.target as Node)) close();
+    });
+    menu.addEventListener("click", (event) => {
+      if ((event.target as Element).closest("a")) close();
+    });
+    menu.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && menu.open) {
+        close();
+        menu.querySelector("summary")!.focus();
       }
     });
   }

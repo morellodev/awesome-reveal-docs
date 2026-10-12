@@ -1,0 +1,511 @@
+---
+import PlaygroundCanvas from "./PlaygroundCanvas.astro";
+import "./playground.css";
+import { Aside, Code, TabItem, Tabs } from "@astrojs/starlight/components";
+import {
+  defaults,
+  fieldApplies,
+  frameworks,
+  presetMatches,
+  presets,
+  shapeFields,
+  snippets,
+  timingFields,
+} from "../lib/playground";
+
+const groups = [
+  { legend: "Motion", fields: shapeFields },
+  { legend: "Timing", fields: timingFields },
+];
+
+const code = snippets(defaults);
+---
+
+<div class="playground-root">
+  <header class="lead not-content">
+    <slot />
+  </header>
+
+  <form
+    class="playground not-content"
+    data-playground
+    data-markdown-ignore
+    novalidate
+  >
+    <div class="presets" role="group" aria-label="Presets">
+      {presets.map((preset) => (
+        <button
+          type="button"
+          class="chip"
+          aria-pressed={presetMatches(preset, defaults)}
+        >
+          {preset.name}
+        </button>
+      ))}
+    </div>
+
+    <div class="stage-column">
+      <PlaygroundCanvas />
+    </div>
+
+    <div class="controls">
+      {groups.map(({ legend, fields }) => (
+        <fieldset>
+          <legend>{legend}</legend>
+          {fields.map((field) => (
+            <div
+              class="field"
+              data-name={field.name}
+              hidden={!fieldApplies(field, defaults)}
+            >
+              {field.options ? (
+                <>
+                  <span class="label" id={`playground-${field.name}-label`}>
+                    {field.label}
+                  </span>
+                  <div
+                    class="choices"
+                    role="radiogroup"
+                    aria-labelledby={`playground-${field.name}-label`}
+                  >
+                    {field.options.map((option) => (
+                      <label class="chip">
+                        <input
+                          type="radio"
+                          name={field.name}
+                          value={option}
+                          checked={option === defaults[field.name]}
+                        />
+                        <span>{field.optionLabels?.[option] ?? option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <label class="label" for={`playground-${field.name}`}>
+                    {field.label}
+                  </label>
+                  <output for={`playground-${field.name}`}>
+                    {defaults[field.name]}
+                    {field.unit}
+                  </output>
+                  <input
+                    type="range"
+                    name={field.name}
+                    id={`playground-${field.name}`}
+                    min={field.min}
+                    max={field.max}
+                    step={field.step}
+                    value={defaults[field.name]}
+                  />
+                </>
+              )}
+            </div>
+          ))}
+        </fieldset>
+      ))}
+      <button type="reset" class="action reset">
+        Reset
+      </button>
+    </div>
+
+    <div class="code">
+      <div data-custom-help hidden={defaults.animation !== "spin"}>
+        <Aside type="tip">
+          <p>
+            <code>defineKeyframes</code> samples a function of progress from 0
+            to 1. See{" "}
+            <a href="/concepts/keyframes/#definekeyframes">custom keyframes</a>.
+          </p>
+        </Aside>
+      </div>
+      <div data-text-help hidden={defaults.scene !== "text"}>
+        <Aside type="tip">
+          <p>
+            Give word spans <code>display: inline-block</code> and expose the
+            full text to screen readers. See the{" "}
+            <a href="/recipes/text-animation/">text animation recipe</a>.
+          </p>
+        </Aside>
+      </div>
+      <Tabs syncKey="framework">
+        {frameworks.map(({ key, pkg, lang, label, icon }) => (
+          <TabItem label={label} icon={icon}>
+            <div class="snippet">
+              <Code code={`pnpm add @awesome-reveal/${pkg}`} lang="shell" />
+              {key === "javascript" && (
+                <p class="note">
+                  Apply this to an element with <code>id="reveal-demo"</code>.
+                  Stagger animates its direct children.
+                </p>
+              )}
+              <div data-code={key}>
+                <Code code={code[key]} lang={lang} />
+              </div>
+            </div>
+          </TabItem>
+        ))}
+      </Tabs>
+    </div>
+  </form>
+</div>
+
+<script>
+  import { highlight } from "../lib/highlight";
+  import {
+    defaults,
+    fieldApplies,
+    fields,
+    frameworks,
+    presetMatches,
+    presetValues,
+    presets,
+    revealOptionsOf,
+    searchFor,
+    snippets,
+    valuesFromSearch,
+    type Framework,
+    type PlaygroundValues,
+  } from "../lib/playground";
+
+  const root = document.querySelector<HTMLFormElement>("[data-playground]")!;
+  const fieldsByName = new Map(fields.map((field) => [field.name, field]));
+  const controls = [...root.querySelectorAll<HTMLElement>(".field")].map(
+    (element) => ({
+      element,
+      field: fieldsByName.get(element.dataset.name as keyof PlaygroundValues)!,
+      output: element.querySelector("output"),
+    }),
+  );
+  const codes = [...root.querySelectorAll<HTMLElement>("div[data-code]")];
+  const scenes = [...root.querySelectorAll<HTMLElement>(".scene")];
+  const presetButtons = [
+    ...root.querySelectorAll<HTMLButtonElement>(".presets button"),
+  ].map((button, index) => ({ button, preset: presets[index]! }));
+
+  function readValues() {
+    const data = new FormData(root);
+    return Object.fromEntries(
+      Object.entries(defaults).map(([name, fallback]) => [
+        name,
+        typeof fallback === "number"
+          ? Number(data.get(name))
+          : String(data.get(name)),
+      ]),
+    ) as unknown as PlaygroundValues;
+  }
+
+  function showControls(values: PlaygroundValues) {
+    for (const { element, field, output } of controls) {
+      element.hidden = !fieldApplies(field, values);
+      if (output)
+        output.textContent = `${values[field.name]}${field.unit ?? ""}`;
+    }
+    for (const { button, preset } of presetButtons) {
+      button.setAttribute(
+        "aria-pressed",
+        String(presetMatches(preset, values)),
+      );
+    }
+  }
+
+  const shownCode = new Map<string, string>();
+  function showCode(values: PlaygroundValues) {
+    const code = snippets(values);
+    for (const block of codes) {
+      const key = block.dataset.code as keyof typeof code;
+      if (shownCode.get(key) === code[key]) continue;
+      shownCode.set(key, code[key]);
+      block.querySelector("pre code")!.innerHTML = highlight(code[key], key);
+      // The copy button of Expressive Code reads this attribute.
+      block
+        .querySelector("button[data-code]")!
+        .setAttribute("data-code", code[key]);
+    }
+  }
+
+  const host = () => root.querySelector(".scene:not([hidden]) awesome-reveal")!;
+  const optionsOf = (values: PlaygroundValues) =>
+    JSON.stringify(revealOptionsOf(values));
+
+  function replay(values = readValues(), options = optionsOf(values)) {
+    // A new <awesome-reveal> element hides its child and reveals it again.
+    const current = host();
+    const next = current.cloneNode(true) as HTMLElement;
+    next.setAttribute("options", options);
+    current.replaceWith(next);
+  }
+
+  let timer: ReturnType<typeof setTimeout>;
+  function update(immediate = false) {
+    const values = readValues();
+    showControls(values);
+    showCode(values);
+    root.querySelector<HTMLElement>("[data-text-help]")!.hidden =
+      values.scene !== "text";
+    root.querySelector<HTMLElement>("[data-custom-help]")!.hidden =
+      values.animation !== "spin";
+    const sceneChanged =
+      root.querySelector<HTMLElement>(".scene:not([hidden])")?.dataset.scene !==
+      values.scene;
+    for (const scene of scenes) {
+      scene.hidden = scene.dataset.scene !== values.scene;
+    }
+    scheduleUrl();
+    clearTimeout(timer);
+    if (sceneChanged || immediate) replay(values);
+    else {
+      timer = setTimeout(() => {
+        const options = optionsOf(values);
+        if (host().getAttribute("options") !== options) replay(values, options);
+      }, 250);
+    }
+  }
+
+  root.addEventListener("input", () => update());
+  root.addEventListener("submit", (event) => event.preventDefault());
+  // The form resets its fields after the reset event.
+  root.addEventListener("reset", () => setTimeout(update, 0, true));
+  root
+    .querySelector("[data-replay]")!
+    .addEventListener("click", () => replay());
+
+  for (const { button, preset } of presetButtons) {
+    button.addEventListener("click", () => {
+      setValues(presetValues(preset));
+      update(true);
+    });
+  }
+
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const showMotionPreference = () => {
+    root.querySelector<HTMLElement>("[data-reduced-motion]")!.hidden =
+      !motion.matches;
+    root.querySelector<HTMLElement>("[data-replay]")!.hidden = motion.matches;
+  };
+  showMotionPreference();
+  motion.addEventListener("change", showMotionPreference);
+
+  const tabs = root.querySelector<HTMLElement>("starlight-tabs")!;
+  const tabLinks = [
+    ...tabs.querySelectorAll<HTMLAnchorElement>('[role="tab"]'),
+  ];
+  function selectedFramework(): Framework {
+    return (
+      frameworks[
+        tabLinks.findIndex(
+          (tab) => tab.getAttribute("aria-selected") === "true",
+        )
+      ]?.key ?? "react"
+    );
+  }
+  function writeUrl() {
+    const url = new URL(location.href);
+    url.search = searchFor(
+      readValues(),
+      selectedFramework(),
+      url.searchParams,
+    ).toString();
+    try {
+      if (url.href !== location.href)
+        history.replaceState(history.state, "", url);
+    } catch {
+      // History quotas must not interrupt the preview or copying its URL.
+    }
+    return url.href;
+  }
+  let urlTimer: ReturnType<typeof setTimeout>;
+  function scheduleUrl() {
+    clearTimeout(urlTimer);
+    urlTimer = setTimeout(writeUrl, 250);
+  }
+  function setValues(values: PlaygroundValues) {
+    for (const [name, value] of Object.entries(values)) {
+      // The named item is a RadioNodeList for radio buttons, and an input for ranges.
+      (
+        root.elements.namedItem(name) as RadioNodeList | HTMLInputElement
+      ).value = String(value);
+    }
+  }
+  // Use Starlight's own tab switching so its ARIA and panel behavior stay intact.
+  type TabsElement = HTMLElement & {
+    switchTab?(tab: HTMLAnchorElement, index: number, sync: boolean): void;
+  };
+  function selectFramework(key: string | null) {
+    const index = frameworks.findIndex((framework) => framework.key === key);
+    if (index >= 0)
+      (tabs as TabsElement).switchTab?.(tabLinks[index]!, index, false);
+  }
+  window.addEventListener("popstate", () => {
+    const search = new URLSearchParams(location.search);
+    setValues(valuesFromSearch(search));
+    selectFramework(search.get("framework"));
+    update(true);
+  });
+  let statusTimer: ReturnType<typeof setTimeout>;
+  root.querySelector("[data-share]")!.addEventListener("click", async () => {
+    clearTimeout(urlTimer);
+    const url = writeUrl();
+    const status = root.querySelector<HTMLElement>("[data-share-status]")!;
+    const label = root.querySelector<HTMLElement>("[data-share-label]")!;
+    clearTimeout(statusTimer);
+    try {
+      await navigator.clipboard.writeText(url);
+      status.textContent = "Link copied";
+      label.textContent = "Copied";
+    } catch {
+      status.textContent = "Copy the link from your address bar.";
+      label.textContent = "Copy failed";
+    }
+    statusTimer = setTimeout(() => {
+      status.textContent = "";
+      label.textContent = "Copy link";
+    }, 2000);
+  });
+  await customElements.whenDefined("starlight-tabs");
+  const initialSearch = new URLSearchParams(location.search);
+  selectFramework(initialSearch.get("framework"));
+  if (Object.keys(defaults).some((name) => initialSearch.has(name))) {
+    setValues(valuesFromSearch(initialSearch));
+    update(true);
+  } else {
+    const initial = readValues();
+    if (
+      Object.entries(defaults).some(
+        ([name, value]) => initial[name as keyof PlaygroundValues] !== value,
+      )
+    )
+      update();
+  }
+  new MutationObserver(scheduleUrl).observe(tabs, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["aria-selected"],
+  });
+</script>
+
+<style>
+  [data-text-help],
+  [data-custom-help] {
+    margin-block-end: 1rem;
+  }
+  .playground-root {
+    container-type: inline-size;
+  }
+  .lead {
+    max-width: 40rem;
+    margin-bottom: 1.5rem;
+    font-size: var(--sl-text-lg);
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+  .lead :global(p) {
+    margin: 0;
+  }
+  .playground {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-block: 1rem 2rem;
+  }
+  @container (min-width: 40rem) {
+    .playground {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "presets presets"
+        "stage controls"
+        "code code";
+      align-items: start;
+    }
+    .presets {
+      grid-area: presets;
+    }
+    .stage-column {
+      grid-area: stage;
+      align-self: stretch;
+    }
+    .controls {
+      grid-area: controls;
+    }
+    .code {
+      grid-area: code;
+    }
+  }
+
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .controls {
+    display: grid;
+    gap: 1rem;
+  }
+  fieldset {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  legend {
+    float: left;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 0.5rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .field {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 0.375rem 1rem;
+  }
+  .label {
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+  .field .choices {
+    grid-column: 1 / -1;
+  }
+  output {
+    font-family: var(--__sl-font-mono);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-white);
+  }
+  input[type="range"] {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin: 0;
+    accent-color: var(--sl-color-accent);
+  }
+
+  .field[hidden] {
+    display: none;
+  }
+  .reset {
+    justify-self: start;
+  }
+
+  @media (pointer: coarse) {
+    input[type="range"] {
+      min-block-size: 2.75rem;
+    }
+  }
+  @container (max-width: 30rem) {
+    input[type="range"] {
+      min-block-size: 2.75rem;
+    }
+  }
+
+  .snippet {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+</style>
