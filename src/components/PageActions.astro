@@ -1,0 +1,97 @@
+---
+import Check from "@lucide/astro/icons/check";
+import Copy from "@lucide/astro/icons/copy";
+import FileText from "@lucide/astro/icons/file-text";
+import { markdownSlug } from "../lib/markdown-slug";
+
+const { id } = Astro.locals.starlightRoute;
+const markdownPath = `/${markdownSlug(id)}.md`;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const prompt = encodeURIComponent(
+  `Read ${pageUrl} so I can ask questions about it.`,
+);
+---
+
+<div class="actions" data-markdown-ignore>
+  <button type="button" data-copy={markdownPath}>
+    <Copy class="idle" />
+    <Check class="done" />
+    <span>Copy page</span>
+  </button>
+  <a href={markdownPath}>
+    <FileText /> View as Markdown
+  </a>
+  <a href={`https://claude.ai/new?q=${prompt}`} rel="noopener" target="_blank">
+    Ask Claude
+  </a>
+  <a href={`https://chatgpt.com/?q=${prompt}`} rel="noopener" target="_blank">
+    Ask ChatGPT
+  </a>
+</div>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block: 0.75rem 1.5rem;
+  }
+  button,
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-gray-2);
+    font: inherit;
+    font-size: var(--sl-text-xs);
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  button:hover,
+  a:hover {
+    border-color: var(--sl-color-accent);
+    color: var(--sl-color-white);
+  }
+  .actions :global(svg) {
+    width: 1em;
+    height: 1em;
+  }
+  .done,
+  [data-state="copied"] .idle {
+    display: none;
+  }
+  [data-state="copied"] .done {
+    display: inline;
+    color: var(--sl-color-green);
+  }
+</style>
+
+<script>
+  const label = "Copy page";
+
+  document.addEventListener("click", async (event) => {
+    const button = (event.target as Element).closest<HTMLButtonElement>(
+      "button[data-copy]",
+    );
+    if (!button) return;
+    const text = button.querySelector("span")!;
+    try {
+      const response = await fetch(button.dataset.copy!);
+      if (!response.ok) throw new Error(String(response.status));
+      await navigator.clipboard.writeText(await response.text());
+      button.dataset.state = "copied";
+      text.textContent = "Copied";
+    } catch {
+      text.textContent = "Copy failed";
+    }
+    setTimeout(() => {
+      delete button.dataset.state;
+      text.textContent = label;
+    }, 2000);
+  });
+</script>

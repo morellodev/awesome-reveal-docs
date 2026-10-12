@@ -1,0 +1,82 @@
+---
+title: Animate text
+description: "Reveal text one word or one character at a time as it scrolls into view, with the stagger option. Keep the text accessible to screen readers and find-in-page."
+sidebar:
+  order: 2
+head:
+  - tag: title
+    content: Animate Text on Scroll, Word by Word | Awesome Reveal
+  - tag: meta
+    attrs:
+      property: og:title
+      content: Animate Text on Scroll, Word by Word | Awesome Reveal
+---
+
+import { fade } from "@awesome-reveal/astro/keyframes";
+import Demo from "../../../components/demos/Demo.astro";
+import DemoGrid from "../../../components/demos/DemoGrid.astro";
+
+`stagger` animates the children of an element. To animate text, put each word or character in its own element. Then reveal the parent.
+
+<DemoGrid>
+  <Demo
+    code="keyframes: fade(), stagger: 30"
+    keyframes={fade()}
+    stagger={30}
+    text="Hello, world!"
+  />
+</DemoGrid>
+
+## Word by word
+
+Split the text on spaces. Give each word `display: inline-block`, because transforms do not apply to inline elements:
+
+```jsx
+import { Reveal } from "@awesome-reveal/react";
+import { slide } from "@awesome-reveal/react/keyframes";
+
+function Headline({ text }) {
+  return (
+    <h2>
+      <span className="visually-hidden">{text}</span>
+      <Reveal as="span" keyframes={slide()} stagger={60} aria-hidden>
+        {text.split(" ").map((word, index) => (
+          <span key={index} style={{ display: "inline-block" }}>
+            {word}&nbsp;
+          </span>
+        ))}
+      </Reveal>
+    </h2>
+  );
+}
+```
+
+## Character by character
+
+Use the same pattern with `[...text]`, and keep the spaces with `white-space: pre`:
+
+```jsx
+<Reveal as="span" keyframes={fade()} stagger={30} aria-hidden>
+  {[...text].map((char, index) => (
+    <span key={index} style={{ display: "inline-block", whiteSpace: "pre" }}>
+      {char}
+    </span>
+  ))}
+</Reveal>
+```
+
+## Keep the text accessible
+
+Split text is a problem for screen readers: they can read each word or character as a separate item. To prevent this:
+
+1. Put the full text in an element that only screen readers see. `visually-hidden` is your own class that hides content visually, but keeps it for assistive technology.
+2. Put `aria-hidden` on the animated copy.
+
+Then screen readers read the text one time, and find-in-page finds the full text.
+
+## Tips
+
+- Choose `stagger` between 20 and 40 ms for characters, and between 40 and 80 ms for words. A long text with a large value is slow to finish.
+- Use a short `duration` for characters, for example `400`.
+- Use `fade()` or a small `slide({ distance: 12 })`. Large movements of many small elements look noisy.
+- With `once: false`, the text hides and plays again at each entry. See [Options](/concepts/options/#viewport).

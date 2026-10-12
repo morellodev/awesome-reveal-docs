@@ -1,0 +1,9 @@
+---
+import Default from "@astrojs/starlight/components/PageTitle.astro";
+import PageActions from "./PageActions.astro";
+
+const { id } = Astro.locals.starlightRoute;
+---
+
+<Default />
+{id !== "404" && <PageActions />}

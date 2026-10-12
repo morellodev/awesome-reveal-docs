@@ -38,6 +38,17 @@ export default defineConfig({
         starlightHeadingBadges(),
         starlightLlmsTxt({
           projectName: siteConfig.name,
+          description:
+            "Awesome Reveal is an open source TypeScript library for scroll reveal animations in React, Vue, Astro and plain JavaScript.",
+          details:
+            "It has zero dependencies and about 2 kB gzipped for Reveal with one animation. It uses Intersection Observer and the Web Animations API, respects prefers-reduced-motion, and renders content hidden on the server with no flash. Packages: @awesome-reveal/react, @awesome-reveal/vue, @awesome-reveal/astro and @awesome-reveal/core. It is the successor of react-awesome-reveal v4.",
+          optionalLinks: [
+            {
+              label: "GitHub",
+              url: "https://github.com/awesome-reveal/awesome-reveal",
+              description: "Source code, issues and discussions",
+            },
+          ],
           exclude: ["v4/**"],
           customSelectors: { all: ["[data-markdown-ignore]"] },
         }),
@@ -51,6 +62,10 @@ export default defineConfig({
       routeMiddleware: "./src/routeData.ts",
       components: {
         Footer: "./src/components/Footer.astro",
+        PageTitle: "./src/components/PageTitle.astro",
+      },
+      editLink: {
+        baseUrl: "https://github.com/morellodev/awesome-reveal-docs/edit/main/",
       },
       social: [
         { icon: "heart", label: "Sponsor", href: siteConfig.sponsorUrl },
@@ -83,12 +98,16 @@ export default defineConfig({
           items: [{ autogenerate: { directory: "concepts" } }],
         },
         {
+          label: "Recipes",
+          items: [{ autogenerate: { directory: "recipes" } }],
+        },
+        {
           label: "Packages",
           items: ["react", "vue", "astro", "core"],
         },
         {
           label: "Guides",
-          items: ["migrate-from-v4", "agent-skills"],
+          items: ["faq", "migrate-from-v4", "agent-skills"],
         },
       ],
       head: [
@@ -122,6 +141,18 @@ export default defineConfig({
         {
           tag: "meta",
           attrs: { property: "og:image:height", content: "630" },
+        },
+        { tag: "meta", attrs: { name: "twitter:image", content: ogUrl } },
+        {
+          tag: "meta",
+          attrs: { name: "twitter:image:alt", content: ogImageAlt },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "robots",
+            content: "index, follow, max-image-preview:large, max-snippet:-1",
+          },
         },
         {
           tag: "link",
