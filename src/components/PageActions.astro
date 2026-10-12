@@ -1,0 +1,122 @@
+---
+import Copy from "@lucide/astro/icons/copy";
+import FileText from "@lucide/astro/icons/file-text";
+import { markdownPath } from "../lib/markdown-slug";
+import { isArchived } from "../site.config";
+
+const { id } = Astro.locals.starlightRoute;
+const markdown = markdownPath(id);
+const prompt = encodeURIComponent(
+  `Read ${new URL(Astro.url.pathname, Astro.site).href} so I can ask questions about it.`,
+);
+// The archive documents a legacy package, and llms.txt leaves it out.
+const askLinks = isArchived(id)
+  ? []
+  : [
+      ["Claude", "https://claude.ai/new?q="],
+      ["ChatGPT", "https://chatgpt.com/?q="],
+    ];
+---
+
+<div class="actions" data-markdown-ignore data-pagefind-ignore>
+  <button type="button" data-copy={markdown} hidden>
+    <Copy size="1em" />
+    <span>Copy page</span>
+  </button>
+  <a href={markdown}>
+    <FileText size="1em" /> View as Markdown
+  </a>
+  {askLinks.map(([name, url]) => (
+    <a
+      href={url + prompt}
+      rel="noopener noreferrer"
+      target="_blank"
+      aria-label={`Ask ${name} about this page (opens in a new tab)`}
+    >
+      Ask {name}
+    </a>
+  ))}
+  <span class="status" role="status" data-status></span>
+</div>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block: 0.75rem 1.5rem;
+  }
+  button,
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-gray-2);
+    font: inherit;
+    font-size: var(--sl-text-xs);
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  button:hover,
+  a:hover,
+  button:focus-visible,
+  a:focus-visible {
+    border-color: var(--sl-color-accent);
+    color: var(--sl-color-white);
+  }
+  .status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  @media (max-width: 34rem) {
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    button,
+    a {
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>("button[data-copy]");
+  const status = document.querySelector<HTMLElement>("[data-status]");
+
+  if (button && status) {
+    const label = button.querySelector("span")!;
+    const idle = label.textContent;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const show = (text: string, message: string) => {
+      label.textContent = text;
+      status.textContent = message;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        label.textContent = idle;
+        status.textContent = "";
+      }, 2000);
+    };
+
+    button.hidden = false;
+    button.addEventListener("click", async () => {
+      try {
+        const response = await fetch(button.dataset.copy!);
+        if (!response.ok) throw new Error(String(response.status));
+        await navigator.clipboard.writeText(await response.text());
+        show("Copied", "Page copied as Markdown");
+      } catch {
+        show("Copy failed", "Copy failed");
+      }
+    });
+  }
+</script>

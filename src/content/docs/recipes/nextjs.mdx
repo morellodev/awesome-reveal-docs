@@ -1,0 +1,90 @@
+---
+title: Next.js
+description: "Add scroll animations to a Next.js App Router app with @awesome-reveal/react: Reveal in Server Components, useReveal, no flash on load and no-JavaScript support."
+sidebar:
+  order: 4
+head:
+  - tag: title
+    content: Scroll Animations in Next.js App Router | Awesome Reveal
+  - tag: meta
+    attrs:
+      property: og:title
+      content: Scroll Animations in Next.js App Router | Awesome Reveal
+---
+
+`@awesome-reveal/react` works in the Next.js App Router. The server renders the content hidden, so the page has no flash before the animation.
+
+## Install
+
+```sh
+pnpm add @awesome-reveal/react
+```
+
+## Use `Reveal` in a Server Component
+
+`Reveal` has the `"use client"` directive, so you can render it in a Server Component. You do not need your own client component. The keyframes factories do not import React, so you can call them in the Server Component too:
+
+```tsx title="app/page.tsx"
+import { Reveal } from "@awesome-reveal/react";
+import { slide } from "@awesome-reveal/react/keyframes";
+
+export default function Page() {
+  return (
+    <Reveal keyframes={slide({ direction: "left" })}>
+      <h1>Rendered on the server</h1>
+    </Reveal>
+  );
+}
+```
+
+The keyframes are plain data, so Next.js can send them from the server to the client. Do not give a function to `Reveal` from a Server Component: a function cannot cross that border. Call the factory, and give the result.
+
+## Use `useReveal` in a Client Component
+
+A hook needs a Client Component. Add `"use client"` at the top of your file, and spread `getProps` on your own element:
+
+```tsx title="components/card.tsx"
+"use client";
+
+import { useReveal } from "@awesome-reveal/react";
+import { fade } from "@awesome-reveal/react/keyframes";
+
+export function Card({ children }: { children: React.ReactNode }) {
+  const { getProps } = useReveal({ keyframes: fade() });
+
+  return <article {...getProps({ className: "card" })}>{children}</article>;
+}
+```
+
+## Show the content when JavaScript is off
+
+The server renders hidden elements with `opacity: 0`. If JavaScript does not run, they stay hidden. Add a `<noscript>` style to the `<head>` of your root layout:
+
+```tsx title="app/layout.tsx"
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <head>
+        <noscript>
+          <style>{`[data-reveal="hidden"] { opacity: 1 !important; }`}</style>
+        </noscript>
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+For a strict Content Security Policy and for printing, see [Accessibility](/concepts/accessibility/).
+
+## Tips
+
+- Do not reveal the content at the top of the page, for example the main heading and the hero image. It waits for the script, which can delay the Largest Contentful Paint.
+- If you call `spring()` on the server, browsers without CSS `linear()` show the element with no animation. See [Springs](/concepts/keyframes/#springs).
+- `Reveal` respects `prefers-reduced-motion` by default. See [Accessibility](/concepts/accessibility/#reduced-motion).
+
+See the [React page](/react/) for all the options of `Reveal` and `useReveal`.

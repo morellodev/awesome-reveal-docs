@@ -39,6 +39,7 @@ import { fade, slide } from "@awesome-reveal/react/keyframes";
 
 function Hero() {
   const inputRef = useRef(null);
+
   return (
     <Reveal as="section" keyframes={slide()} className="hero" id="intro">
       <Reveal as="input" keyframes={fade()} ref={inputRef} />
@@ -67,6 +68,7 @@ function Card() {
     keyframes: fade(),
     threshold: 0.3,
   });
+
   return (
     <article {...getProps({ className: "card", style: { padding: 16 } })}>
       …

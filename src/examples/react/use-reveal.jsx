@@ -6,6 +6,7 @@ function Card() {
     keyframes: fade(),
     threshold: 0.3,
   });
+
   return (
     <article {...getProps({ className: "card", style: { padding: 16 } })}>
       …

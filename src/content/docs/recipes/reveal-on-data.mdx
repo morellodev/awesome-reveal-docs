@@ -1,0 +1,63 @@
+---
+title: Reveal after data loads
+description: "Animate content when your data arrives, not when it scrolls into view, with the when option. React and Vue examples, and how to avoid a flash after hydration."
+sidebar:
+  order: 3
+head:
+  - tag: title
+    content: Animate Content After Data Loads | Awesome Reveal
+  - tag: meta
+    attrs:
+      property: og:title
+      content: Animate Content After Data Loads | Awesome Reveal
+---
+
+By default, an element reveals when it scrolls into view. Use `when` when your own state decides: for example, a list that animates in after a request finishes, or a panel that opens on a click.
+
+With `when`, nothing observes the viewport. The element is revealed while `when` is `true`, and hidden while it is `false`.
+
+## React
+
+```jsx
+import { Reveal } from "@awesome-reveal/react";
+import { slide } from "@awesome-reveal/react/keyframes";
+
+function Results({ data }) {
+  return (
+    <Reveal as="ul" keyframes={slide()} when={data !== undefined} stagger={50}>
+      {data?.map((item) => (
+        <li key={item.id}>{item.name}</li>
+      ))}
+    </Reveal>
+  );
+}
+```
+
+The list stays hidden while `data` is `undefined`. When `data` arrives, the list reveals and the items enter one after the other.
+
+## Vue
+
+```vue
+<script setup>
+import { Reveal } from "@awesome-reveal/vue";
+import { slide } from "@awesome-reveal/vue/keyframes";
+
+defineProps(["data"]);
+</script>
+
+<template>
+  <Reveal as="ul" :keyframes="slide()" :when="data !== undefined" :stagger="50">
+    <li v-for="item in data" :key="item.id">{{ item.name }}</li>
+  </Reveal>
+</template>
+```
+
+## Avoid a flash after hydration
+
+If `when` is `true` from the start, the server renders the element shown, because nothing hides it. After hydration, the entrance starts at its first keyframe, so the element can flash. To avoid the flash, start with `false`, and set `when` to `true` after the first render.
+
+## Hide again
+
+A change from `true` to `false` hides the element again. A change from `false` to `true` plays the animation again.
+
+See [Control the reveal manually](/concepts/options/#control-the-reveal-manually) for all the rules.
