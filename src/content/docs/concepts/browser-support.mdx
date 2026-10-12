@@ -14,7 +14,7 @@ head:
 
 awesome-reveal is built on two web APIs: Intersection Observer and Web Animations. Both are [Baseline Widely available](https://developer.mozilla.org/en-US/docs/Glossary/Baseline/Compatibility): they have worked in all the Baseline browsers for at least 2.5 years.
 
-The packages also support older browsers: Chrome 84, Firefox 75 and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes.
+The packages also support older browsers: Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes.
 
 ## Fallbacks
 
@@ -23,6 +23,8 @@ In browsers without a necessary API, the content still shows:
 - Without `IntersectionObserver`, elements are revealed immediately.
 - Without `Element.animate`, elements appear with no animation.
 - When `element.animate` throws, the element appears with no animation. For example, browsers without CSS `linear()` throw on a [`spring()`](/concepts/keyframes/#springs) easing that the server created. A property value that the browser does not support does not throw: the browser ignores it.
+
+If the browser rejects an option, such as an invalid `rootMargin`, the element shows at once. The error is reported once for each message, and it reaches `window.onerror`: it does not throw in your code.
 
 ## Implicit keyframes in Safari
 

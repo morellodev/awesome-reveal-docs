@@ -41,7 +41,7 @@ The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script 
 
 ## Avoid a flash on page load
 
-`reveal` hides the element only when the script runs. Until then, the browser shows the HTML, so an element can show, disappear and then animate in. To hide it from the first paint, put the hidden state in the HTML. The reveal removes the inline `opacity` and the `data-reveal` attribute:
+`reveal` hides the element only when the script runs. Until then, the browser shows the HTML, so an element can show, disappear and then animate in. To hide it from the first paint, put the hidden state in the HTML. The reveal removes the `opacity: 0` and the `data-reveal` attribute:
 
 ```html
 <section class="card" style="opacity: 0" data-reveal="hidden">…</section>
@@ -67,26 +67,28 @@ Under a strict Content Security Policy, the inline `opacity: 0` style needs `sty
 
 ## Entry points
 
-| Import path                      | Contents                                                    |
-| -------------------------------- | ----------------------------------------------------------- |
-| `@awesome-reveal/core`           | `reveal`, `observe`, `play` and `hiddenStyle`.              |
-| `@awesome-reveal/core/keyframes` | The built-in keyframes, `defineKeyframes`, and their types. |
+| Import path                      | Contents                                                       |
+| -------------------------------- | -------------------------------------------------------------- |
+| `@awesome-reveal/core`           | `reveal`, `observe`, `play`, `hiddenStyle` and `createReveal`. |
+| `@awesome-reveal/core/keyframes` | The built-in keyframes, `defineKeyframes`, and their types.    |
 
 ## API
 
 ### `reveal(element, options?)`
 
-Hides the element, and plays the keyframes when the element enters the viewport. While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, so an inline `opacity` of your own does not stay.
+Hides the element, and plays the keyframes when the element enters the viewport. While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes `data-reveal` and restores the inline `opacity` that the element had. It removes an `opacity: 0` that comes from `data-reveal="hidden"` markup.
 
 `reveal` returns a controller:
 
 - `revealed`: `true` while the element is revealed. With `once: false`, it goes back to `false` when the element leaves the viewport.
-- `update(options)`: replaces the options. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
-- `destroy()`: stops the observation and cancels the animation. The element keeps its current style, so an element that is not revealed stays hidden. After `destroy()`, `update()` does nothing.
+- `setOptions(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+- `destroy()`: stops the observation, cancels the animation and restores the element, so it shows. After `destroy()`, `setOptions()` does nothing.
 
 ### `observe(element, options, onChange)`
 
 Calls `onChange(true)` when the element enters the viewport. When `once` is `false`, it also calls `onChange(false)` when the element leaves the viewport. It uses `threshold`, `rootMargin` and `once`, and returns a function that stops the observation.
+
+If the browser rejects an option, such as an invalid `rootMargin`, `observe` calls `onChange(true)`, so the element shows. Without `IntersectionObserver`, it does the same at once. The error is reported once for each message, from a microtask: it reaches `window.onerror` and does not throw in your code. `reveal` then stays shown. With the default `once`, a corrected option does not hide it again.
 
 ### `play(element, options?)`
 
@@ -103,18 +105,21 @@ The style that hides an element until the reveal: `{ opacity: "0" }`. A server r
 `@awesome-reveal/core` exports the types of its API:
 
 - `RevealOptions` and `RevealController` for `reveal`.
+- `RevealState` for `createReveal`.
 - `ObserveOptions` for `observe`, and `PlayOptions` for `play`.
 
 `@awesome-reveal/core/keyframes` exports `RevealKeyframe`, `KeyframesFactory`, `KeyframesDefinition`, `SpringOptions`, and the options type of each factory, such as `SlideOptions`.
 
 ## Write an adapter
 
-Use `reveal` when your code owns the element. When your framework renders the style of the element, use `observe`, `play` and `hiddenStyle`:
+Use `reveal` when your code owns the element. When your framework renders the style of the element, use `createReveal`. It decides when the element is revealed and plays the animation, but it does not change the DOM.
 
-1. Render the element with `hiddenStyle` and `data-reveal="hidden"`.
-2. Call `observe` on the element. Store the `inView` value that `onChange` gets.
-3. Render `hiddenStyle` and `data-reveal` only while `inView` is `false`. With `once: false`, `inView` can go back to `false`.
-4. When `inView` becomes `true`, call `play` on the element in the same frame.
-5. Call the functions that `observe` and `play` return when the element leaves the page.
+1. Call `createReveal(options)` once for each element.
+2. Render the element with `hiddenStyle` and `data-reveal="hidden"`. Read `revealed` for the first render: it is `true` before the first `attach` only when `when` is `true`.
+3. Call `subscribe(listener)`. The listener hides or shows the element before the next frame. There is one listener, and a new call replaces it.
+4. Call `attach(element)` when the element mounts. The state observes the element and plays the keyframes. A new element keeps the state and does not play again. `attach(null)` stops the observation.
+5. Call `setOptions(options)` when the options change.
 
-The React adapter follows these steps: [`useReveal.ts`](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/src/useReveal.ts) observes and plays, and [`Reveal.ts`](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/src/Reveal.ts) sets `data-reveal`.
+`observe` and `play` are the lower-level pieces of `createReveal`. Use them when you need only one of them.
+
+The React adapter follows these steps: [`useReveal.ts`](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/src/useReveal.ts) builds on `createReveal`, and its `getProps` sets `data-reveal`.

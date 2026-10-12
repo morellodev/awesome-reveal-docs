@@ -26,7 +26,7 @@ Keep `"user"` unless you have a strong reason. Motion makes some people ill, and
 
 ## Hidden content
 
-Until the reveal, the element has an inline `opacity: 0` style. With Astro, a stylesheet rule hides it instead. It stays in the accessibility tree, and the browser's find-in-page finds its text.
+Until the reveal, the element has an inline `opacity: 0` style. With Astro, a stylesheet rule hides it instead. It stays in the accessibility tree, and the browser's find-in-page finds its text. Links and buttons in it stay focusable and clickable. When a keyboard user tabs to one, the browser scrolls it into view, and the reveal starts.
 
 ## Pages without JavaScript
 
@@ -42,14 +42,28 @@ The server renders hidden elements with `opacity: 0`. If JavaScript does not run
 </noscript>
 ```
 
-Hidden elements have the `data-reveal="hidden"` attribute:
+Hidden elements have the `data-reveal="hidden"` attribute. This attribute is reserved: do not use it for your own data.
 
 - The React `Reveal` component, the Vue `v-reveal` directive and `Reveal` component, the Astro `Reveal` component, and the core `reveal` function set it.
-- With the React `useReveal` hook, set it yourself. See [`useReveal`](/react/#the-usereveal-hook).
+- The React `useReveal` hook sets it in `getProps`. See [`useReveal`](/react/#the-usereveal-hook).
 - With the core `observe`, `play` and `hiddenStyle`, set it yourself. See [Write an adapter](/core/#write-an-adapter).
+
+## Printing
+
+Elements that are not revealed yet stay invisible on a printed page. To print them, add this rule to your stylesheet. The Astro `Reveal` component and the `reveal` function on markup with no hidden state need only this rule, not the `<noscript>` style:
+
+```css
+@media print {
+  [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+}
+```
 
 ## Content Security Policy
 
 The React, Vue and core packages add no `<style>` elements. Under a strict Content Security Policy, the inline `opacity: 0` style in the server markup needs `style-src-attr 'unsafe-inline'`.
+
+If you put the `<noscript>` style or the print rule in a `<style>` element, give it a `nonce`, or put the print rule in your stylesheet.
 
 The Astro markup has no inline style, so it needs no `unsafe-inline`. See [Astro](/astro/#content-security-policy).

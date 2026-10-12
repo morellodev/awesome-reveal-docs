@@ -5,11 +5,10 @@ import {
 
 // The same keyframes as the samples on the Keyframes page.
 const spin = defineKeyframes(({ turns = 1 }: { turns?: number }) => ({
-  keyframe: (t, u) => ({
+  keyframe: (t) => ({
     opacity: t,
-    transform: `rotate(${u * turns * 360}deg)`,
+    transform: `rotate(${(1 - t) * turns * 360}deg)`,
   }),
-  easing: (t) => 1 - (1 - t) ** 3,
   steps: 30,
 }));
 

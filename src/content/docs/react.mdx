@@ -10,7 +10,7 @@ head:
       content: "React Scroll Reveal Animations: Reveal and useReveal"
 ---
 
-`@awesome-reveal/react` has two APIs with the same options:
+`@awesome-reveal/react` needs React 18 or later. It has two APIs with the same options:
 
 - The `Reveal` component renders one element and animates it.
 - The `useReveal` hook animates your own element or component, with no wrapper.
@@ -53,42 +53,43 @@ The children animate together. To animate them one after the other, use [`stagge
 
 ## The `useReveal` hook
 
-`useReveal(options)` returns `{ ref, style, revealed }`:
+`useReveal(options)` returns `{ revealed, getProps }`:
 
-- `ref`: attach it to the element to reveal.
-- `style`: the style that hides the element until the reveal. Spread it last into the element style, so that it overrides your `opacity`.
 - `revealed`: `true` while the element is revealed. With `once: false` or `when`, it can go back to `false`.
+- `getProps(props?)`: merges the reveal into the props of the element. It returns the `ref`, the `style` with the hidden `opacity`, and `data-reveal`. Spread the result on the element.
 
 ```tsx
 import { useReveal } from "@awesome-reveal/react";
 import { fade } from "@awesome-reveal/react/keyframes";
 
 function Card() {
-  const { ref, style, revealed } = useReveal({
+  const { getProps } = useReveal({
     keyframes: fade(),
     threshold: 0.3,
   });
   return (
-    <article
-      ref={ref}
-      style={{ padding: 16, ...style }}
-      data-reveal={revealed ? undefined : "hidden"}
-    >
+    <article {...getProps({ className: "card", style: { padding: 16 } })}>
       …
     </article>
   );
 }
 ```
 
-`data-reveal="hidden"` lets a `<noscript>` style show the element when JavaScript does not run. See [Pages without JavaScript](/concepts/accessibility/#pages-without-javascript).
+Pass your own `ref` and `style` to `getProps`, not next to the spread. `getProps` merges them. A `style` after the spread replaces the hidden style, and the element shows before the reveal.
+
+`getProps` sets `data-reveal="hidden"` while the element is hidden. A `<noscript>` style can use it to show the element when JavaScript does not run. See [Pages without JavaScript](/concepts/accessibility/#pages-without-javascript).
 
 Use `revealed` to run code after the reveal, for example in a `useEffect`.
+
+To use `getProps` on your own component, forward the `ref` to an element. React 18 needs `forwardRef` for this.
+
+With `stagger`, always render the children. Children that you render only when `revealed` is `true` do not animate.
 
 The element type is `HTMLElement` by default. For another element, give the type, for example `useReveal<SVGSVGElement>()`.
 
 ## Options
 
-`Reveal` and `useReveal` accept the [reveal options](/concepts/options/), and the `when` option.
+`Reveal` and `useReveal` accept the [reveal options](/concepts/options/).
 
 ### Control the reveal manually
 
@@ -110,21 +111,22 @@ function Results({ data }) {
 }
 ```
 
-With `when`, `threshold`, `rootMargin` and `once` have no effect.
+With `when`, `threshold`, `rootMargin` and `once` have no effect. For the rest of the rules, such as the flash after hydration, see [Control the reveal manually](/concepts/options/#control-the-reveal-manually). For the effect of a changed option, see [Option changes](/concepts/options/#option-changes).
 
 ## TypeScript
 
 `@awesome-reveal/react` exports these types:
 
 - `RevealProps<T>`: the props of `Reveal`, where `T` is the tag in `as`.
-- `RevealOptions`: the reveal options and `when`.
+- `RevealOptions`: the reveal options.
 - `RevealState<T>`: the return value of `useReveal`.
+- `RevealTargetProps<T>`: the return value of `getProps`.
 
 `@awesome-reveal/react/keyframes` exports the keyframes types, such as `KeyframesFactory` and `SlideOptions`. See [Keyframes](/concepts/keyframes/).
 
 ## SSR
 
-On the server, `Reveal` renders the element hidden, with `opacity: 0`, unless `when` is `true`. With `useReveal`, the element is hidden when you spread `style` into its style. The animation starts in the browser, when the element enters the viewport. If JavaScript does not run, the element stays hidden. To show it, add the [`<noscript>` style](/concepts/accessibility/#pages-without-javascript).
+On the server, `Reveal` renders the element hidden, with `opacity: 0`, unless `when` is `true`. With `useReveal`, the element is hidden when you spread `getProps()` on it: it sets the hidden `style` and `data-reveal="hidden"`. The animation starts in the browser, when the element enters the viewport. If JavaScript does not run, the element stays hidden. To show it, add the [`<noscript>` style](/concepts/accessibility/#pages-without-javascript).
 
 ## React Server Components
 

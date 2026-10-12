@@ -53,7 +53,7 @@ const fromLeft = slide({ direction: "left" });
 
 Without `keyframes`, the element fades in and moves up, as with `slide()`.
 
-While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, so an inline `opacity` of your own does not stay. Set your opacity in a class.
+While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes `data-reveal` and restores the inline `opacity` that the element had when `v-reveal` mounted. With SSR, the server markup replaces an inline `opacity` of your own, so set it in a class.
 
 ### Register the directive globally
 
@@ -97,11 +97,13 @@ The children animate together. To animate them one after the other, use [`stagge
 
 ## Options
 
-`Reveal` accepts the [reveal options](/concepts/options/) as props, and `v-reveal` accepts them as one object. Both also accept the `when` option.
+`Reveal` accepts the [reveal options](/concepts/options/) as props, and `v-reveal` accepts them as one object.
 
 `once` and `when` are optional. Without a value, they keep the default behavior: `<Reveal>` reveals once, and observes the viewport.
 
-A change of `threshold`, `rootMargin` or `once` restarts the observation of the viewport. The other options apply at the next reveal. A change does not replay an animation that already played.
+For the rules of `when`, such as the flash after hydration, see [Control the reveal manually](/concepts/options/#control-the-reveal-manually). For the effect of a changed option, see [Option changes](/concepts/options/#option-changes).
+
+When Vue replaces the element of `v-reveal`, for example with a new `key` or tag, the new element starts a new reveal. `Reveal` keeps its state when `as` changes and does not play again.
 
 ### Control the reveal manually
 
@@ -124,7 +126,7 @@ With `when`, `threshold`, `rootMargin` and `once` have no effect.
 `@awesome-reveal/vue` exports these types:
 
 - `RevealProps`: the props of `Reveal`.
-- `RevealOptions`: the reveal options and `when`, for `v-reveal`.
+- `RevealOptions`: the reveal options, for `v-reveal`.
 
 `@awesome-reveal/vue/keyframes` exports the keyframes types, such as `KeyframesFactory` and `SlideOptions`. See [Keyframes](/concepts/keyframes/).
 

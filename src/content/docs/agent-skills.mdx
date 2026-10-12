@@ -48,6 +48,8 @@ The approval covers all the skills of the package, also in later versions. pnpm 
 - When pnpm detects an agent, such as Claude Code or Cursor, it creates the skill folder of that agent.
 - To choose the folders yourself, set `skills.dirs`. An empty list turns off the links.
 
+If you approved a skill, but no skill folder exists and pnpm detects no agent, for example in CI, the install fails. Create `.claude/skills`, or set `skills.dirs`.
+
 pnpm adds a `.gitignore` to each skill folder, so the links stay out of Git. Global installs, `pnpm dlx` and `pnpm deploy` do not link skills.
 
 ## Other package managers
