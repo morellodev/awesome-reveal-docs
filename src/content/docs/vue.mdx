@@ -97,13 +97,11 @@ The children animate together. To animate them one after the other, use [`stagge
 
 ## Options
 
-`Reveal` accepts the [reveal options](/concepts/options/) as props, and `v-reveal` accepts them as one object. Both also accept the `when` option.
+`Reveal` accepts the [reveal options](/concepts/options/) as props, and `v-reveal` accepts them as one object.
 
 `once` and `when` are optional. Without a value, they keep the default behavior: `<Reveal>` reveals once, and observes the viewport.
 
-A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observation of the viewport. The other options apply at the next reveal. A change does not replay an animation that already played.
-
-If `when` is `true` at the start, the entrance plays once. The server renders the element shown, so the entrance can flash after hydration. To avoid the flash, start with `:when="false"` and change it to `true` after the first render.
+For the rules of `when`, such as the flash after hydration, see [Control the reveal manually](/concepts/options/#control-the-reveal-manually). For the effect of a changed option, see [Option changes](/concepts/options/#option-changes).
 
 When Vue replaces the element of `v-reveal`, for example with a new `key` or tag, the new element starts a new reveal. `Reveal` keeps its state when `as` changes and does not play again.
 
@@ -128,7 +126,7 @@ With `when`, `threshold`, `rootMargin` and `once` have no effect.
 `@awesome-reveal/vue` exports these types:
 
 - `RevealProps`: the props of `Reveal`.
-- `RevealOptions`: the reveal options and `when`, for `v-reveal`.
+- `RevealOptions`: the reveal options, for `v-reveal`.
 
 `@awesome-reveal/vue/keyframes` exports the keyframes types, such as `KeyframesFactory` and `SlideOptions`. See [Keyframes](/concepts/keyframes/).
 
