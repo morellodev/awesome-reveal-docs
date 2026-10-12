@@ -30,7 +30,7 @@ pnpm remove react-awesome-reveal @emotion/react
 pnpm add @awesome-reveal/react
 ```
 
-The new package needs React 18 or later. It is ESM-only: `require("react-awesome-reveal")` no longer works.
+The new package needs React 18 or later. It is ESM-only: there is no CommonJS build.
 
 You can also upgrade `react-awesome-reveal` to version 5 (`react-awesome-reveal@next`). It re-exports `@awesome-reveal/react`: `react-awesome-reveal` is the same as `@awesome-reveal/react`, and `react-awesome-reveal/keyframes` is the same as `@awesome-reveal/react/keyframes`. The changes on this page also apply to version 5.
 
@@ -118,7 +118,7 @@ To keep one, [port its keyframes from Animate.css](#port-an-animatecss-animation
 - Use `stagger` to animate the children one after the other.
 - Lists, fragments and text have no special handling. For a list, use `as="ul"` with `stagger`.
 - Animations do not stay applied after they finish, so a transformed element no longer breaks `position: fixed` children or `z-index`.
-- A style such as `opacity: 1` no longer replaces your own `opacity`. Your CSS `opacity` applies after the reveal. While the element is hidden, `opacity: 0` covers it, and the reveal restores it. Check the elements with an `opacity` below 1 in your CSS.
+- v4 kept the last keyframe applied, so `opacity: 1` replaced your own `opacity`. Now your CSS `opacity` applies after the reveal. While the element is hidden, `opacity: 0` covers it, and the reveal restores it. Check the elements with an `opacity` below 1 in your CSS.
 
 ## Port an Animate.css animation
 

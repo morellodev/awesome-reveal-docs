@@ -77,7 +77,7 @@ function Card() {
 
 Pass your own `ref` and `style` to `getProps`, not next to the spread. `getProps` merges them. A `style` after the spread replaces the hidden style, and the element shows before the reveal.
 
-`getProps` sets `data-reveal="hidden"` while the element is hidden. A `<noscript>` style can use it to show the element when JavaScript does not run. See [Pages without JavaScript](/concepts/accessibility/#pages-without-javascript). `data-reveal` is reserved: do not use it for your own data.
+`getProps` sets `data-reveal="hidden"` while the element is hidden. A `<noscript>` style can use it to show the element when JavaScript does not run. See [Pages without JavaScript](/concepts/accessibility/#pages-without-javascript).
 
 Use `revealed` to run code after the reveal, for example in a `useEffect`.
 
@@ -89,7 +89,7 @@ The element type is `HTMLElement` by default. For another element, give the type
 
 ## Options
 
-`Reveal` and `useReveal` accept the [reveal options](/concepts/options/), and the `when` option.
+`Reveal` and `useReveal` accept the [reveal options](/concepts/options/).
 
 ### Control the reveal manually
 
@@ -111,18 +111,14 @@ function Results({ data }) {
 }
 ```
 
-With `when`, `threshold`, `rootMargin` and `once` have no effect. `when={null}` or `when={undefined}` lets the viewport decide.
-
-If `when` is `true` at the first render, the entrance plays once. The server renders the element shown, so the entrance can flash after hydration. To avoid the flash, start with `when={false}` and change it to `true` after the first render.
-
-A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal and do not replay the animation.
+With `when`, `threshold`, `rootMargin` and `once` have no effect. For the rest of the rules, such as the flash after hydration, see [Control the reveal manually](/concepts/options/#control-the-reveal-manually). For the effect of a changed option, see [Option changes](/concepts/options/#option-changes).
 
 ## TypeScript
 
 `@awesome-reveal/react` exports these types:
 
 - `RevealProps<T>`: the props of `Reveal`, where `T` is the tag in `as`.
-- `RevealOptions`: the reveal options and `when`.
+- `RevealOptions`: the reveal options.
 - `RevealState<T>`: the return value of `useReveal`.
 - `RevealTargetProps<T>`: the return value of `getProps`.
 

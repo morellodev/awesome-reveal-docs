@@ -88,11 +88,11 @@ Hides the element, and plays the keyframes when the element enters the viewport.
 
 Calls `onChange(true)` when the element enters the viewport. When `once` is `false`, it also calls `onChange(false)` when the element leaves the viewport. It uses `threshold`, `rootMargin` and `once`, and returns a function that stops the observation.
 
+If the browser rejects an option, such as an invalid `rootMargin`, `observe` calls `onChange(true)`, so the element shows. Without `IntersectionObserver`, it does the same at once. The error is reported once for each message, from a microtask: it reaches `window.onerror` and does not throw in your code. `reveal` then stays shown. With the default `once`, a corrected option does not hide it again.
+
 ### `play(element, options?)`
 
 Plays the keyframes on the element, or on its children with `stagger`. It uses `keyframes`, `duration`, `delay`, `stagger` and `reducedMotion`, and returns a function that cancels the animation.
-
-If the browser rejects an option, such as an invalid `rootMargin`, `observe` calls `onChange(true)`, so the element shows. Without `IntersectionObserver`, it does the same at once. The error is reported once for each message, from a microtask: it reaches `window.onerror` and does not throw in your code. `reveal` then stays shown, also if you correct the option later.
 
 Call `play` in the same frame that removes the hidden style. If you do not, the element shows at its resting style for one frame.
 
