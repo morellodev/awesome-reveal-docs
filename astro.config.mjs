@@ -2,6 +2,7 @@ import partytown from "@astrojs/partytown";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
+import starlightLlmsTxt from "starlight-llms-txt";
 import starlightVersions from "starlight-versions";
 import { siteConfig } from "./src/site.config";
 
@@ -20,8 +21,7 @@ const v4Guides = [
 const ogUrl = new URL("og.png?v=3", site).href;
 const description =
   "Reveal-on-scroll animations for many frameworks, with the Intersection Observer API and the Web Animations API.";
-const ogImageAlt =
-  "Awesome Reveal: scroll reveal animations for React, Vue, Astro and JavaScript.";
+const ogImageAlt = `${siteConfig.name}: scroll reveal animations for React, Vue, Astro and JavaScript.`;
 
 // https://astro.build/config
 export default defineConfig({
@@ -36,13 +36,19 @@ export default defineConfig({
     starlight({
       plugins: [
         starlightHeadingBadges(),
+        starlightLlmsTxt({
+          projectName: siteConfig.name,
+          exclude: ["v4/**"],
+          customSelectors: { all: ["[data-markdown-ignore]"] },
+        }),
         starlightVersions({
           current: { redirect: "root" },
           versions: [{ slug: "v4", redirect: "root" }],
         }),
       ],
-      title: "Awesome Reveal",
+      title: siteConfig.name,
       description,
+      routeMiddleware: "./src/routeData.ts",
       components: {
         Footer: "./src/components/Footer.astro",
       },
