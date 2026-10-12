@@ -60,7 +60,7 @@ The children animate together. To animate them one after the other, use [`stagge
 
 With `when`, your code controls the reveal, and nothing observes the viewport. `threshold`, `rootMargin` and `once` have no effect.
 
-`Reveal` writes its options into the `options` attribute of the `<awesome-reveal>` element, as JSON. To change them in the browser, set that attribute to new JSON. The new value replaces all the options, so merge your change into the current value. A change of `when`, `threshold`, `rootMargin` or `once` applies at once. The other options apply at the next reveal.
+`Reveal` writes its options into the `options` attribute of the `<awesome-reveal>` element, as JSON. To change them in the browser, set that attribute to new JSON. The new value replaces all the options, so merge your change into the current value. A change of `when`, `threshold`, `rootMargin` or `once` applies at once. The other options apply at the next reveal. If the JSON is invalid when the element connects, the browser reports the error to the console, and the element reveals with the default options. If a later change is invalid, the previous options stay.
 
 ```astro
 <button id="show">Show</button>
@@ -96,6 +96,9 @@ Astro runs a bundled script once. The `<ClientRouter />` fires `astro:page-load`
 - The custom element starts when it enters the page, so `Reveal` works with the `<ClientRouter />` and with server islands.
 - A `transition:persist` element keeps its state, and does not play again after a navigation. You can put `transition:persist` on `Reveal` or on an ancestor.
 - On a page that the browser prerenders, the animation waits until the user opens the page.
+- Each `Reveal` writes its own copy of the options in the HTML. A preset adds about 100–200 bytes, `spring()` about 300 bytes, and a `defineKeyframes` factory about 3 kB. For a long list, use one `Reveal` with `stagger`.
+- The keyframes factories run on the server. If you call `spring()`, browsers without CSS `linear()` show the element with no animation. See [Springs](/concepts/keyframes/#springs).
+- If `when` is `true` at the start, the entrance plays once and ignores `threshold`, `rootMargin` and `once`. The server renders the element shown, so the entrance can flash. Start with `when={false}` to avoid it.
 
 ### Layout
 
@@ -114,6 +117,16 @@ Astro runs a bundled script once. The `<ClientRouter />` fires `astro:page-load`
 The stylesheet rule that hides the element applies only in `@media (scripting: enabled)`. When JavaScript is off, the content shows. You do not need the [`<noscript>` style](/concepts/accessibility/#pages-without-javascript) of the other packages.
 
 The `scripting` media feature needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the element shows until the script hides it. Then the reveal animation plays as usual.
+
+Unrevealed elements stay invisible on a printed page. Add a print rule to your stylesheet. The hide rule of `Reveal` uses `:where()`, so it has no specificity, and your rule wins:
+
+```css
+@media print {
+  [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+}
+```
 
 ## TypeScript
 

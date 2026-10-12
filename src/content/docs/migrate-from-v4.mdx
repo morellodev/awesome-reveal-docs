@@ -30,13 +30,13 @@ pnpm remove react-awesome-reveal @emotion/react
 pnpm add @awesome-reveal/react
 ```
 
-The new package needs React 18 or later.
+The new package needs React 18 or later. It is ESM-only: `require("react-awesome-reveal")` no longer works.
 
 You can also upgrade `react-awesome-reveal` to version 5 (`react-awesome-reveal@next`). It re-exports `@awesome-reveal/react`: `react-awesome-reveal` is the same as `@awesome-reveal/react`, and `react-awesome-reveal/keyframes` is the same as `@awesome-reveal/react/keyframes`. The changes on this page also apply to version 5.
 
 ## Steps
 
-1. Change the imports. `Reveal` is a named export now. The keyframes come from `@awesome-reveal/react/keyframes`.
+1. Change the imports. `Reveal` has no default export now. The keyframes come from `@awesome-reveal/react/keyframes`.
 2. Replace each effect component with `Reveal` and a keyframes factory. See [Components](#components).
 3. Change the props. See [Props](#props).
 4. Check the [behavior changes](#behavior-changes) in each place that you change.
@@ -98,17 +98,17 @@ To keep one, [port its keyframes from Animate.css](#port-an-animatecss-animation
 
 ## Props
 
-| v4                             | @awesome-reveal/react                                                                                                                                                                                                      |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cascade` and `damping`        | `stagger`, in milliseconds: `duration * damping`. The v4 defaults give `stagger={500}`.                                                                                                                                    |
-| `fraction`                     | `threshold`                                                                                                                                                                                                                |
-| `triggerOnce`                  | `once`. The default is `true` now. Set `once={false}` where v4 had no `triggerOnce`.                                                                                                                                       |
-| `duration` (default `1000`)    | `duration` (default `600`). Set `duration={1000}` to keep the v4 duration.                                                                                                                                                 |
-| `ease` timing, with no prop    | The `easing` option of each factory, default `cubic-bezier(0.22, 1, 0.36, 1)`. Set `easing: "ease"` to keep the v4 motion.                                                                                                 |
-| `className`, `style`           | They apply to the one element that `Reveal` renders. v4 applied them to the `div` of each child. To keep that, put them on each child.                                                                                     |
-| `childClassName`, `childStyle` | Style the children directly.                                                                                                                                                                                               |
-| `onVisibilityChange`           | `useReveal` with `once: false`, and its `revealed` value in an effect. With the default `once: true`, `revealed` never goes back to `false`. v4 called the callback for each child, so use one `useReveal` for each child. |
-| Emotion `keyframes`            | `defineKeyframes` or a keyframes array. See [Custom keyframes](/concepts/keyframes/#custom-keyframes).                                                                                                                     |
+| v4                             | @awesome-reveal/react                                                                                                                                                                                                                                                                                       |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cascade` and `damping`        | `stagger`, in milliseconds: `duration * damping`. The v4 defaults give `stagger={500}`.                                                                                                                                                                                                                     |
+| `fraction`                     | `threshold`                                                                                                                                                                                                                                                                                                 |
+| `triggerOnce`                  | `once`. The default is `true` now. Set `once={false}` where v4 had no `triggerOnce`.                                                                                                                                                                                                                        |
+| `duration` (default `1000`)    | `duration` (default `600`). Set `duration={1000}` to keep the v4 duration.                                                                                                                                                                                                                                  |
+| `ease` timing, with no prop    | The `easing` option of each factory, default `cubic-bezier(0.22, 1, 0.36, 1)`. Set `easing: "ease"` to keep the v4 motion.                                                                                                                                                                                  |
+| `className`, `style`           | They apply to the one element that `Reveal` renders. v4 applied them to the `div` of each child. To keep that, put them on each child.                                                                                                                                                                      |
+| `childClassName`, `childStyle` | Style the children directly.                                                                                                                                                                                                                                                                                |
+| `onVisibilityChange`           | `useReveal` with `once: false`, and its `revealed` value in an effect. With the default `once: true`, `revealed` never goes back to `false`. v4 called the callback for each child, so use one `useReveal` for each child. v4 passed the `IntersectionObserverEntry` too, and `revealed` is only a boolean. |
+| Emotion `keyframes`            | `defineKeyframes` or a keyframes array. See [Custom keyframes](/concepts/keyframes/#custom-keyframes).                                                                                                                                                                                                      |
 
 ## Behavior changes
 
@@ -118,6 +118,7 @@ To keep one, [port its keyframes from Animate.css](#port-an-animatecss-animation
 - Use `stagger` to animate the children one after the other.
 - Lists, fragments and text have no special handling. For a list, use `as="ul"` with `stagger`.
 - Animations do not stay applied after they finish, so a transformed element no longer breaks `position: fixed` children or `z-index`.
+- A style such as `opacity: 1` no longer replaces your own `opacity`. Your CSS `opacity` applies after the reveal. While the element is hidden, `opacity: 0` covers it, and the reveal restores it. Check the elements with an `opacity` below 1 in your CSS.
 
 ## Port an Animate.css animation
 

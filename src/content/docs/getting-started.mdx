@@ -143,12 +143,11 @@ The other factories are `fade()`, `scale()`, `blur()`, `pop()` and `enter()`. Se
   <TabItem label="React" icon="seti:react">
     To animate your own element or component with no wrapper, use the `useReveal` hook:
 
-    1. Attach `ref` to the element.
-    2. Spread `style` last into the element style.
+    Spread `getProps(yourProps)` on the element. Pass your own `ref` and `style` inside `getProps`, not next to the spread.
 
     <Code code={reactUseReveal} lang="jsx" />
 
-    `style` hides the element until the reveal. `threshold: 0.3` reveals the element when 30% of it is visible.
+    `getProps` hides the element until the reveal and sets `data-reveal`. `threshold: 0.3` reveals the element when 30% of it is visible.
 
   </TabItem>
   <TabItem label="Vue" icon="seti:vue">

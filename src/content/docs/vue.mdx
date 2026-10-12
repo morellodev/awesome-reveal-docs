@@ -53,7 +53,7 @@ const fromLeft = slide({ direction: "left" });
 
 Without `keyframes`, the element fades in and moves up, as with `slide()`.
 
-While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, so an inline `opacity` of your own does not stay. Set your opacity in a class.
+While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes `data-reveal` and restores the inline `opacity` that the element had when `v-reveal` mounted. With SSR, the server markup replaces an inline `opacity` of your own, so set it in a class.
 
 ### Register the directive globally
 
@@ -101,7 +101,11 @@ The children animate together. To animate them one after the other, use [`stagge
 
 `once` and `when` are optional. Without a value, they keep the default behavior: `<Reveal>` reveals once, and observes the viewport.
 
-A change of `threshold`, `rootMargin` or `once` restarts the observation of the viewport. The other options apply at the next reveal. A change does not replay an animation that already played.
+A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observation of the viewport. The other options apply at the next reveal. A change does not replay an animation that already played.
+
+If `when` is `true` at the start, the entrance plays once. The server renders the element shown, so the entrance can flash after hydration. To avoid the flash, start with `:when="false"` and change it to `true` after the first render.
+
+When Vue replaces the element of `v-reveal`, for example with a new `key` or tag, the new element starts a new reveal. `Reveal` keeps its state when `as` changes and does not play again.
 
 ### Control the reveal manually
 
