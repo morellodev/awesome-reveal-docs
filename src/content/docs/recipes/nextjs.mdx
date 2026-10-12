@@ -51,6 +51,7 @@ import { fade } from "@awesome-reveal/react/keyframes";
 
 export function Card({ children }: { children: React.ReactNode }) {
   const { getProps } = useReveal({ keyframes: fade() });
+
   return <article {...getProps({ className: "card" })}>{children}</article>;
 }
 ```
