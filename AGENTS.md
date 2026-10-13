@@ -1,4 +1,4 @@
-# awesome-reveal-docs
+# website
 
 The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.morello.dev>. It uses Astro with Starlight. The packages are in [awesome-reveal/awesome-reveal](https://github.com/awesome-reveal/awesome-reveal). Their development branch is `next`.
 
@@ -27,10 +27,9 @@ Search the Astro docs with the `astro-docs` MCP server in `.mcp.json`.
 
 ## Deploys
 
-Vercel deploys `main` to production and each other branch to a preview URL. The `vercel` CLI is linked to the project: use it to read deploys and build logs, for example `vercel inspect <url> --logs`.
+Vercel serves production, but it does not build pushes to `awesome-reveal/website`: `main` does not deploy, and branches get no preview URL. The move to Cloudflare Workers restores the deploys. The `vercel` CLI is linked to the project: use it to read deploys and build logs, for example `vercel inspect <url> --logs`.
 
 - `react-awesome-reveal.morello.dev` is the old domain. Vercel redirects it (308) to the new domain and keeps the path. Keep its DNS record in Cloudflare: the redirect and the TLS certificate renewal need it.
-- The repo stays in the `morellodev` account. The Vercel project is on the Hobby plan, which cannot deploy a private repo of an organization, and deploys only the commits of the team owner.
 
 ## Rules
 
