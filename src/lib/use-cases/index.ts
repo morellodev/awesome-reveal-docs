@@ -1,12 +1,11 @@
 import { alternating } from "./alternating";
-import { cards } from "./cards";
 import { cta } from "./cta";
 import { hero } from "./hero";
 import { media } from "./media";
-import { stats } from "./stats";
-import { timeline } from "./timeline";
+import { sequence } from "./sequence";
+import { stagger } from "./stagger";
 
-const useCases = [hero, cards, timeline, media, stats, alternating, cta];
+const useCases = [hero, sequence, stagger, media, alternating, cta];
 
 export const findUseCase = (id: string | undefined) =>
   useCases.find((useCase) => useCase.id === id);

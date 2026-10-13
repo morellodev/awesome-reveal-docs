@@ -14,6 +14,8 @@ interface Expr<T = unknown> {
   value: T;
   source: string;
   imports: string[];
+  /** Module-level code that `source` refers to. */
+  declarations?: string[];
 }
 
 type Arg = string | number | Expr | undefined;
@@ -61,17 +63,41 @@ export function keyframes(
   };
 }
 
+const objectSource = (object: object) =>
+  `{ ${Object.entries(object)
+    .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+    .join(", ")} }`;
+
+/** A keyframes array in a module-level constant. */
+export const keyframesArray = (
+  name: string,
+  frames: RevealKeyframe[],
+): Expr<RevealKeyframe[]> => ({
+  value: frames,
+  source: name,
+  imports: [],
+  declarations: [
+    `const ${name} = [`,
+    ...frames.map((frame) => `  ${objectSource(frame)},`),
+    "];",
+  ],
+});
+
 export const libraryTiming: Timing = { duration: 600, delay: 0 };
 
 export interface RevealSpec {
   keyframes: Expr<RevealKeyframe[]>;
   stagger?: number;
+  /** Added to the delay of the fine-tune panel. */
+  delay?: number;
 }
 
 export function revealOf(
-  { keyframes, stagger }: RevealSpec,
-  { duration, delay }: Timing,
+  { keyframes, stagger, delay: offset = 0 }: RevealSpec,
+  timing: Timing,
 ) {
+  const { duration } = timing;
+  const delay = timing.delay + offset;
   const props: [name: string, source: string][] = [
     ["keyframes", keyframes.source],
   ];
@@ -85,7 +111,12 @@ export function revealOf(
     delay,
     ...(stagger && { stagger }),
   };
-  return { options, props, imports: keyframes.imports };
+  return {
+    options,
+    props,
+    imports: keyframes.imports,
+    declarations: keyframes.declarations ?? [],
+  };
 }
 
 export type Reveal = ReturnType<typeof revealOf>;
@@ -97,15 +128,26 @@ const packages = {
   javascript: "core",
 } as const;
 
-function imports(framework: Framework, reveal: Reveal) {
+function imports(framework: Framework, reveals: Reveal[]) {
   const pkg = packages[framework];
   const component = framework === "javascript" ? "reveal" : "Reveal";
-  const names = [...new Set(reveal.imports)];
+  const names = [...new Set(reveals.flatMap((reveal) => reveal.imports))];
   return [
     `import { ${component} } from "@awesome-reveal/${pkg}";`,
-    `import { ${names.join(", ")} } from "@awesome-reveal/${pkg}/keyframes";`,
+    ...(names.length
+      ? [
+          `import { ${names.join(", ")} } from "@awesome-reveal/${pkg}/keyframes";`,
+        ]
+      : []),
   ];
 }
+
+const declarations = (reveals: Reveal[]) => {
+  const blocks = [
+    ...new Set(reveals.map((reveal) => reveal.declarations.join("\n"))),
+  ].filter(Boolean);
+  return blocks.flatMap((block) => ["", block]);
+};
 
 /** A Vue directive (`v-*`) is always an expression. */
 export type Attr = readonly [name: string, value: string, expression?: true];
@@ -160,7 +202,7 @@ const lines = (...parts: (string | string[])[]) => parts.flat().join("\n");
 
 /** `filesOf` adds the imports, the props and the wrappers. */
 export interface Files {
-  reveal: Reveal;
+  reveals: Reveal[];
   props: string[];
   react: (string | string[])[];
   reactImports?: string[];
@@ -174,7 +216,7 @@ export interface Files {
 export function filesOf(
   component: string,
   {
-    reveal,
+    reveals,
     props,
     react,
     reactImports,
@@ -186,10 +228,12 @@ export function filesOf(
   }: Files,
 ): Snippets {
   const list = props.join(", ");
+  const constants = declarations(reveals);
   return {
     react: lines(
-      imports("react", reveal),
+      imports("react", reveals),
       reactImports ? `import { ${reactImports.join(", ")} } from "react";` : [],
+      constants,
       "",
       `export function ${component}(${props.length ? `{ ${list} }` : ""}) {`,
       ...react,
@@ -197,7 +241,8 @@ export function filesOf(
     ),
     vue: lines(
       "<script setup>",
-      imports("vue", reveal),
+      imports("vue", reveals),
+      constants,
       props.length
         ? ["", `defineProps([${props.map((prop) => `"${prop}"`).join(", ")}]);`]
         : [],
@@ -209,14 +254,20 @@ export function filesOf(
     ),
     astro: lines(
       "---",
-      imports("astro", reveal),
+      imports("astro", reveals),
+      constants,
       props.length ? ["", `const { ${list} } = Astro.props;`] : [],
       "---",
       "",
       ...astro,
     ),
     html: lines(...html),
-    javascript: lines(imports("javascript", reveal), "", ...javascript),
+    javascript: lines(
+      imports("javascript", reveals),
+      constants,
+      "",
+      ...javascript,
+    ),
     ...(css && { css: lines(...css) }),
   };
 }

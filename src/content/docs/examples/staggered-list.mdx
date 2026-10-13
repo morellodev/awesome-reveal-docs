@@ -1,19 +1,19 @@
 ---
-title: List animation
-description: "Slide the items of a list or timeline in one after the other on scroll. Try it live, then copy the code for React, Vue, Astro or plain JavaScript."
+title: Staggered list
+description: "Reveal the items of a list or a grid one after the other on scroll with the stagger option. Try it live, then copy the code for your framework."
 sidebar:
   order: 3
 head:
   - tag: title
-    content: List and Timeline Animation on Scroll | Awesome Reveal
+    content: Staggered List and Grid Animation on Scroll | Awesome Reveal
 ---
 
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import Example from "../../../components/example/Example.astro";
 
-The items of a list slide in one after the other. Use it for changelogs, steps and search results.
+The items of a list enter one after the other. One `Reveal` holds the items, and `stagger` animates its children. Use it for feature grids, key figures, changelogs, steps and search results.
 
-<Example useCase="timeline" />
+<Example useCase="stagger" />
 
 ## Why one `Reveal` for the whole list
 
@@ -25,6 +25,7 @@ With `stagger`, the children reveal together as the list enters the viewport. If
 
 - `stagger: 0` animates all the children together.
 - Choose `stagger` between 40 and 120 ms for lists. A larger value makes a long list slow to finish.
+- Use `pop()` for key figures. Each figure grows past its resting size, then settles back.
 - The library reads the children when the list is revealed. Items that you add before the reveal animate. Items that you add later do not.
 - `stagger` animates child elements only. Put text in an element, as in [Text animation](/examples/text-animation/).
 - In React, always render the children. See [`useReveal`](/react/#the-usereveal-hook) for the rules with a hook.
@@ -38,9 +39,9 @@ With `stagger`, the children reveal together as the list enters the viewport. If
     href="/concepts/options/#stagger"
   />
   <LinkCard
-    title="Options"
-    description="Duration, delay, stagger and the viewport options."
-    href="/concepts/options/"
+    title="Springs"
+    description="Make an animation overshoot and settle."
+    href="/concepts/keyframes/#springs"
   />
   <LinkCard
     title="Accessibility"

@@ -15,26 +15,25 @@ export const features = [
 
 const staggers = { tight: 60, relaxed: 100, slow: 160 };
 
-export const cards = defineUseCase({
-  id: "cards",
+export const stagger = defineUseCase({
+  id: "stagger",
   component: "Features",
   tweaks: [
     {
-      name: "direction",
-      label: "Direction",
+      name: "effect",
+      label: "Effect",
       options: [
-        { value: "up", label: "up" },
-        { value: "left", label: "left" },
-        { value: "right", label: "right" },
+        { value: "slide", label: "slide" },
+        { value: "pop", label: "pop" },
+        { value: "fade", label: "fade" },
       ],
-      default: "up",
+      default: "slide",
     },
     staggerTweak,
     springTweak,
   ],
   reveal: (v) => ({
-    keyframes: keyframes("slide", {
-      direction: v.direction,
+    keyframes: keyframes(v.effect, {
       easing: v.easing === "spring" ? springEasing() : undefined,
     }),
     stagger: staggers[v.stagger],

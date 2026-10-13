@@ -1,7 +1,25 @@
-import { keyframes, openTag, revealAttrs, revealCall } from "./code";
+import {
+  keyframes,
+  keyframesArray,
+  openTag,
+  revealAttrs,
+  revealCall,
+} from "./code";
 import { defineUseCase } from "./model";
 
 export const photoCaption = "Sunrise over the hills";
+
+// clip-path interpolates only between basic shapes, so the last keyframe is `inset(0)`, not `none`.
+const masks = {
+  wipe: keyframesArray("wipe", [
+    { clipPath: "inset(0 100% 0 0)", easing: "ease-in-out" },
+    { clipPath: "inset(0)" },
+  ]),
+  circle: keyframesArray("circle", [
+    { clipPath: "circle(0%)", easing: "ease-out" },
+    { clipPath: "circle(75%)" },
+  ]),
+};
 
 export const media = defineUseCase({
   id: "media",
@@ -14,12 +32,19 @@ export const media = defineUseCase({
         { value: "blur", label: "blur" },
         { value: "scale", label: "scale" },
         { value: "fade", label: "fade" },
+        { value: "wipe", label: "wipe" },
+        { value: "circle", label: "circle" },
       ],
       default: "blur",
     },
   ],
   timing: { duration: 1000 },
-  reveal: (v) => ({ keyframes: keyframes(v.effect) }),
+  reveal: (v) => ({
+    keyframes:
+      v.effect === "wipe" || v.effect === "circle"
+        ? masks[v.effect]
+        : keyframes(v.effect),
+  }),
   snippets(reveal) {
     const attrs = revealAttrs(reveal, [
       ["as", "figure"],

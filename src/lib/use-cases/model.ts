@@ -59,9 +59,13 @@ interface Definition<
   timing?: Partial<Timing>;
   /** The number of `Reveal` elements in the preview. */
   hosts?: number;
-  /** The code shows the reveal of the first host. */
   reveal(values: V, index: number): RevealSpec;
-  snippets(reveal: Reveal, values: V): Omit<Files, "reveal">;
+  /** `reveal` is the first host, and `reveals` has one entry for each host. */
+  snippets(
+    reveal: Reveal,
+    values: V,
+    reveals: Reveal[],
+  ): Omit<Files, "reveals">;
 }
 
 interface UseCase {
@@ -90,18 +94,16 @@ export function defineUseCase<const T extends readonly ChoiceTweak[]>(
     const v = values as Values & Timing;
     return revealOf(reveal(v, index), v);
   };
+  const revealsAt = (values: Values) =>
+    Array.from({ length: hosts }, (_, index) => revealAt(values, index));
   return {
     ...rest,
-    preview: (values) =>
-      Array.from(
-        { length: hosts },
-        (_, index) => revealAt(values, index).options,
-      ),
+    preview: (values) => revealsAt(values).map(({ options }) => options),
     snippets(values) {
-      const first = revealAt(values, 0);
+      const reveals = revealsAt(values);
       return filesOf(rest.component, {
-        ...snippets(first, values as Values & Timing),
-        reveal: first,
+        ...snippets(reveals[0]!, values as Values & Timing, reveals),
+        reveals,
       });
     },
   };
