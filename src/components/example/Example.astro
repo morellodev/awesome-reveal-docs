@@ -267,7 +267,7 @@ const blocks: Record<keyof Snippets, { lang: Lang; title: string }> = {
       const index = tabs.tabs.findIndex(
         (tab) => tab.getAttribute("aria-selected") === "true",
       );
-      return index > 0 ? frameworks[index]?.key : undefined;
+      return frameworks[index]?.key;
     };
 
     const selectFramework = (key: string | null) => {
