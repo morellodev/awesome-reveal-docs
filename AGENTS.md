@@ -31,6 +31,7 @@ Cloudflare Workers serves `dist/` as static assets, with no adapter and no Worke
 
 - `public/_redirects` sets the redirects. A rule applies also when an asset exists at its path.
 - `public/_headers` gives `/_astro/*` a long `immutable` cache. Without the Cloudflare adapter, nothing else adds it.
+- Production sends `.md` and `.txt` files without a `charset`, so `public/_headers` adds `charset=utf-8`. `wrangler dev` adds it by itself, so a local test does not show the problem.
 - Without `not_found_handling: "404-page"`, Workers does not serve the Starlight 404 page.
 - `awesome-reveal.dev` is a Workers Custom Domain in `wrangler.jsonc`. A DNS record on the hostname blocks it. A redirect rule sends `www` to the apex with a 301. It needs the proxied `www` record.
 - `awesome-reveal.morello.dev` and `react-awesome-reveal.morello.dev` are old domains. A redirect rule in the `morello.dev` zone sends them to `awesome-reveal.dev` with a 301, and keeps the path. Keep their proxied DNS records: the redirect needs them.
