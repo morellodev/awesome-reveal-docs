@@ -1,0 +1,51 @@
+---
+title: Hero sequence
+description: "Animate a hero section in sequence: the title, then the lead, then the buttons, with a delay on each Reveal. Try it live, then copy the code for your framework."
+sidebar:
+  order: 2
+head:
+  - tag: title
+    content: Hero Animation Sequence on Page Load | Awesome Reveal
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import Example from "../../../components/example/Example.astro";
+
+The title, the lead and the buttons of a hero enter one after the other. Each part has its own `Reveal`, and each `delay` is larger than the previous one.
+
+<Example useCase="sequence" />
+
+## Why a `Reveal` for each part
+
+One `Reveal` with `stagger` on the whole hero would animate the buttons as one element. With a `Reveal` for each part, the buttons get their own `stagger`, and each part can have its own keyframes.
+
+## Tips
+
+- The delays work because the parts enter the viewport together. Above the fold, they enter when the page loads. A `Reveal` that enters later starts its delay at that time.
+- Keep the sequence short. The last part starts two gaps after the first one, so a long gap makes visitors wait for the buttons.
+- The title is often the Largest Contentful Paint (LCP) element. Chrome skips elements at opacity 0 when it measures LCP, so a hidden title can delay LCP. If the title is your LCP element, keep it out of the sequence.
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Text animation"
+    description="Reveal a headline word by word or letter by letter."
+    href="/examples/text-animation/"
+  />
+  <LinkCard
+    title="Options"
+    description="Duration, delay, stagger and the viewport options."
+    href="/concepts/options/"
+  />
+  <LinkCard
+    title="Accessibility"
+    description="Reduced motion, screen readers and pages without JavaScript."
+    href="/concepts/accessibility/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="Install the package for your framework."
+    href="/getting-started/"
+  />
+</CardGrid>

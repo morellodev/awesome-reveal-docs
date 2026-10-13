@@ -13,5 +13,9 @@ export const siteConfig = {
   sponsorUrl: "https://github.com/sponsors/morellodev",
 };
 
-/** The archived versions have a slug prefix, such as `v4`. */
+export const codeThemes = {
+  dark: "night-owl",
+  light: "night-owl-light",
+} as const;
+
 export const isArchived = (id: string) => id === "v4" || id.startsWith("v4/");

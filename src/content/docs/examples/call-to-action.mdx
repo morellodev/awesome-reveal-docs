@@ -1,0 +1,41 @@
+---
+title: Call to action
+description: "Grow a call-to-action banner into place on scroll after a short delay. Try it live, then copy the code for React, Vue, Astro or plain JavaScript."
+sidebar:
+  order: 6
+head:
+  - tag: title
+    content: Call to Action Animation on Scroll | Awesome Reveal
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import Example from "../../../components/example/Example.astro";
+
+A banner grows into place after a short delay, so it gets attention after the content above it.
+
+<Example useCase="cta" />
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Options"
+    description="Duration, delay, stagger and the viewport options."
+    href="/concepts/options/"
+  />
+  <LinkCard
+    title="Springs"
+    description="Make an animation overshoot and settle."
+    href="/concepts/keyframes/#springs"
+  />
+  <LinkCard
+    title="Accessibility"
+    description="Reduced motion, screen readers and pages without JavaScript."
+    href="/concepts/accessibility/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="Install the package for your framework."
+    href="/getting-started/"
+  />
+</CardGrid>

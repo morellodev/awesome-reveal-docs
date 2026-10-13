@@ -1,0 +1,41 @@
+---
+title: Alternating sections
+description: "Slide page sections in from alternating sides as each one scrolls into view. Try it live, then copy the code for React, Vue, Astro or plain JavaScript."
+sidebar:
+  order: 5
+head:
+  - tag: title
+    content: Alternating Sections Animation on Scroll | Awesome Reveal
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import Example from "../../../components/example/Example.astro";
+
+Each section slides in from the side opposite to the previous one. Each section has its own `Reveal`, so it animates when it enters the viewport.
+
+<Example useCase="alternating" />
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Viewport options"
+    description="Choose when an element starts to animate."
+    href="/concepts/options/#viewport"
+  />
+  <LinkCard
+    title="Keyframes"
+    description="The built-in animations, springs and custom keyframes."
+    href="/concepts/keyframes/"
+  />
+  <LinkCard
+    title="Accessibility"
+    description="Reduced motion, screen readers and pages without JavaScript."
+    href="/concepts/accessibility/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="Install the package for your framework."
+    href="/getting-started/"
+  />
+</CardGrid>
