@@ -7,27 +7,13 @@ import starlightVersions from "starlight-versions";
 import codeThemesModule from "./src/integrations/code-themes";
 import { siteConfig } from "./src/site.config";
 
-const site = "https://awesome-reveal.morello.dev";
-// The v4 README and old links point to these root URLs.
-const v4Guides = [
-  "attention-seekers",
-  "custom-animations",
-  "getting-started",
-  "older-browsers",
-  "performances",
-  "revealing-effects",
-  "rsc-frameworks",
-  "typescript-support",
-];
+const site = "https://awesome-reveal.dev";
 const ogUrl = new URL("og.png?v=3", site).href;
 const ogImageAlt = `${siteConfig.name}: scroll reveal animations for React, Vue, Astro and JavaScript.`;
 
 // https://astro.build/config
 export default defineConfig({
   site,
-  redirects: Object.fromEntries(
-    v4Guides.map((page) => [`/guides/${page}`, `/v4/guides/${page}/`]),
-  ),
   experimental: {
     contentIntellisense: true,
   },

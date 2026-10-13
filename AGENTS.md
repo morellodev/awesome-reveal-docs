@@ -1,6 +1,6 @@
 # website
 
-The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.morello.dev>. It uses Astro with Starlight. The packages are in [awesome-reveal/awesome-reveal](https://github.com/awesome-reveal/awesome-reveal). Their development branch is `next`.
+The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.dev>. It uses Astro with Starlight. The packages are in [awesome-reveal/awesome-reveal](https://github.com/awesome-reveal/awesome-reveal). Their development branch is `next`.
 
 ## Map
 
@@ -27,13 +27,17 @@ Search the Astro docs with the `astro-docs` MCP server in `.mcp.json`.
 
 ## Deploys
 
-Vercel serves production, but it does not build pushes to `awesome-reveal/website`: `main` does not deploy, and branches get no preview URL. The move to Cloudflare Workers restores the deploys. The `vercel` CLI is linked to the project: use it to read deploys and build logs, for example `vercel inspect <url> --logs`.
+Cloudflare Workers serves `dist/` as static assets, with no adapter and no Worker code. `wrangler.jsonc` has the config. Workers Builds builds each push: `main` deploys to production, and other branches get a preview URL. Run `pnpm build && pnpm exec wrangler dev` to serve the build with the production routing.
 
-- `react-awesome-reveal.morello.dev` is the old domain. Vercel redirects it (308) to the new domain and keeps the path. Keep its DNS record in Cloudflare: the redirect and the TLS certificate renewal need it.
+- `public/_redirects` sets the redirects. A rule applies also when an asset exists at its path.
+- `public/_headers` gives `/_astro/*` a long `immutable` cache. Without the Cloudflare adapter, nothing else adds it.
+- Without `not_found_handling: "404-page"`, Workers does not serve the Starlight 404 page.
+- `awesome-reveal.dev` is a Workers Custom Domain in `wrangler.jsonc`. A DNS record on the hostname blocks it. A redirect rule sends `www` to the apex with a 301. It needs the proxied `www` record.
+- `awesome-reveal.morello.dev` and `react-awesome-reveal.morello.dev` are old domains. A redirect rule in the `morello.dev` zone sends them to `awesome-reveal.dev` with a 301, and keeps the path. Keep their proxied DNS records: the redirect needs them.
 
 ## Rules
 
-- Ask the user before each change in Vercel, Cloudflare DNS or another external service. Reading is fine.
+- Ask the user before each change in Cloudflare (Workers, DNS, rules) or another external service. Reading is fine.
 - Work on a branch, named `<type>/<description>`. Use Conventional Commits, and squash-merge PRs.
 - Add an official Astro integration with `pnpm astro add <name>`, and other packages with `pnpm add`. Do not edit the dependencies in `package.json` by hand.
 - Take API names, option defaults and examples from the `next` branch of the packages repo, not from the v4 archive.

@@ -7,3 +7,5 @@ minimumReleaseAgeExclude:
 permissions:
   "@awesome-reveal/astro":
     skills: true
+  workerd:
+    build: true

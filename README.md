@@ -1,6 +1,6 @@
 # Awesome Reveal Docs
 
-The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.morello.dev>. The site uses [Starlight](https://starlight.astro.build).
+The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.dev>. The site uses [Starlight](https://starlight.astro.build).
 
 The packages are in [awesome-reveal/awesome-reveal](https://github.com/awesome-reveal/awesome-reveal).
 
