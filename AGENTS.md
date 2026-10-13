@@ -1,4 +1,4 @@
-# awesome-reveal-docs
+# website
 
 The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.morello.dev>. It uses Astro with Starlight. The packages are in [awesome-reveal/awesome-reveal](https://github.com/awesome-reveal/awesome-reveal). Their development branch is `next`.
 

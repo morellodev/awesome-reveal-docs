@@ -64,7 +64,7 @@ export default defineConfig({
         PageTitle: "./src/components/PageTitle.astro",
       },
       editLink: {
-        baseUrl: "https://github.com/morellodev/awesome-reveal-docs/edit/main/",
+        baseUrl: "https://github.com/awesome-reveal/website/edit/main/",
       },
       social: [
         { icon: "heart", label: "Sponsor", href: siteConfig.sponsorUrl },
