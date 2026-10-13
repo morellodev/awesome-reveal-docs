@@ -1,6 +1,6 @@
 ---
 name: updating-dependencies
-description: Updates Astro, Starlight, the Starlight plugins, the lint and format tools, Node or pnpm in the docs site, then checks the site and the Vercel preview. Use when you update dependencies, when `pnpm outdated` lists packages, or when the packages repo changes its Node or pnpm version.
+description: Updates Astro, Starlight, the Starlight plugins, the lint and format tools, Node or pnpm in the docs site, then checks the site and the Workers Builds preview. Use when you update dependencies, when `pnpm outdated` lists packages, or when the packages repo changes its Node or pnpm version.
 ---
 
 # Update the dependencies
@@ -10,7 +10,7 @@ Do the update on a branch, for example `build/update-dependencies`.
 ## Versions to keep
 
 - Node and pnpm: use the same versions as the packages repo (its `.nvmrc` and `packageManager`). To change pnpm, copy the `packageManager` field with its hash. pnpm then downloads and runs that version.
-- Vercel reads the pnpm version from `packageManager`. The build log shows it, but the Vercel docs describe only the Corepack path. Vercel ignores `.nvmrc`: it reads the Node major version from the project settings, or from `engines.node` in `package.json` when it is set. This repo does not set `engines.node`, so ask the user to change the project setting when `.nvmrc` changes.
+- Workers Builds reads the Node version from `.nvmrc`, and `pnpm install` downloads the pnpm version in `packageManager`. The build log shows both, in the line `Detected the following tools from environment`.
 - TypeScript: stay on the highest version that `@astrojs/check` and `typescript-eslint` support. Check their `peerDependencies` with `pnpm view <package> peerDependencies` before you update TypeScript. `typescript-eslint` often allows only some minor versions, for example `<6.1.0`.
 
 ## Update
@@ -29,4 +29,7 @@ Do the update on a branch, for example `build/update-dependencies`.
 
 1. `pnpm peers check`, `pnpm build`, `pnpm exec eslint .` and `pnpm exec prettier --check .`.
 2. Compare the home page, one guide and one archived page with production, for example with screenshots. A Starlight update can change the layout a little.
-3. Push, and check the Vercel preview deploy with `vercel inspect <url> --logs`: the Node and pnpm versions, and no new build warnings.
+3. Push, open a PR, and wait for the "Workers Builds" check in `gh pr checks`. Then open the preview URL, `https://<branch>-awesome-reveal-website.morellodev.workers.dev`, with `-` in place of `/` in the branch name. Wrangler cannot read the build log, so ask the user for the Node and pnpm versions and the new build warnings in the log. These warnings are known, and have no fix in this repo:
+   - `[starlight-versions-plugin] A <PageTitle> component override is already defined`: `src/components/PageTitle.astro` already renders `VersionNotice`.
+   - `[content] Entry docs → 404 was not found`: Starlight then uses its default 404 page. A `src/content/docs/404.md` adds a route conflict and a `/404.md` page.
+   - `wrangler preview is an open beta command`.
