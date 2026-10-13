@@ -29,4 +29,4 @@ Do the update on a branch, for example `build/update-dependencies`.
 
 1. `pnpm peers check`, `pnpm build`, `pnpm exec eslint .` and `pnpm exec prettier --check .`.
 2. Compare the home page, one guide and one archived page with production, for example with screenshots. A Starlight update can change the layout a little.
-3. Push, open a PR, and wait for the "Workers Builds" check in `gh pr checks`. Then open the preview URL. Wrangler cannot read the build log, so ask the user for the Node and pnpm versions and the new build warnings in the log.
+3. Push, open a PR, and wait for the "Workers Builds" check in `gh pr checks`. Then open the preview URL, `https://<branch>-awesome-reveal-website.morellodev.workers.dev`, with `-` in place of `/` in the branch name. Wrangler cannot read the build log, so ask the user for the Node and pnpm versions and the new build warnings in the log.
