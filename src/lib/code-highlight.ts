@@ -1,26 +1,31 @@
-import type { HighlighterCore } from "shiki/core";
+import type { HighlighterCore, LanguageRegistration } from "shiki/core";
 
 export type Lang = "jsx" | "vue" | "astro" | "html" | "js" | "css";
 
 const themes = { dark: "dark", light: "light" };
 
-let shiki: HighlighterCore | undefined;
-let loading: Promise<HighlighterCore> | undefined;
+const grammarImports: Record<
+  Lang,
+  () => Promise<{ default: LanguageRegistration[] }>
+> = {
+  jsx: () => import("shiki/langs/jsx.mjs"),
+  vue: () => import("shiki/langs/vue.mjs"),
+  astro: () => import("shiki/langs/astro.mjs"),
+  html: () => import("shiki/langs/html.mjs"),
+  js: () => import("shiki/langs/javascript.mjs"),
+  css: () => import("shiki/langs/css.mjs"),
+};
 
-// Shiki loads only when a reader uses the form, so most visits do not download it.
-export function loadHighlighter(
-  samples: (readonly [code: string, lang: Lang])[],
-) {
-  loading ??= Promise.all([
+let highlighter: HighlighterCore | undefined;
+let highlighterLoad: Promise<HighlighterCore> | undefined;
+const languageLoads = new Map<Lang, Promise<void>>();
+const warmedUpLanguages = new Set<Lang>();
+
+function loadHighlighterCore() {
+  highlighterLoad ??= Promise.all([
     import("shiki/core"),
     import("shiki/engine/javascript"),
     import("virtual:code-themes"),
-    import("shiki/langs/jsx.mjs"),
-    import("shiki/langs/vue.mjs"),
-    import("shiki/langs/astro.mjs"),
-    import("shiki/langs/html.mjs"),
-    import("shiki/langs/javascript.mjs"),
-    import("shiki/langs/css.mjs"),
   ]).then(
     async ([
       { createHighlighterCore },
@@ -28,27 +33,62 @@ export function loadHighlighter(
       {
         default: { dark, light },
       },
-      ...grammars
-    ]) => {
-      const highlighter = await createHighlighterCore({
+    ]) =>
+      (highlighter = await createHighlighterCore({
         themes: [dark, light],
-        langs: grammars.map((grammar) => grammar.default),
+        langs: [],
         engine: createJavaScriptRegexEngine(),
-      });
-      // The first use of a grammar is slow. Warm up each one with the code of the page, one block in each task.
-      for (const [code, lang] of samples) {
-        highlighter.codeToTokensWithThemes(code, { lang, themes });
+      })),
+  );
+  highlighterLoad.catch(() => {
+    highlighterLoad = undefined;
+  });
+  return highlighterLoad;
+}
+
+function loadAndWarmUpLanguage(lang: Lang, codeSamples: string[]) {
+  let languageLoad = languageLoads.get(lang);
+  if (!languageLoad) {
+    languageLoad = Promise.all([
+      loadHighlighterCore(),
+      grammarImports[lang](),
+    ]).then(async ([loadedHighlighter, { default: grammar }]) => {
+      // A later lazy embed, such as jsx in vue, recompiles the grammar and loses its warm-up. The snippets use none.
+      await loadedHighlighter.loadLanguage(
+        ...grammar.map((registration) => ({
+          ...registration,
+          embeddedLangsLazy: [],
+        })),
+      );
+      // The first use of a grammar is slow. Warm it up with the code of the page, one block in each task.
+      for (const code of codeSamples) {
+        loadedHighlighter.codeToTokensWithThemes(code, { lang, themes });
         await (globalThis.scheduler?.yield?.() ??
           new Promise((resolve) => setTimeout(resolve)));
       }
-      return (shiki = highlighter);
-    },
+      warmedUpLanguages.add(lang);
+    });
+    languageLoads.set(lang, languageLoad);
+    languageLoad.catch(() => languageLoads.delete(lang));
+  }
+  return languageLoad;
+}
+
+// Shiki loads only when a reader uses the form, and each grammar only when its code shows.
+export function loadLanguagesOf(
+  codeBlocks: (readonly [code: string, lang: Lang])[],
+) {
+  const langs = new Set(codeBlocks.map(([, lang]) => lang));
+  return Promise.allSettled(
+    [...langs].map((lang) =>
+      loadAndWarmUpLanguage(
+        lang,
+        codeBlocks.flatMap(([code, blockLang]) =>
+          blockLang === lang ? [code] : [],
+        ),
+      ),
+    ),
   );
-  loading.catch(() => {
-    // A later change tries the download again.
-    loading = undefined;
-  });
-  return loading;
 }
 
 const escapeHtml = (text: string) =>
@@ -65,8 +105,8 @@ export const plainLines = (code: string) =>
 
 // Expressive Code uses `--0` for the dark theme and `--1` for the light theme.
 export function highlight(code: string, lang: Lang) {
-  if (!shiki) return undefined;
-  const tokens = shiki.codeToTokensWithThemes(code, { lang, themes });
+  if (!highlighter || !warmedUpLanguages.has(lang)) return undefined;
+  const tokens = highlighter.codeToTokensWithThemes(code, { lang, themes });
   return tokens
     .map((line) => {
       const spans = line

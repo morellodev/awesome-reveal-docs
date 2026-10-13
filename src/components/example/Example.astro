@@ -147,7 +147,7 @@ const blocks: Record<keyof Snippets, { lang: Lang; title: string }> = {
 <script>
   import {
     highlight,
-    loadHighlighter,
+    loadLanguagesOf,
     plainLines,
     type Lang,
   } from "../../lib/code-highlight";
@@ -222,18 +222,26 @@ const blocks: Record<keyof Snippets, { lang: Lang; title: string }> = {
         block.querySelector("pre")!.dataset.language as Lang,
       ] as const;
 
-    const startHighlighter = () =>
-      loadHighlighter(
-        [...root.querySelectorAll("[data-snippet]")].map(sourceOf),
+    const visibleBlocks = () =>
+      [...root.querySelectorAll("[data-snippet]")].filter(
+        (block) => !block.closest("[hidden]"),
       );
 
-    const colorPlainBlocks = () => {
+    const loadVisibleLanguages = () =>
+      loadLanguagesOf(visibleBlocks().map(sourceOf));
+
+    const highlightPlainBlocks = () => {
       for (const block of root.querySelectorAll("[data-plain]")) {
-        block.querySelector("pre code")!.innerHTML = highlight(
-          ...sourceOf(block),
-        )!;
+        const html = highlight(...sourceOf(block));
+        if (!html) continue;
+        block.querySelector("pre code")!.innerHTML = html;
         block.removeAttribute("data-plain");
       }
+    };
+
+    const highlightVisiblePlainBlocks = () => {
+      if (root.querySelector("[data-plain]"))
+        loadVisibleLanguages().then(highlightPlainBlocks);
     };
 
     const showCode = () => {
@@ -252,8 +260,7 @@ const blocks: Record<keyof Snippets, { lang: Lang; title: string }> = {
         pre.querySelector("code")!.innerHTML = html ?? plainLines(code);
         block.toggleAttribute("data-plain", !html);
       }
-      if (root.querySelector("[data-plain]"))
-        startHighlighter().then(colorPlainBlocks, () => undefined);
+      highlightVisiblePlainBlocks();
     };
 
     const selectedFramework = (): Framework | undefined => {
@@ -308,7 +315,7 @@ const blocks: Record<keyof Snippets, { lang: Lang; title: string }> = {
     form.addEventListener("submit", (event) => event.preventDefault());
     // Start the download before the first change, so the code keeps its colors.
     for (const type of ["pointerover", "focusin"])
-      form.addEventListener(type, () => startHighlighter().catch(() => {}), {
+      form.addEventListener(type, loadVisibleLanguages, {
         once: true,
       });
     resetButton.addEventListener("click", (event) => {
@@ -367,7 +374,10 @@ const blocks: Record<keyof Snippets, { lang: Lang; title: string }> = {
       );
       update();
     }
-    new MutationObserver(scheduleUrl).observe(tabs, {
+    new MutationObserver(() => {
+      scheduleUrl();
+      highlightVisiblePlainBlocks();
+    }).observe(tabs, {
       subtree: true,
       attributeFilter: ["aria-selected"],
     });
