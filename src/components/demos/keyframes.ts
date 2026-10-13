@@ -3,26 +3,14 @@ import {
   type KeyframesFactory,
 } from "@awesome-reveal/astro/keyframes";
 
-const spinSteps = 30;
-
-export const spin = defineKeyframes(({ turns = 1 }: { turns?: number }) => ({
+// The same keyframes as the samples on the Keyframes page.
+const spin = defineKeyframes(({ turns = 1 }: { turns?: number }) => ({
   keyframe: (t) => ({
     opacity: t,
     transform: `rotate(${(1 - t) * turns * 360}deg)`,
   }),
-  steps: spinSteps,
+  steps: 30,
 }));
-
-/** The code of `spin` that the playground shows. Keep it equal to `spin`. */
-export const spinSource = (typeParameter = "") => [
-  `const spin = defineKeyframes${typeParameter}(({ turns = 1 }) => ({`,
-  "  keyframe: (t) => ({",
-  "    opacity: t,",
-  "    transform: `rotate(${(1 - t) * turns * 360}deg)`,",
-  "  }),",
-  `  steps: ${spinSteps},`,
-  "}));",
-];
 
 export const spinTwice = spin({ turns: 2 });
 

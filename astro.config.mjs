@@ -4,7 +4,8 @@ import { defineConfig } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
 import starlightLlmsTxt from "starlight-llms-txt";
 import starlightVersions from "starlight-versions";
-import { interactivePages, siteConfig } from "./src/site.config";
+import codeThemesModule from "./src/integrations/code-themes";
+import { siteConfig } from "./src/site.config";
 
 const site = "https://awesome-reveal.morello.dev";
 // The v4 README and old links point to these root URLs.
@@ -47,7 +48,7 @@ export default defineConfig({
               description: "Source code, issues and discussions",
             },
           ],
-          exclude: ["v4/**", ...interactivePages],
+          exclude: ["v4/**"],
           customSelectors: { all: ["[data-markdown-ignore]"] },
         }),
         starlightVersions({
@@ -91,14 +92,13 @@ export default defineConfig({
       ],
       sidebar: [
         "getting-started",
-        "playground",
+        {
+          label: "Examples",
+          items: [{ autogenerate: { directory: "examples" } }],
+        },
         {
           label: "Concepts",
           items: [{ autogenerate: { directory: "concepts" } }],
-        },
-        {
-          label: "Recipes",
-          items: [{ autogenerate: { directory: "recipes" } }],
         },
         {
           label: "Packages",
@@ -106,7 +106,13 @@ export default defineConfig({
         },
         {
           label: "Guides",
-          items: ["faq", "migrate-from-v4", "agent-skills"],
+          items: [
+            "nextjs",
+            "reveal-on-data",
+            "faq",
+            "migrate-from-v4",
+            "agent-skills",
+          ],
         },
       ],
       head: [
@@ -160,5 +166,6 @@ export default defineConfig({
       ],
     }),
     partytown({ config: { forward: ["dataLayer.push"] } }),
+    codeThemesModule(),
   ],
 });

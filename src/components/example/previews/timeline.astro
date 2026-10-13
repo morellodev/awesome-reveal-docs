@@ -1,0 +1,59 @@
+---
+import { Reveal } from "@awesome-reveal/astro";
+import { releases } from "../../../lib/use-cases/timeline";
+import type { PreviewProps as Props } from "../../../lib/use-cases";
+
+const { options } = Astro.props;
+---
+
+<Reveal as="ol" class="timeline" role="list" {...options[0]}>
+  {releases.map(({ date, month, title }) => (
+    <li>
+      <time class="date" datetime={date}>
+        {month}
+      </time>
+      <span class="title">{title}</span>
+    </li>
+  ))}
+</Reveal>
+
+<style>
+  .timeline {
+    display: grid;
+    gap: 0.375rem;
+    width: min(100%, 22rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.125rem 0.625rem;
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--pv-border);
+    border-radius: 0.5rem;
+    background: var(--pv-surface);
+    line-height: 1.4;
+  }
+  li::before {
+    content: "";
+    align-self: center;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--pv-accent);
+  }
+  .date {
+    font-size: var(--sl-text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--pv-muted);
+  }
+  .title {
+    grid-column: 2;
+    font-weight: 600;
+    color: var(--pv-text);
+  }
+</style>

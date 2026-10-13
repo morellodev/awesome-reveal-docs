@@ -1,0 +1,57 @@
+---
+title: Text animation
+description: "Animate a hero headline one word or one letter at a time on scroll. Try it live, then copy the code for React, Vue, Astro or plain JavaScript."
+sidebar:
+  order: 1
+head:
+  - tag: title
+    content: Text Animation on Scroll | Awesome Reveal
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import Example from "../../../components/example/Example.astro";
+
+The headline enters one word or one letter at a time. Screen readers read the full title one time.
+
+<Example useCase="hero" />
+
+## Keep the text accessible
+
+Split text is a problem for screen readers: they can read each word or letter as a separate item. The code prevents this in two steps:
+
+1. The full title is in an element that only screen readers see. `visually-hidden` is a class in `styles.css`. It hides the element visually, but keeps it for assistive technology.
+2. The animated copy has `aria-hidden`.
+
+Then screen readers read the title one time, and find-in-page finds the full title.
+
+## Tips
+
+- Choose `stagger` between 20 and 40 ms for letters, and between 40 and 80 ms for words. A long text with a large value is slow to finish.
+- Use a short `duration` for letters, for example `400`.
+- Use `fade()` or a small `slide({ distance: 12 })`. Large movements of many small elements look noisy.
+- With `once: false`, the text hides and plays again at each entry. See [Viewport options](/concepts/options/#viewport).
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Stagger"
+    description="Animate the children of an element one after the other."
+    href="/concepts/options/#stagger"
+  />
+  <LinkCard
+    title="Keyframes"
+    description="The built-in animations, springs and custom keyframes."
+    href="/concepts/keyframes/"
+  />
+  <LinkCard
+    title="Accessibility"
+    description="Reduced motion, screen readers and pages without JavaScript."
+    href="/concepts/accessibility/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="Install the package for your framework."
+    href="/getting-started/"
+  />
+</CardGrid>

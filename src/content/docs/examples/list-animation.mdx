@@ -1,0 +1,55 @@
+---
+title: List animation
+description: "Slide the items of a list or timeline in one after the other on scroll. Try it live, then copy the code for React, Vue, Astro or plain JavaScript."
+sidebar:
+  order: 3
+head:
+  - tag: title
+    content: List and Timeline Animation on Scroll | Awesome Reveal
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import Example from "../../../components/example/Example.astro";
+
+The items of a list slide in one after the other. Use it for changelogs, steps and search results.
+
+<Example useCase="timeline" />
+
+## Why one `Reveal` for the whole list
+
+One `Reveal` for the whole list creates one observer and keeps one copy of the options. A `Reveal` around each item creates an observer for each item, and the items reveal at different times as the user scrolls.
+
+With `stagger`, the children reveal together as the list enters the viewport. If the list is long, the last items can start their animation below the fold. Split the list into groups, or give each group its own `Reveal`, as in [Alternating sections](/examples/alternating-sections/).
+
+## Tips
+
+- `stagger: 0` animates all the children together.
+- Choose `stagger` between 40 and 120 ms for lists. A larger value makes a long list slow to finish.
+- The library reads the children when the list is revealed. Items that you add before the reveal animate. Items that you add later do not.
+- `stagger` animates child elements only. Put text in an element, as in [Text animation](/examples/text-animation/).
+- In React, always render the children. See [`useReveal`](/react/#the-usereveal-hook) for the rules with a hook.
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Stagger"
+    description="Animate the children of an element one after the other."
+    href="/concepts/options/#stagger"
+  />
+  <LinkCard
+    title="Options"
+    description="Duration, delay, stagger and the viewport options."
+    href="/concepts/options/"
+  />
+  <LinkCard
+    title="Accessibility"
+    description="Reduced motion, screen readers and pages without JavaScript."
+    href="/concepts/accessibility/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="Install the package for your framework."
+    href="/getting-started/"
+  />
+</CardGrid>

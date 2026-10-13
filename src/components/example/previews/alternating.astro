@@ -1,0 +1,59 @@
+---
+import { Reveal } from "@awesome-reveal/astro";
+import { stories } from "../../../lib/use-cases/alternating";
+import type { PreviewProps as Props } from "../../../lib/use-cases";
+
+const { options } = Astro.props;
+---
+
+<div class="stories">
+  {stories.map(({ title, text }, index) => (
+    <Reveal class:list={["story", { flip: index % 2 }]} {...options[index]}>
+      <span class="art" />
+      <span class="copy">
+        <span class="title">{title}</span>
+        <span class="text">{text}</span>
+      </span>
+    </Reveal>
+  ))}
+</div>
+
+<style>
+  .stories {
+    display: grid;
+    gap: 0.75rem;
+    width: min(100%, 26rem);
+  }
+  .story {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem;
+    border: 1px solid var(--pv-border);
+    border-radius: 0.75rem;
+    background: var(--pv-surface);
+  }
+  .flip {
+    flex-direction: row-reverse;
+    text-align: end;
+  }
+  .art {
+    flex: none;
+    width: 4.5rem;
+    aspect-ratio: 4 / 3;
+    border-radius: 0.5rem;
+    background: var(--pv-gradient);
+  }
+  .copy {
+    display: grid;
+    gap: 0.125rem;
+  }
+  .title {
+    font-weight: 600;
+    color: var(--pv-text);
+  }
+  .text {
+    font-size: var(--sl-text-sm);
+    color: var(--pv-muted);
+  }
+</style>

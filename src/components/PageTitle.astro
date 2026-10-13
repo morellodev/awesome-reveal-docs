@@ -2,12 +2,10 @@
 import Default from "@astrojs/starlight/components/PageTitle.astro";
 import VersionNotice from "starlight-versions/components/VersionNotice.astro";
 import PageActions from "./PageActions.astro";
-import { interactivePages } from "../site.config";
 
 const { id } = Astro.locals.starlightRoute;
-const hasActions = id !== "404" && !interactivePages.includes(id);
 ---
 
 <VersionNotice />
 <Default />
-{hasActions && <PageActions />}
+{id !== "404" && <PageActions />}

@@ -1,0 +1,41 @@
+---
+title: Image reveal
+description: "Reveal an image or a video on scroll with a blur, scale or fade effect. Try it live, then copy the code for React, Vue, Astro or plain JavaScript."
+sidebar:
+  order: 4
+head:
+  - tag: title
+    content: Image Reveal Animation on Scroll | Awesome Reveal
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import Example from "../../../components/example/Example.astro";
+
+A large image comes into focus. A long duration suits a large element, because it moves less than it changes.
+
+<Example useCase="media" />
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Built-in keyframes"
+    description="fade, slide, scale, blur, pop and enter."
+    href="/concepts/keyframes/#built-in-keyframes"
+  />
+  <LinkCard
+    title="Options"
+    description="Duration, delay, stagger and the viewport options."
+    href="/concepts/options/"
+  />
+  <LinkCard
+    title="Accessibility"
+    description="Reduced motion, screen readers and pages without JavaScript."
+    href="/concepts/accessibility/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="Install the package for your framework."
+    href="/getting-started/"
+  />
+</CardGrid>

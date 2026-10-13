@@ -4,10 +4,6 @@ description: "Answers about Awesome Reveal: scroll animations in React, Vue and 
 head:
   - tag: title
     content: "Awesome Reveal FAQ: Scroll Animations for React, Vue, Astro"
-  - tag: meta
-    attrs:
-      property: og:title
-      content: "Awesome Reveal FAQ: Scroll Animations for React, Vue, Astro"
 ---
 
 ## How do I add scroll animations to a React app?
@@ -16,7 +12,7 @@ Install `@awesome-reveal/react` and wrap the content in `Reveal`. The content fa
 
 ## Does Awesome Reveal work with Next.js, SSR and React Server Components?
 
-Yes. `Reveal` renders the element hidden on the server, so the page has no flash before the animation. `Reveal` has the `"use client"` directive, so you can render it in a Server Component. See [Scroll animations in Next.js](/recipes/nextjs/).
+Yes. `Reveal` renders the element hidden on the server, so the page has no flash before the animation. `Reveal` has the `"use client"` directive, so you can render it in a Server Component. See [Scroll animations in Next.js](/nextjs/).
 
 ## Does it support Vue and Astro?
 
@@ -24,7 +20,7 @@ Yes. `@awesome-reveal/vue` has a `v-reveal` directive and a `Reveal` component f
 
 ## How do I animate a list one item at a time?
 
-Set the `stagger` option on the element that holds the items. Each child starts `stagger` milliseconds after the previous one. See [Staggered list](/recipes/staggered-list/).
+Set the `stagger` option on the element that holds the items. Each child starts `stagger` milliseconds after the previous one. See [List animation](/examples/list-animation/).
 
 ## How do I replay the animation every time the element scrolls into view?
 
