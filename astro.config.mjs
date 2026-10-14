@@ -1,4 +1,3 @@
-import partytown from "@astrojs/partytown";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
@@ -103,21 +102,6 @@ export default defineConfig({
       ],
       head: [
         {
-          tag: "script",
-          attrs: {
-            type: "text/partytown",
-            src: "https://www.googletagmanager.com/gtag/js?id=GTM-PNLQX9W4",
-          },
-        },
-        {
-          tag: "script",
-          attrs: {
-            type: "text/partytown",
-          },
-          content:
-            "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','GTM-PNLQX9W4');",
-        },
-        {
           tag: "meta",
           attrs: { property: "og:image", content: ogUrl },
         },
@@ -151,7 +135,6 @@ export default defineConfig({
         },
       ],
     }),
-    partytown({ config: { forward: ["dataLayer.push"] } }),
     codeThemesModule(),
   ],
 });

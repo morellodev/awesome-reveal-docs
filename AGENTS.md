@@ -8,7 +8,7 @@ The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.d
 - `src/content/docs/v4/` and `src/content/versions/v4.json`: the archived docs of `react-awesome-reveal` v4. `starlight-versions` generates them.
 - `src/examples/<framework>/`: code samples that the pages import with `?raw`, inside framework tabs.
 - `src/content/i18n/en.json`: overrides of the UI strings, such as the notice on archived pages.
-- `astro.config.mjs`: the site URL, the sidebar, the archived versions and the head tags (analytics and Open Graph).
+- `astro.config.mjs`: the site URL, the sidebar, the archived versions and the head tags (Open Graph).
 
 ## Commands
 
@@ -29,6 +29,7 @@ Search the Astro docs with the `astro-docs` MCP server in `.mcp.json`.
 
 Cloudflare Workers serves `dist/` as static assets, with no adapter and no Worker code. `wrangler.jsonc` has the config. Workers Builds builds each push: `main` deploys to production, and other branches get a preview URL. Run `pnpm build && pnpm exec wrangler dev` to serve the build with the production routing.
 
+- Cloudflare Web Analytics adds its beacon to the HTML pages by itself, so the site has no analytics code. A `no-transform` value in `Cache-Control` stops the beacon.
 - `public/_redirects` sets the redirects. A rule applies also when an asset exists at its path.
 - `public/_headers` gives `/_astro/*` a long `immutable` cache. Without the Cloudflare adapter, nothing else adds it.
 - Production sends `.md` and `.txt` files without a `charset`, so `public/_headers` adds `charset=utf-8`. `wrangler dev` adds it by itself, so a local test does not show the problem.
