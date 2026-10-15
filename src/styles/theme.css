@@ -192,6 +192,12 @@
   color: var(--ink);
 }
 
+/* Only the ring is set, so the inside offsets of Starlight still keep it unclipped in scroll containers.
+   `:root` outweighs the unlayered `outline: revert` of the Pagefind reset. */
+:root :focus-visible {
+  outline: 2px solid var(--sl-color-text-accent);
+}
+
 :root[data-has-hero] body {
   background-image:
     linear-gradient(var(--grid) 1px, transparent 1px),
@@ -329,7 +335,6 @@ starlight-tabs .tab > [role="tab"]:not([aria-selected="true"]) {
   border-radius: 999px;
   font-size: var(--sl-text-sm);
   font-weight: 700;
-  outline: 2px solid var(--sl-color-text-accent);
   outline-offset: 2px;
 }
 
