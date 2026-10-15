@@ -17,10 +17,10 @@ Use the Node version in `.nvmrc` and the pnpm version in `packageManager`. A she
 
 - `pnpm dev`: start the dev server. When Astro detects an AI agent, it runs the server in the background and prints its URL. If a dev server already runs, it prints that URL. `/_astro/status` returns `{"ok": true}` when the server is ready. Stop it with `pnpm astro dev stop`.
 - `pnpm build`: run `astro check`, then build to `dist/`.
-- `pnpm exec eslint .`
-- `pnpm exec prettier --write .` to format, and `--check` to check.
+- `pnpm check`: run `astro check`, ESLint and Prettier `--check`. A warning fails it.
+- `pnpm exec prettier --write .` to format.
 
-The repo has no tests and no CI. Before a PR, run the build, ESLint and Prettier, and look at the changed pages in the dev server. The build does not check links or anchors.
+The repo has no tests and no CI. Before a PR, run `pnpm check` and `pnpm build`, and look at the changed pages in the dev server. The build does not check links or anchors.
 
 ## Docs lookup
 

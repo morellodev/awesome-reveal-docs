@@ -18,7 +18,7 @@ description: Archives the current docs as a version with starlight-versions, so 
 
 ## Check
 
-- `pnpm build`, `pnpm exec eslint .` and `pnpm exec prettier --check .` pass.
+- `pnpm check` and `pnpm build` pass.
 - The picker shows the new version, and its pages show the notice.
 - The links on the archived pages stay under `/<slug>/`.
 - Old URLs of pages that the new docs remove need redirects to the archive. Ask the user where to put them before you add them.

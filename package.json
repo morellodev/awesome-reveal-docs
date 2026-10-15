@@ -8,6 +8,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
+    "check": "astro check --minimumSeverity warning --minimumFailingSeverity warning && eslint --max-warnings 0 . && prettier --check --log-level warn .",
     "preview": "astro preview",
     "astro": "astro"
   },
