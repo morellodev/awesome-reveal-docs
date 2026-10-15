@@ -38,7 +38,7 @@ Cloudflare Workers serves `dist/` as static assets, with no adapter and no Worke
 - Without `not_found_handling: "404-page"`, Workers does not serve the Starlight 404 page.
 - The site opts in to AI training: `public/robots.txt` and `public/_headers` send `ai-train=yes` content signals. Keep each AI bot policy of the zone at Allow. A Block policy turns on the managed robots.txt, and Cloudflare then prepends `ai-train=no` and `Disallow` rules for AI crawlers to our file.
 - `awesome-reveal.dev` is a Workers Custom Domain in `wrangler.jsonc`. A DNS record on the hostname blocks it. A redirect rule sends `www` to the apex with a 301. It needs the proxied `www` record.
-- `react-awesome-reveal.morello.dev` is the old domain. A redirect rule in the `morello.dev` zone sends it to `awesome-reveal.dev` with a 301, and keeps the path. Keep its proxied `AAAA` record to `100::`: without a record, the hostname does not resolve, and the rule cannot run.
+- `react-awesome-reveal.morello.dev` is the old domain. A redirect rule in the `morello.dev` zone sends it to `awesome-reveal.dev/v4` with a 301, and keeps the path and the query string. The old domain served the v4 docs, so old links must reach the archived pages. Keep its proxied `AAAA` record to `100::`: without a record, the hostname does not resolve, and the rule cannot run.
 
 ## Rules
 
