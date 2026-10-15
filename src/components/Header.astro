@@ -48,6 +48,25 @@ import ThemeToggle from "./ThemeToggle.astro";
     margin-inline-start: auto;
   }
 
+  .search :global(button > kbd) {
+    border-radius: 999px;
+    padding-inline: 0.5rem;
+  }
+
+  .search :global(dialog) {
+    border-color: var(--sl-color-hairline-light);
+  }
+
+  .search :global(#starlight__search) {
+    --sl-search-corners: var(--radius-md);
+    --pagefind-ui-border-radius: var(--radius-md);
+  }
+
+  /* The search shows focus with the accent border. Forced colors mode flattens borders, so it shows the transparent outline instead. */
+  .search :global(#starlight__search input:focus) {
+    outline: 2px solid transparent;
+  }
+
   .controls {
     display: flex;
     align-items: center;
@@ -115,6 +134,21 @@ import ThemeToggle from "./ThemeToggle.astro";
 
     .search {
       margin-inline-start: 0;
+    }
+
+    .search :global(button[data-open-modal]) {
+      border-color: var(--sl-color-hairline-light);
+      border-radius: 999px;
+      padding-inline: 1rem 0.5rem;
+      transition: border-color var(--hover-duration) ease;
+    }
+
+    .search :global(button[data-open-modal]:hover) {
+      border-color: var(--sl-color-text-accent);
+    }
+
+    .search :global(dialog) {
+      border-radius: 1rem;
     }
 
     .versions {

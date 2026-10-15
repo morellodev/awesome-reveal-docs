@@ -94,7 +94,7 @@ export default defineConfig({
         themes: [codeThemes.dark, codeThemes.light],
         useStarlightUiThemeColors: false,
         styleOverrides: {
-          borderRadius: "0.75rem",
+          borderRadius: "var(--radius-md)",
           borderColor: "var(--sl-color-hairline-light)",
           frames: {
             frameBoxShadowCssValue: "none",

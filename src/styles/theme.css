@@ -14,6 +14,8 @@
   --sl-shadow-lg: none;
 
   --hover-duration: 160ms;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
 }
 
 /* Paper is the base, and the ink palette applies only on screen, so print always gets the light palette. */
@@ -31,6 +33,7 @@
   --sl-color-accent-low: color-mix(in oklab, var(--marker) 45%, var(--paper));
   --sl-color-accent: var(--ink);
   --sl-color-accent-high: var(--ink);
+  --current-page-bg: var(--sl-color-accent-low);
 
   --hint: oklch(0.5 0.09 222);
   --sl-color-purple-low: color-mix(in oklab, var(--pencil) 30%, var(--paper));
@@ -76,6 +79,8 @@
     --sl-color-accent-low: oklch(0.32 0.05 91);
     --sl-color-accent: var(--marker);
     --sl-color-accent-high: var(--marker);
+    /* Marker over ink mixes to brown, so only paper gets the marker highlight. */
+    --current-page-bg: var(--sl-color-gray-6);
 
     --hint: var(--pencil);
     --sl-color-purple-low: color-mix(in oklab, var(--pencil) 14%, var(--ink));
@@ -233,10 +238,10 @@
   text-decoration-thickness: 2px;
   text-underline-offset: 0.25em;
   text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
-}
 
-.sl-markdown-content a:not(:where(.not-content *)):hover {
-  text-decoration-color: currentColor;
+  &:hover {
+    text-decoration-color: currentColor;
+  }
 }
 
 .features {
@@ -282,49 +287,53 @@
 
 .social-icons a {
   color: var(--sl-color-gray-2);
-}
 
-.social-icons a:hover {
-  color: var(--sl-color-white);
+  &:hover {
+    color: var(--sl-color-white);
+  }
 }
 
 /* JetBrains Mono runs larger than Hanken Grotesk at the same size. */
-:not(pre) > code:not(.sl-markdown-content *) {
+code:not(pre *, .sl-markdown-content *) {
   font-size: 0.85em;
 }
 
 .pagination-links a {
   border-color: var(--sl-color-hairline-light);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   transition: border-color var(--hover-duration) ease;
+
+  &:hover {
+    border-color: var(--sl-color-text-accent);
+  }
 }
 
-.pagination-links a:hover {
-  border-color: var(--sl-color-text-accent);
+starlight-tabs {
+  [role="tablist"] {
+    border-bottom-width: 1px;
+    border-color: var(--sl-color-hairline-light);
+  }
+
+  [role="tab"]:not([aria-selected="true"]) {
+    --sl-tab-color-border: transparent;
+  }
 }
 
-starlight-tabs [role="tablist"] {
-  border-bottom-width: 1px;
-  border-color: var(--sl-color-hairline-light);
-}
+.expressive-code .copy {
+  button {
+    border-radius: var(--radius-sm);
 
-starlight-tabs .tab > [role="tab"]:not([aria-selected="true"]) {
-  --sl-tab-color-border: transparent;
-}
+    &:is(:hover, :focus-visible)::after {
+      background-color: var(--sl-color-text-accent);
+    }
+  }
 
-.expressive-code .copy button {
-  border-radius: 0.5rem;
-}
-
-.expressive-code .copy button:is(:hover, :focus-visible)::after {
-  background-color: var(--sl-color-text-accent);
-}
-
-.expressive-code .copy .feedback {
-  border-radius: 0.5rem;
-  font-family: var(--sl-font);
-  font-size: var(--sl-text-xs);
-  font-weight: 600;
+  .feedback {
+    border-radius: var(--radius-sm);
+    font-family: var(--sl-font);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+  }
 }
 
 .sl-skip-link:focus {
@@ -338,102 +347,65 @@ starlight-tabs .tab > [role="tab"]:not([aria-selected="true"]) {
   outline-offset: 2px;
 }
 
-@media (min-width: 50rem) {
-  site-search button[data-open-modal] {
-    border-color: var(--sl-color-hairline-light);
-    border-radius: 999px;
-    padding-inline: 1rem 0.5rem;
-    transition: border-color var(--hover-duration) ease;
-  }
-
-  site-search button[data-open-modal]:hover {
-    border-color: var(--sl-color-text-accent);
-  }
-
-  site-search dialog {
-    border-radius: 1rem;
-  }
-}
-
-site-search button[data-open-modal] > kbd {
-  border-radius: 999px;
-  padding-inline: 0.5rem;
-}
-
-site-search dialog {
-  border-color: var(--sl-color-hairline-light);
-}
-
-#starlight__search {
-  --sl-search-corners: 0.75rem;
-}
-
-#starlight__search input {
-  border-radius: 0.75rem;
-}
-
-/* Starlight shows focus with the accent border. Forced colors mode flattens borders, so it shows the transparent outline instead. */
-#starlight__search input:focus {
-  outline: 2px solid transparent;
-}
-
 .sl-menu-button {
   border: 1px solid var(--sl-color-hairline-light);
   background-color: var(--sl-color-bg-nav);
   color: var(--sl-color-white);
+
+  &:has(~ :popover-open) {
+    border-color: var(--sl-color-text-accent);
+  }
 }
 
-.sl-menu-button:has(~ :popover-open) {
-  border-color: var(--sl-color-text-accent);
+mobile-starlight-toc {
+  .toggle {
+    border-color: var(--sl-color-hairline-light);
+    border-radius: 999px;
+    padding-inline-start: 1rem;
+  }
+
+  /* `details` outweighs the unlayered hover rule of starlight-heading-badges, which loads later. */
+  details .toggle:hover,
+  details[open] .toggle {
+    border-color: var(--sl-color-text-accent);
+  }
 }
 
-mobile-starlight-toc .toggle {
-  border-color: var(--sl-color-hairline-light);
-  border-radius: 999px;
-  padding-inline-start: 1rem;
-}
+/* The header and the mobile menu footer both render it. */
+starlight-version-select {
+  label {
+    color: var(--sl-color-gray-2);
 
-mobile-starlight-toc details[open] .toggle {
-  border-color: var(--sl-color-text-accent);
-}
+    &:hover {
+      color: var(--sl-color-white);
+    }
+  }
 
-:root starlight-version-select label {
-  color: var(--sl-color-gray-2);
-}
+  select {
+    width: auto;
+    padding-block: 0.375rem;
+    padding-inline: 1.875rem 1.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+    font-weight: 600;
+    transition: border-color var(--hover-duration) ease;
 
-:root starlight-version-select label:hover {
-  color: var(--sl-color-white);
-}
+    &:hover {
+      border-color: var(--sl-color-text-accent);
+    }
+  }
 
-:root starlight-version-select select {
-  width: auto;
-  padding-block: 0.375rem;
-  padding-inline: 1.875rem 1.75rem;
-  border: 1px solid var(--sl-color-hairline-light);
-  border-radius: 999px;
-  font-weight: 600;
-  transition: border-color var(--hover-duration) ease;
-}
+  .label-icon {
+    inset-inline-start: 0.75rem;
+  }
 
-:root starlight-version-select select:hover {
-  border-color: var(--sl-color-text-accent);
-}
-
-:root starlight-version-select .label-icon {
-  inset-inline-start: 0.75rem;
-}
-
-:root starlight-version-select .caret-icon {
-  inset-inline-end: 0.5rem;
+  .caret-icon {
+    inset-inline-end: 0.5rem;
+  }
 }
 
 .sidebar-content a[aria-current="page"] {
-  background-color: var(--sl-color-gray-6);
+  background-color: var(--current-page-bg);
   color: var(--sl-color-text-accent);
   font-weight: 700;
-}
-
-/* Marker over ink mixes to brown, so only paper gets the marker highlight. */
-:root[data-theme="light"] .sidebar-content a[aria-current="page"] {
-  background-color: var(--sl-color-accent-low);
 }
