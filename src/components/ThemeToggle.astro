@@ -40,6 +40,13 @@ import { Icon } from "@astrojs/starlight/components";
     display: contents;
   }
 
+  /* Otherwise the borders with a hover transition fade to the new theme, and the rest of the page switches at once. */
+  :global(:root[data-theme-switching] *),
+  :global(:root[data-theme-switching] *::before),
+  :global(:root[data-theme-switching] *::after) {
+    transition: none !important;
+  }
+
   /* CSS picks the label too, so it stays correct without JavaScript. */
   :global(:root[data-theme="light"]) .dark,
   :global(:root:not([data-theme="light"])) .light {
@@ -74,7 +81,11 @@ import { Icon } from "@astrojs/starlight/components";
   };
 
   const applyTheme = (theme = storedTheme() ?? systemTheme()) => {
+    root.dataset.themeSwitching = "";
     root.dataset.theme = theme;
+    // The forced layout commits the new colors while transitions are off, so removing the attribute starts none.
+    void root.offsetWidth;
+    delete root.dataset.themeSwitching;
   };
 
   systemLight.addEventListener("change", () => applyTheme());
