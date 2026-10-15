@@ -7,7 +7,7 @@ import { codeThemes } from "./src/code-themes";
 import { siteConfig } from "./src/site.config";
 
 const site = "https://awesome-reveal.dev";
-const ogUrl = new URL("og.png?v=3", site).href;
+const ogUrl = new URL("og.png?v=4", site).href;
 const ogImageAlt = `${siteConfig.name}: scroll reveal animations for React, Vue, Astro and JavaScript.`;
 
 // https://astro.build/config
@@ -81,6 +81,8 @@ export default defineConfig({
       customCss: ["./src/styles/theme.css"],
       components: {
         Head: "./src/components/Head.astro",
+        Header: "./src/components/Header.astro",
+        MobileMenuFooter: "./src/components/MobileMenuFooter.astro",
         Hero: "./src/components/Hero.astro",
         Footer: "./src/components/Footer.astro",
         PageTitle: "./src/components/PageTitle.astro",

@@ -1,0 +1,85 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+---
+
+<starlight-theme-toggle>
+  <button type="button" aria-label="Dark theme" aria-pressed="true">
+    <Icon name="moon" class="moon" />
+    <Icon name="sun" class="sun" />
+  </button>
+</starlight-theme-toggle>
+
+<style>
+  button {
+    display: flex;
+    padding: 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--sl-color-gray-2);
+    font-size: 1.125rem;
+    cursor: pointer;
+  }
+
+  button:hover {
+    color: var(--sl-color-white);
+  }
+
+  :global([data-theme="light"]) .moon,
+  :global([data-theme="dark"]) .sun {
+    display: none;
+  }
+</style>
+
+<script>
+  const storageKey = "starlight-theme";
+  const root = document.documentElement;
+  const systemLight = matchMedia("(prefers-color-scheme: light)");
+
+  const storedTheme = () => {
+    try {
+      return localStorage.getItem(storageKey);
+    } catch {
+      return null;
+    }
+  };
+
+  const storeTheme = (theme: string) => {
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch {
+      // Blocked storage only loses the choice for the next page.
+    }
+  };
+
+  const syncButtons = () => {
+    const dark = root.dataset.theme !== "light";
+    for (const button of document.querySelectorAll(
+      "starlight-theme-toggle button",
+    )) {
+      button.setAttribute("aria-pressed", String(dark));
+    }
+  };
+
+  // With no stored choice, the page follows the system setting, as Starlight's theme select does.
+  systemLight.addEventListener("change", () => {
+    if (storedTheme()) return;
+    root.dataset.theme = systemLight.matches ? "light" : "dark";
+    syncButtons();
+  });
+
+  customElements.define(
+    "starlight-theme-toggle",
+    class extends HTMLElement {
+      connectedCallback() {
+        syncButtons();
+        this.querySelector("button")?.addEventListener("click", () => {
+          const theme = root.dataset.theme === "light" ? "dark" : "light";
+          root.dataset.theme = theme;
+          storeTheme(theme);
+          syncButtons();
+        });
+      }
+    },
+  );
+</script>

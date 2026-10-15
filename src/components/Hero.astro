@@ -7,6 +7,19 @@ const { id, entry } = Astro.locals.starlightRoute;
 const { data } = entry;
 const { title = data.title, tagline, actions = [] } = data.hero ?? {};
 const words = title.split(" ");
+// Starlight's generated 404 page has no actions, so it gives no way back.
+const heroActions =
+  id === "404" && actions.length === 0
+    ? [
+        {
+          text: "Go to the home page",
+          link: "/",
+          variant: "primary" as const,
+          icon: { type: "icon" as const, name: "right-arrow" as const },
+          attrs: {},
+        },
+      ]
+    : actions;
 
 const rise = [
   {
@@ -45,9 +58,9 @@ const rise = [
       <Fragment set:html={tagline} />
     </Reveal>
   )}
-  {actions.length > 0 && (
+  {heroActions.length > 0 && (
     <Reveal class="actions" delay={350} from={{ opacity: 0, y: 12 }}>
-      {actions.map(({ attrs, icon, link, text, variant }) => (
+      {heroActions.map(({ attrs, icon, link, text, variant }) => (
         <LinkButton href={link} variant={variant} icon={icon?.name} {...attrs}>
           {text}
           {icon?.html && <Fragment set:html={icon.html} />}

@@ -1,4 +1,5 @@
 {
+  "404.text": "This page does not exist. Search the docs, or go back to the home page.",
   "starlightVersions.outdated.slug": "This page is for {{slug}} of the legacy <code>react-awesome-reveal</code> package.",
   "starlightVersions.link.latest": "Read the <a href={{link}}>Awesome Reveal docs</a> for the new <code>@awesome-reveal/*</code> packages.",
   "starlightVersions.search.outdated.slug": "Search limited to {{slug}} of <code>react-awesome-reveal</code>.",
