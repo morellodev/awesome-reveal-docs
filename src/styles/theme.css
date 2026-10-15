@@ -285,6 +285,19 @@
   color: var(--hint);
 }
 
+.starlight-aside {
+  border: 1px solid var(--sl-color-hairline-light);
+  border-inline-start: 0.25rem solid var(--sl-color-asides-border);
+  border-radius: var(--radius-md);
+  background-color: var(--sl-color-gray-6);
+}
+
+.starlight-aside__title {
+  font-family: var(--font-display);
+  font-stretch: 85%;
+  font-weight: 700;
+}
+
 .social-icons a {
   color: var(--sl-color-gray-2);
 

@@ -81,6 +81,7 @@ export default defineConfig({
       customCss: ["./src/styles/theme.css"],
       components: {
         Head: "./src/components/Head.astro",
+        Banner: "./src/components/Banner.astro",
         Header: "./src/components/Header.astro",
         MobileMenuFooter: "./src/components/MobileMenuFooter.astro",
         Hero: "./src/components/Hero.astro",
