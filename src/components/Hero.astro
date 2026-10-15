@@ -30,15 +30,6 @@ const heroActions =
         },
       ]
     : actions;
-
-const rise = [
-  {
-    opacity: 0,
-    transform: "translateY(0.35em)",
-    easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-  },
-  { opacity: 1, transform: "none" },
-];
 ---
 
 <div class="hero">
@@ -54,7 +45,7 @@ const rise = [
     data-page-title
     interval={110}
     duration={900}
-    keyframes={rise}
+    from={{ opacity: 0, y: "0.35em" }}
   >
     {words.map((word) => (
       <>

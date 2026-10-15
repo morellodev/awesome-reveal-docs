@@ -87,6 +87,7 @@ export default defineConfig({
         Hero: "./src/components/Hero.astro",
         Footer: "./src/components/Footer.astro",
         PageTitle: "./src/components/PageTitle.astro",
+        ThemeProvider: "./src/components/ThemeProvider.astro",
       },
       editLink: {
         baseUrl: "https://github.com/awesome-reveal/website/edit/main/",

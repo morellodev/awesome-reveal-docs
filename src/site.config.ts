@@ -12,5 +12,3 @@ export const siteConfig = {
   },
   sponsorUrl: "https://github.com/sponsors/morellodev",
 };
-
-export const isArchived = (id: string) => id === "v4" || id.startsWith("v4/");
