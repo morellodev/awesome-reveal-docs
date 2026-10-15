@@ -2,12 +2,16 @@
 import { Icon } from "@astrojs/starlight/components";
 ---
 
-<starlight-theme-toggle>
-  <button type="button" aria-label="Dark theme" aria-pressed="true">
-    <Icon name="moon" class="moon" />
-    <Icon name="sun" class="sun" />
-  </button>
-</starlight-theme-toggle>
+<button type="button" data-theme-toggle>
+  <span class="dark">
+    <Icon name="moon" />
+    <span class="sr-only">Switch to light theme</span>
+  </span>
+  <span class="light">
+    <Icon name="sun" />
+    <span class="sr-only">Switch to dark theme</span>
+  </span>
+</button>
 
 <style>
   button {
@@ -25,61 +29,65 @@ import { Icon } from "@astrojs/starlight/components";
     color: var(--sl-color-white);
   }
 
-  :global([data-theme="light"]) .moon,
-  :global([data-theme="dark"]) .sun {
+  @media (scripting: none) {
+    button {
+      display: none;
+    }
+  }
+
+  .dark,
+  .light {
+    display: contents;
+  }
+
+  /* CSS picks the label too, so it stays correct without JavaScript. */
+  :global(:root[data-theme="light"]) .dark,
+  :global(:root:not([data-theme="light"])) .light {
     display: none;
   }
 </style>
 
 <script>
+  type Theme = "light" | "dark";
+
   const storageKey = "starlight-theme";
   const root = document.documentElement;
   const systemLight = matchMedia("(prefers-color-scheme: light)");
+  const systemTheme = (): Theme => (systemLight.matches ? "light" : "dark");
 
-  const storedTheme = () => {
+  const storedTheme = (): Theme | null => {
     try {
-      return localStorage.getItem(storageKey);
+      const theme = localStorage.getItem(storageKey);
+      return theme === "light" || theme === "dark" ? theme : null;
     } catch {
       return null;
     }
   };
 
-  const storeTheme = (theme: string) => {
+  const storeTheme = (theme: Theme | null) => {
     try {
-      localStorage.setItem(storageKey, theme);
+      if (theme) localStorage.setItem(storageKey, theme);
+      else localStorage.removeItem(storageKey);
     } catch {
       // Blocked storage only loses the choice for the next page.
     }
   };
 
-  const syncButtons = () => {
-    const dark = root.dataset.theme !== "light";
-    for (const button of document.querySelectorAll(
-      "starlight-theme-toggle button",
-    )) {
-      button.setAttribute("aria-pressed", String(dark));
-    }
+  const applyTheme = (theme = storedTheme() ?? systemTheme()) => {
+    root.dataset.theme = theme;
   };
 
-  // With no stored choice, the page follows the system setting, as Starlight's theme select does.
-  systemLight.addEventListener("change", () => {
-    if (storedTheme()) return;
-    root.dataset.theme = systemLight.matches ? "light" : "dark";
-    syncButtons();
+  systemLight.addEventListener("change", () => applyTheme());
+  addEventListener("storage", (event) => {
+    if (event.key === storageKey) applyTheme();
   });
 
-  customElements.define(
-    "starlight-theme-toggle",
-    class extends HTMLElement {
-      connectedCallback() {
-        syncButtons();
-        this.querySelector("button")?.addEventListener("click", () => {
-          const theme = root.dataset.theme === "light" ? "dark" : "light";
-          root.dataset.theme = theme;
-          storeTheme(theme);
-          syncButtons();
-        });
-      }
-    },
-  );
+  document
+    .querySelector("[data-theme-toggle]")
+    ?.addEventListener("click", () => {
+      const theme = root.dataset.theme === "light" ? "dark" : "light";
+      // A choice that matches the system is not stored, so the page follows later system changes again.
+      storeTheme(theme === systemTheme() ? null : theme);
+      applyTheme(theme);
+    });
 </script>

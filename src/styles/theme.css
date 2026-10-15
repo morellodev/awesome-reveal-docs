@@ -13,21 +13,57 @@
   --sl-shadow-md: none;
   --sl-shadow-lg: none;
 
-  --hint: var(--pencil);
-  --grid: color-mix(in oklab, var(--pencil) 7%, transparent);
   --hover-duration: 160ms;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --hover-duration: 0s;
-  }
+/* Paper is the base, and the ink palette applies only on screen, so print always gets the light palette. */
+:root,
+::backdrop {
+  --sl-color-white: var(--ink);
+  --sl-color-gray-1: color-mix(in oklab, var(--ink) 92%, var(--paper));
+  --sl-color-gray-2: color-mix(in oklab, var(--ink) 80%, var(--paper));
+  --sl-color-gray-3: color-mix(in oklab, var(--ink) 64%, var(--paper));
+  --sl-color-gray-4: color-mix(in oklab, var(--ink) 44%, var(--paper));
+  --sl-color-gray-5: color-mix(in oklab, var(--ink) 22%, var(--paper));
+  --sl-color-gray-6: color-mix(in oklab, var(--ink) 8%, var(--paper));
+  --sl-color-black: var(--paper);
+
+  --sl-color-accent-low: color-mix(in oklab, var(--marker) 45%, var(--paper));
+  --sl-color-accent: var(--ink);
+  --sl-color-accent-high: var(--ink);
+
+  --hint: oklch(0.5 0.09 222);
+  --sl-color-purple-low: color-mix(in oklab, var(--pencil) 30%, var(--paper));
+  --sl-color-purple: var(--hint);
+  --sl-color-purple-high: oklch(0.4 0.08 222);
+
+  --sl-color-blue-low: oklch(0.93 0.025 265);
+  --sl-color-blue: oklch(0.58 0.13 265);
+  --sl-color-blue-high: oklch(0.42 0.11 265);
+  --sl-color-green-low: oklch(0.93 0.025 155);
+  --sl-color-green: oklch(0.58 0.13 155);
+  --sl-color-green-high: oklch(0.42 0.11 155);
+  --sl-color-red-low: oklch(0.93 0.025 25);
+  --sl-color-red: oklch(0.58 0.13 25);
+  --sl-color-red-high: oklch(0.42 0.11 25);
+  --sl-color-orange-low: color-mix(in oklab, var(--marker) 30%, var(--paper));
+  --sl-color-orange: oklch(0.7 0.15 80);
+  --sl-color-orange-high: oklch(0.46 0.1 75);
+
+  --sl-color-bg-nav: var(--paper);
+  --sl-color-bg-inline-code: color-mix(in oklab, var(--ink) 7%, var(--paper));
+  --sl-color-hairline-light: color-mix(in oklab, var(--ink) 12%, var(--paper));
+  --sl-color-hairline: color-mix(in oklab, var(--ink) 16%, var(--paper));
+  --sl-color-hairline-shade: var(--sl-color-hairline);
+  --sl-color-backdrop-overlay: color-mix(in oklab, var(--ink) 45%, transparent);
+
+  --grid: color-mix(in oklab, var(--ink) 5%, transparent);
 }
 
-/* Screen only: Starlight's print.css forces light colors with a plain :root rule. */
+/* Each tint keeps the hue of its color. A mix of a warm color into ink goes gray. */
 @media screen {
-  :root,
-  ::backdrop {
+  :root:not([data-theme="light"]),
+  :root:not([data-theme="light"]) ::backdrop {
     --sl-color-white: var(--paper);
     --sl-color-gray-1: color-mix(in oklab, var(--paper) 92%, var(--ink));
     --sl-color-gray-2: color-mix(in oklab, var(--paper) 80%, var(--ink));
@@ -37,47 +73,27 @@
     --sl-color-gray-6: color-mix(in oklab, var(--paper) 7%, var(--ink));
     --sl-color-black: var(--ink);
 
-    --sl-color-accent-low: color-mix(in oklab, var(--marker) 18%, var(--ink));
+    --sl-color-accent-low: oklch(0.32 0.05 91);
     --sl-color-accent: var(--marker);
     --sl-color-accent-high: var(--marker);
 
+    --hint: var(--pencil);
     --sl-color-purple-low: color-mix(in oklab, var(--pencil) 14%, var(--ink));
-    --sl-color-purple: var(--pencil);
     --sl-color-purple-high: var(--pencil);
 
-    --sl-color-blue-low: color-mix(
-      in oklab,
-      var(--sl-color-blue) 16%,
-      var(--ink)
-    );
+    --sl-color-blue-low: oklch(0.32 0.06 265);
     --sl-color-blue: oklch(0.8 0.12 265);
     --sl-color-blue-high: oklch(0.9 0.07 265);
-
-    --sl-color-green-low: color-mix(
-      in oklab,
-      var(--sl-color-green) 16%,
-      var(--ink)
-    );
+    --sl-color-green-low: oklch(0.32 0.05 155);
     --sl-color-green: oklch(0.8 0.12 155);
     --sl-color-green-high: oklch(0.9 0.07 155);
-
-    --sl-color-orange-low: color-mix(
-      in oklab,
-      var(--sl-color-orange) 16%,
-      var(--ink)
-    );
+    --sl-color-red-low: oklch(0.32 0.06 25);
+    --sl-color-red: oklch(0.8 0.12 25);
+    --sl-color-red-high: oklch(0.9 0.07 25);
+    --sl-color-orange-low: oklch(0.32 0.05 82);
     --sl-color-orange: oklch(0.84 0.14 82);
     --sl-color-orange-high: oklch(0.9 0.08 82);
 
-    --sl-color-red-low: color-mix(
-      in oklab,
-      var(--sl-color-red) 16%,
-      var(--ink)
-    );
-    --sl-color-red: oklch(0.8 0.12 25);
-    --sl-color-red-high: oklch(0.9 0.07 25);
-
-    --sl-color-text: var(--sl-color-gray-2);
     --sl-color-bg-nav: var(--ink);
     --sl-color-bg-sidebar: var(--ink);
     --sl-color-bg-inline-code: color-mix(
@@ -96,87 +112,21 @@
       var(--pencil) 10%,
       var(--ink)
     );
-    --code-bg: color-mix(in oklab, var(--pencil) 7%, var(--ink));
-    --code-bar: color-mix(in oklab, var(--pencil) 4%, var(--ink));
     --sl-color-backdrop-overlay: color-mix(
       in oklab,
       var(--ink) 70%,
       transparent
     );
+
+    --grid: color-mix(in oklab, var(--pencil) 7%, transparent);
   }
+}
 
-  :root[data-theme="light"],
-  [data-theme="light"] ::backdrop {
-    --sl-color-white: var(--ink);
-    --sl-color-gray-1: color-mix(in oklab, var(--ink) 92%, var(--paper));
-    --sl-color-gray-2: color-mix(in oklab, var(--ink) 80%, var(--paper));
-    --sl-color-gray-3: color-mix(in oklab, var(--ink) 64%, var(--paper));
-    --sl-color-gray-4: color-mix(in oklab, var(--ink) 44%, var(--paper));
-    --sl-color-gray-5: color-mix(in oklab, var(--ink) 22%, var(--paper));
-    --sl-color-gray-6: color-mix(in oklab, var(--ink) 8%, var(--paper));
-    --sl-color-gray-7: color-mix(in oklab, var(--ink) 4%, var(--paper));
-    --sl-color-black: var(--paper);
-
-    --sl-color-accent-low: color-mix(in oklab, var(--marker) 45%, var(--paper));
-    --sl-color-accent: var(--ink);
-    --sl-color-accent-high: var(--ink);
-
-    --sl-color-purple-low: color-mix(in oklab, var(--pencil) 30%, var(--paper));
-    --sl-color-purple: var(--hint);
-    --sl-color-purple-high: oklch(from var(--pencil) 0.4 0.09 h);
-
-    --sl-color-blue-low: color-mix(
-      in oklab,
-      var(--sl-color-blue) 14%,
-      var(--paper)
-    );
-    --sl-color-blue: oklch(0.58 0.13 265);
-    --sl-color-blue-high: oklch(0.42 0.11 265);
-
-    --sl-color-green-low: color-mix(
-      in oklab,
-      var(--sl-color-green) 14%,
-      var(--paper)
-    );
-    --sl-color-green: oklch(0.58 0.13 155);
-    --sl-color-green-high: oklch(0.42 0.11 155);
-
-    --sl-color-orange-low: color-mix(in oklab, var(--marker) 30%, var(--paper));
-    --sl-color-orange: oklch(0.7 0.15 80);
-    --sl-color-orange-high: oklch(0.46 0.1 75);
-
-    --sl-color-red-low: color-mix(
-      in oklab,
-      var(--sl-color-red) 14%,
-      var(--paper)
-    );
-    --sl-color-red: oklch(0.58 0.13 25);
-    --sl-color-red-high: oklch(0.42 0.11 25);
-
-    --sl-color-bg-nav: var(--paper);
-    --sl-color-bg-sidebar: var(--paper);
-    --sl-color-bg-inline-code: color-mix(in oklab, var(--ink) 7%, var(--paper));
-    --sl-color-hairline-light: color-mix(
-      in oklab,
-      var(--ink) 12%,
-      var(--paper)
-    );
-    --sl-color-hairline: color-mix(in oklab, var(--ink) 16%, var(--paper));
-    --sl-color-hairline-shade: color-mix(
-      in oklab,
-      var(--ink) 16%,
-      var(--paper)
-    );
-    --sl-color-backdrop-overlay: color-mix(
-      in oklab,
-      var(--ink) 45%,
-      transparent
-    );
-
-    --hint: oklch(from var(--pencil) 0.5 0.09 h);
-    --code-bg: color-mix(in oklab, white 55%, var(--paper));
-    --code-bar: color-mix(in oklab, var(--ink) 4%, var(--paper));
-    --grid: color-mix(in oklab, var(--ink) 5%, transparent);
+/* :root:root ties the specificity of the dark rule, so this block must stay after it. The gray steps flip with the theme, so one rule serves both. */
+@media screen and (prefers-contrast: more) {
+  :root:root {
+    --sl-color-hairline-light: var(--sl-color-gray-3);
+    --sl-color-hairline: var(--sl-color-gray-4);
   }
 }
 
@@ -250,10 +200,21 @@
   background-position: center top;
 }
 
-#_top,
-.sl-markdown-content :is(h1, h2, h3) {
+:where(
+  #_top,
+  .sl-markdown-content :is(h1, h2, h3),
+  .card .title,
+  .pagination-links .link-title,
+  .sidebar-content .group-label .large,
+  .right-sidebar-panel h2
+) {
   font-family: var(--font-display);
   font-stretch: 85%;
+  font-weight: 700;
+}
+
+#_top,
+.sl-markdown-content :is(h1, h2, h3) {
   font-weight: 750;
   text-wrap: balance;
 }
@@ -272,31 +233,16 @@
   text-decoration-color: currentColor;
 }
 
-.sl-link-button {
-  font-weight: 700;
-  transition: transform var(--hover-duration) ease;
-}
-
-.sl-link-button:hover {
-  transform: translateY(-2px);
-}
-
-.sl-link-button:active {
-  transform: translateY(1px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sl-link-button:is(:hover, :active) {
-    transform: none;
-  }
-}
-
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   margin: 3rem 0 0;
   padding: 0;
   list-style: none;
+}
+
+:is(.features, .card-grid) {
+  gap: 2.5rem 2rem;
 }
 
 :is(.features li, .card) {
@@ -321,20 +267,6 @@
   color: var(--sl-color-gray-3);
 }
 
-.social-icons a {
-  color: var(--sl-color-gray-3);
-}
-
-/* JetBrains Mono runs larger than Hanken Grotesk at the same size. */
-:not(pre) > code:not(.sl-markdown-content *) {
-  font-size: 0.85em;
-}
-
-.card .title {
-  font-family: var(--font-display);
-  font-stretch: 85%;
-}
-
 .card .icon {
   border: 0;
   background: none;
@@ -342,21 +274,27 @@
   color: var(--hint);
 }
 
-:is(.pagination-links a, .sl-link-card) {
+.social-icons a {
+  color: var(--sl-color-gray-2);
+}
+
+.social-icons a:hover {
+  color: var(--sl-color-white);
+}
+
+/* JetBrains Mono runs larger than Hanken Grotesk at the same size. */
+:not(pre) > code:not(.sl-markdown-content *) {
+  font-size: 0.85em;
+}
+
+.pagination-links a {
   border-color: var(--sl-color-hairline-light);
   border-radius: 0.75rem;
   transition: border-color var(--hover-duration) ease;
 }
 
-:is(.pagination-links a, .sl-link-card):hover {
+.pagination-links a:hover {
   border-color: var(--sl-color-text-accent);
-  background: none;
-}
-
-.pagination-links .link-title {
-  font-family: var(--font-display);
-  font-stretch: 85%;
-  font-weight: 700;
 }
 
 starlight-tabs [role="tablist"] {
@@ -364,16 +302,8 @@ starlight-tabs [role="tablist"] {
   border-color: var(--sl-color-hairline-light);
 }
 
-starlight-tabs .tab > [role="tab"] {
+starlight-tabs .tab > [role="tab"]:not([aria-selected="true"]) {
   --sl-tab-color-border: transparent;
-}
-
-starlight-tabs .tab > [role="tab"][aria-selected="true"] {
-  --sl-tab-color-border: var(--sl-color-text-accent);
-}
-
-:is(.features, .card-grid) {
-  gap: 2.5rem 2rem;
 }
 
 .expressive-code .copy button {
@@ -437,8 +367,9 @@ site-search dialog {
   border-radius: 0.75rem;
 }
 
+/* Starlight shows focus with the accent border. Forced colors mode flattens borders, so it shows the transparent outline instead. */
 #starlight__search input:focus {
-  outline: none;
+  outline: 2px solid transparent;
 }
 
 .sl-menu-button {
@@ -449,7 +380,6 @@ site-search dialog {
 
 .sl-menu-button:has(~ :popover-open) {
   border-color: var(--sl-color-text-accent);
-  background-color: var(--sl-color-bg-nav);
 }
 
 mobile-starlight-toc .toggle {
@@ -492,9 +422,8 @@ mobile-starlight-toc details[open] .toggle {
   inset-inline-end: 0.5rem;
 }
 
-.sidebar-content a[aria-current="page"],
-.sidebar-content a[aria-current="page"]:is(:hover, :focus) {
-  background-color: var(--sl-color-hairline);
+.sidebar-content a[aria-current="page"] {
+  background-color: var(--sl-color-gray-6);
   color: var(--sl-color-text-accent);
   font-weight: 700;
 }
@@ -502,11 +431,4 @@ mobile-starlight-toc details[open] .toggle {
 /* Marker over ink mixes to brown, so only paper gets the marker highlight. */
 :root[data-theme="light"] .sidebar-content a[aria-current="page"] {
   background-color: var(--sl-color-accent-low);
-}
-
-.sidebar-content .group-label .large,
-.right-sidebar-panel h2 {
-  font-family: var(--font-display);
-  font-stretch: 85%;
-  font-weight: 700;
 }

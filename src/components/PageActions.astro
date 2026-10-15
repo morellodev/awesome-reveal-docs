@@ -119,12 +119,6 @@ const askLinks = isArchived(id)
   summary:focus-visible,
   .more[open] summary {
     z-index: 1;
-  }
-  .copy:hover,
-  .copy:focus-visible,
-  summary:hover,
-  summary:focus-visible,
-  .more[open] summary {
     border-color: var(--sl-color-text-accent);
     color: var(--sl-color-white);
   }
@@ -141,10 +135,10 @@ const askLinks = isArchived(id)
     border-radius: 0.75rem;
     background: var(--sl-color-bg-nav);
   }
-  .menu li {
+  li {
     margin: 0;
   }
-  .menu a {
+  a {
     display: block;
     padding: 0.375rem 0.625rem;
     border-radius: 0.5rem;
@@ -152,8 +146,8 @@ const askLinks = isArchived(id)
     font-size: var(--sl-text-sm);
     text-decoration: none;
   }
-  .menu a:hover,
-  .menu a:focus-visible {
+  a:hover,
+  a:focus-visible {
     background: var(--sl-color-gray-6);
     color: var(--sl-color-white);
   }

@@ -17,7 +17,7 @@ import { siteConfig } from "../site.config";
     </span>
   </p>
   <a class="sponsor" href={siteConfig.sponsorUrl}>
-    <Icon name="heart" />
+    <Icon name="heart" color="var(--sl-color-red)" />
     Sponsor on GitHub
   </a>
 </div>
@@ -36,7 +36,7 @@ import { siteConfig } from "../site.config";
     font-size: var(--sl-text-sm);
   }
 
-  p > span {
+  span {
     white-space: nowrap;
   }
 
@@ -66,9 +66,5 @@ import { siteConfig } from "../site.config";
 
   .sponsor:hover {
     border-color: var(--sl-color-red);
-  }
-
-  .sponsor :global(svg) {
-    color: var(--sl-color-red);
   }
 </style>
