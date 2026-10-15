@@ -1,14 +1,15 @@
 ---
-import { Icon } from "@astrojs/starlight/components";
+import Moon from "@lucide/astro/icons/moon";
+import Sun from "@lucide/astro/icons/sun";
 ---
 
 <button type="button" data-theme-toggle>
   <span class="dark">
-    <Icon name="moon" />
+    <Moon />
     <span class="sr-only">Switch to light theme</span>
   </span>
   <span class="light">
-    <Icon name="sun" />
+    <Sun />
     <span class="sr-only">Switch to dark theme</span>
   </span>
 </button>

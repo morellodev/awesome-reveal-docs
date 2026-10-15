@@ -1,0 +1,17 @@
+---
+import Github from "../assets/github.svg";
+import { siteConfig } from "../site.config";
+---
+
+<a href={siteConfig.repoUrl} rel="me">
+  <span class="sr-only">GitHub</span>
+  <Github aria-hidden="true" width="1em" height="1em" />
+</a>
+
+<style>
+  a {
+    display: flex;
+    padding: 0.5em;
+    margin: -0.5em;
+  }
+</style>

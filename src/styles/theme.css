@@ -278,6 +278,13 @@
   color: var(--sl-color-gray-3);
 }
 
+/* Lucide sets a 24px size. Starlight sizes its own icons to the font size the same way. */
+.lucide {
+  width: 1em;
+  height: 1em;
+  overflow: visible;
+}
+
 .card .icon {
   border: 0;
   background: none;

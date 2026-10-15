@@ -2,6 +2,11 @@
 import { Badge, LinkButton } from "@astrojs/starlight/components";
 import DraftContentNotice from "@astrojs/starlight/components/DraftContentNotice.astro";
 import { Cascade, Reveal } from "@awesome-reveal/astro";
+import ArrowRight from "@lucide/astro/icons/arrow-right";
+import Github from "../assets/github.svg";
+
+// The hero schema of Starlight accepts only its own icon names, so the frontmatter name picks the icon here.
+const icons = { github: Github, "right-arrow": ArrowRight };
 
 const { id, entry } = Astro.locals.starlightRoute;
 const { data } = entry;
@@ -60,12 +65,18 @@ const rise = [
   )}
   {heroActions.length > 0 && (
     <Reveal class="actions" delay={350} from={{ opacity: 0, y: 12 }}>
-      {heroActions.map(({ attrs, icon, link, text, variant }) => (
-        <LinkButton href={link} variant={variant} icon={icon?.name} {...attrs}>
-          {text}
-          {icon?.html && <Fragment set:html={icon.html} />}
-        </LinkButton>
-      ))}
+      {heroActions.map(({ attrs, icon, link, text, variant }) => {
+        const Icon =
+          icon?.type === "icon"
+            ? icons[icon.name as keyof typeof icons]
+            : undefined;
+        return (
+          <LinkButton href={link} variant={variant} {...attrs}>
+            {text}
+            {Icon && <Icon aria-hidden="true" width="1em" height="1em" />}
+          </LinkButton>
+        );
+      })}
     </Reveal>
   )}
 </div>
@@ -113,6 +124,10 @@ const rise = [
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem 1.5rem;
+  }
+
+  .sl-link-button :global(svg) {
+    font-size: 1.5rem;
   }
 
   .sl-link-button {

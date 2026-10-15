@@ -1,6 +1,6 @@
 ---
-import { Icon } from "@astrojs/starlight/components";
 import Default from "@astrojs/starlight/components/Footer.astro";
+import Heart from "@lucide/astro/icons/heart";
 import { siteConfig } from "../site.config";
 ---
 
@@ -17,7 +17,7 @@ import { siteConfig } from "../site.config";
     </span>
   </p>
   <a class="sponsor" href={siteConfig.sponsorUrl}>
-    <Icon name="heart" color="var(--sl-color-red)" />
+    <Heart color="var(--sl-color-red)" />
     Sponsor on GitHub
   </a>
 </div>

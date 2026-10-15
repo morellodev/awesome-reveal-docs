@@ -1,31 +1,11 @@
 ---
 import Default from "@astrojs/starlight/components/PageTitle.astro";
-import VersionNotice from "starlight-versions/components/VersionNotice.astro";
 import PageActions from "./PageActions.astro";
+import VersionNotice from "./VersionNotice.astro";
 
 const { id } = Astro.locals.starlightRoute;
 ---
 
-<div class="version-notice">
-  <VersionNotice />
-</div>
+<VersionNotice />
 <Default />
 {id !== "404" && <PageActions />}
-
-<style>
-  .version-notice :global(p) {
-    border-color: var(--sl-color-hairline-light);
-    border-radius: var(--radius-md);
-    background-color: var(--sl-color-gray-6);
-    color: var(--sl-color-gray-2);
-  }
-
-  .version-notice :global(a) {
-    color: var(--sl-color-text-accent);
-    font-weight: 600;
-  }
-
-  .version-notice :global(svg) {
-    color: var(--sl-color-text-accent);
-  }
-</style>

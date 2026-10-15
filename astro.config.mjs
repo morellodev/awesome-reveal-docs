@@ -118,7 +118,6 @@ export default defineConfig({
           },
         },
       },
-      social: [{ icon: "github", label: "GitHub", href: siteConfig.repoUrl }],
       sidebar: [],
       head: [
         {
