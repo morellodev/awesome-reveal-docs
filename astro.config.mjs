@@ -1,9 +1,9 @@
 import starlight from "@astrojs/starlight";
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
 import starlightLlmsTxt from "starlight-llms-txt";
 import starlightVersions from "starlight-versions";
-import codeThemesModule from "./src/integrations/code-themes";
+import { codeThemes } from "./src/code-themes";
 import { siteConfig } from "./src/site.config";
 
 const site = "https://awesome-reveal.dev";
@@ -16,6 +16,40 @@ export default defineConfig({
   experimental: {
     contentIntellisense: true,
   },
+  fonts: [
+    {
+      name: "Bricolage Grotesque",
+      cssVariable: "--font-bricolage",
+      provider: fontProviders.google(),
+      weights: ["600 800"],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["system-ui", "sans-serif"],
+      options: {
+        experimental: {
+          variableAxis: { opsz: ["96"], wdth: [["75", "100"]] },
+        },
+      },
+    },
+    {
+      name: "Hanken Grotesk",
+      cssVariable: "--font-hanken",
+      provider: fontProviders.google(),
+      weights: ["400 700"],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["system-ui", "sans-serif"],
+    },
+    {
+      name: "JetBrains Mono",
+      cssVariable: "--font-jetbrains",
+      provider: fontProviders.google(),
+      weights: ["400 700"],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["ui-monospace", "monospace"],
+    },
+  ],
   integrations: [
     starlight({
       plugins: [
@@ -25,7 +59,7 @@ export default defineConfig({
           description:
             "Awesome Reveal is an open source TypeScript library for scroll reveal animations in React, Vue, Astro and plain JavaScript.",
           details:
-            "It has zero dependencies and about 2 kB gzipped or less for Reveal with one animation. It uses Intersection Observer and the Web Animations API, respects prefers-reduced-motion, and renders content hidden on the server with no flash. Packages: @awesome-reveal/react, @awesome-reveal/vue, @awesome-reveal/astro and @awesome-reveal/core. It is the successor of react-awesome-reveal v4.",
+            "The core package has no dependencies. Reveal with one animation is about 2 kB gzipped or less. It uses Intersection Observer and the Web Animations API, and it obeys prefers-reduced-motion. The server renders the content hidden, so the content does not flash before the animation. Packages: @awesome-reveal/react, @awesome-reveal/vue, @awesome-reveal/astro and @awesome-reveal/core. It is the successor of react-awesome-reveal v4.",
           optionalLinks: [
             {
               label: "GitHub",
@@ -44,62 +78,50 @@ export default defineConfig({
       title: siteConfig.name,
       description: siteConfig.description,
       routeMiddleware: "./src/routeData.ts",
+      customCss: ["./src/styles/theme.css"],
       components: {
+        Head: "./src/components/Head.astro",
+        Hero: "./src/components/Hero.astro",
         Footer: "./src/components/Footer.astro",
         PageTitle: "./src/components/PageTitle.astro",
       },
       editLink: {
         baseUrl: "https://github.com/awesome-reveal/website/edit/main/",
       },
-      social: [
-        { icon: "heart", label: "Sponsor", href: siteConfig.sponsorUrl },
-        {
-          icon: "email",
-          label: "Email",
-          href: "mailto:dennismorello@gmail.com",
+      expressiveCode: {
+        themes: [codeThemes.dark, codeThemes.light],
+        useStarlightUiThemeColors: false,
+        styleOverrides: {
+          borderRadius: "0.75rem",
+          borderColor: "var(--sl-color-hairline-light)",
+          codeBackground: "var(--code-bg)",
+          frames: {
+            frameBoxShadowCssValue: "none",
+            terminalBackground: "var(--code-bg)",
+            inlineButtonForeground: "var(--sl-color-gray-3)",
+            inlineButtonBorder: "var(--sl-color-hairline-light)",
+            inlineButtonBorderOpacity: "1",
+            inlineButtonBackground: "var(--sl-color-text-accent)",
+            inlineButtonBackgroundHoverOrFocusOpacity: "0.12",
+            inlineButtonBackgroundActiveOpacity: "0.2",
+            tooltipSuccessBackground: "var(--sl-color-text-accent)",
+            tooltipSuccessForeground: "var(--sl-color-black)",
+            editorTabBarBackground: "var(--code-bar)",
+            editorTabBarBorderBottomColor: "var(--sl-color-hairline-light)",
+            editorActiveTabBackground: "var(--code-bg)",
+            editorActiveTabForeground: "var(--sl-color-text)",
+            editorActiveTabIndicatorBottomColor: "transparent",
+            editorActiveTabIndicatorTopColor: "var(--sl-color-text-accent)",
+            terminalTitlebarBackground: "var(--code-bar)",
+            terminalTitlebarBorderBottomColor: "var(--sl-color-hairline-light)",
+            terminalTitlebarForeground: "var(--sl-color-text)",
+            terminalTitlebarDotsForeground: "var(--sl-color-gray-4)",
+            terminalTitlebarDotsOpacity: "0.5",
+          },
         },
-        {
-          icon: "github",
-          label: "GitHub",
-          href: siteConfig.repoUrl,
-        },
-        {
-          icon: "linkedin",
-          label: "LinkedIn",
-          href: "https://www.linkedin.com/in/dennismorello",
-        },
-        {
-          icon: "blueSky",
-          label: "Bluesky",
-          href: "https://bsky.app/profile/morello.dev",
-        },
-        { icon: "x.com", label: "X", href: "https://x.com/morellodev" },
-      ],
-      sidebar: [
-        "getting-started",
-        {
-          label: "Examples",
-          items: [{ autogenerate: { directory: "examples" } }],
-        },
-        {
-          label: "Concepts",
-          items: [{ autogenerate: { directory: "concepts" } }],
-        },
-        {
-          label: "Packages",
-          items: ["react", "vue", "astro", "core"],
-        },
-        {
-          label: "Guides",
-          items: [
-            "nextjs",
-            "reveal-on-data",
-            "faq",
-            "migrate-from-v4",
-            "agent-skills",
-          ],
-        },
-      ],
+      },
+      social: [{ icon: "github", label: "GitHub", href: siteConfig.repoUrl }],
+      sidebar: [],
       head: [
         {
           tag: "meta",
@@ -135,6 +157,5 @@ export default defineConfig({
         },
       ],
     }),
-    codeThemesModule(),
   ],
 });

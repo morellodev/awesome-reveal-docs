@@ -1,0 +1,472 @@
+:root {
+  --ink: #181b36;
+  --paper: #eef0f7;
+  --pencil: #9fd3e6;
+  --marker: #ffd23f;
+
+  --sl-font: var(--font-hanken);
+  --sl-font-mono: var(--font-jetbrains);
+  --font-display: var(--font-bricolage);
+
+  --sl-line-height-headings: 1.1;
+  --sl-shadow-sm: none;
+  --sl-shadow-md: none;
+  --sl-shadow-lg: none;
+
+  --hint: var(--pencil);
+  --grid: color-mix(in oklab, var(--pencil) 7%, transparent);
+  --hover-duration: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --hover-duration: 0s;
+  }
+}
+
+/* Screen only: Starlight's print.css forces light colors with a plain :root rule. */
+@media screen {
+  :root,
+  ::backdrop {
+    --sl-color-white: var(--paper);
+    --sl-color-gray-1: color-mix(in oklab, var(--paper) 92%, var(--ink));
+    --sl-color-gray-2: color-mix(in oklab, var(--paper) 80%, var(--ink));
+    --sl-color-gray-3: color-mix(in oklab, var(--paper) 60%, var(--ink));
+    --sl-color-gray-4: color-mix(in oklab, var(--paper) 40%, var(--ink));
+    --sl-color-gray-5: color-mix(in oklab, var(--paper) 18%, var(--ink));
+    --sl-color-gray-6: color-mix(in oklab, var(--paper) 7%, var(--ink));
+    --sl-color-black: var(--ink);
+
+    --sl-color-accent-low: color-mix(in oklab, var(--marker) 18%, var(--ink));
+    --sl-color-accent: var(--marker);
+    --sl-color-accent-high: var(--marker);
+
+    --sl-color-purple-low: color-mix(in oklab, var(--pencil) 14%, var(--ink));
+    --sl-color-purple: var(--pencil);
+    --sl-color-purple-high: var(--pencil);
+
+    --sl-color-blue-low: color-mix(
+      in oklab,
+      var(--sl-color-blue) 16%,
+      var(--ink)
+    );
+    --sl-color-blue: oklch(0.8 0.12 265);
+    --sl-color-blue-high: oklch(0.9 0.07 265);
+
+    --sl-color-green-low: color-mix(
+      in oklab,
+      var(--sl-color-green) 16%,
+      var(--ink)
+    );
+    --sl-color-green: oklch(0.8 0.12 155);
+    --sl-color-green-high: oklch(0.9 0.07 155);
+
+    --sl-color-orange-low: color-mix(
+      in oklab,
+      var(--sl-color-orange) 16%,
+      var(--ink)
+    );
+    --sl-color-orange: oklch(0.84 0.14 82);
+    --sl-color-orange-high: oklch(0.9 0.08 82);
+
+    --sl-color-red-low: color-mix(
+      in oklab,
+      var(--sl-color-red) 16%,
+      var(--ink)
+    );
+    --sl-color-red: oklch(0.8 0.12 25);
+    --sl-color-red-high: oklch(0.9 0.07 25);
+
+    --sl-color-text: var(--sl-color-gray-2);
+    --sl-color-bg-nav: var(--ink);
+    --sl-color-bg-sidebar: var(--ink);
+    --sl-color-bg-inline-code: color-mix(
+      in oklab,
+      var(--pencil) 14%,
+      var(--ink)
+    );
+    --sl-color-hairline-light: color-mix(
+      in oklab,
+      var(--pencil) 22%,
+      var(--ink)
+    );
+    --sl-color-hairline: color-mix(in oklab, var(--pencil) 14%, var(--ink));
+    --sl-color-hairline-shade: color-mix(
+      in oklab,
+      var(--pencil) 10%,
+      var(--ink)
+    );
+    --code-bg: color-mix(in oklab, var(--pencil) 7%, var(--ink));
+    --code-bar: color-mix(in oklab, var(--pencil) 4%, var(--ink));
+    --sl-color-backdrop-overlay: color-mix(
+      in oklab,
+      var(--ink) 70%,
+      transparent
+    );
+  }
+
+  :root[data-theme="light"],
+  [data-theme="light"] ::backdrop {
+    --sl-color-white: var(--ink);
+    --sl-color-gray-1: color-mix(in oklab, var(--ink) 92%, var(--paper));
+    --sl-color-gray-2: color-mix(in oklab, var(--ink) 80%, var(--paper));
+    --sl-color-gray-3: color-mix(in oklab, var(--ink) 64%, var(--paper));
+    --sl-color-gray-4: color-mix(in oklab, var(--ink) 44%, var(--paper));
+    --sl-color-gray-5: color-mix(in oklab, var(--ink) 22%, var(--paper));
+    --sl-color-gray-6: color-mix(in oklab, var(--ink) 8%, var(--paper));
+    --sl-color-gray-7: color-mix(in oklab, var(--ink) 4%, var(--paper));
+    --sl-color-black: var(--paper);
+
+    --sl-color-accent-low: color-mix(in oklab, var(--marker) 45%, var(--paper));
+    --sl-color-accent: var(--ink);
+    --sl-color-accent-high: var(--ink);
+
+    --sl-color-purple-low: color-mix(in oklab, var(--pencil) 30%, var(--paper));
+    --sl-color-purple: var(--hint);
+    --sl-color-purple-high: oklch(from var(--pencil) 0.4 0.09 h);
+
+    --sl-color-blue-low: color-mix(
+      in oklab,
+      var(--sl-color-blue) 14%,
+      var(--paper)
+    );
+    --sl-color-blue: oklch(0.58 0.13 265);
+    --sl-color-blue-high: oklch(0.42 0.11 265);
+
+    --sl-color-green-low: color-mix(
+      in oklab,
+      var(--sl-color-green) 14%,
+      var(--paper)
+    );
+    --sl-color-green: oklch(0.58 0.13 155);
+    --sl-color-green-high: oklch(0.42 0.11 155);
+
+    --sl-color-orange-low: color-mix(in oklab, var(--marker) 30%, var(--paper));
+    --sl-color-orange: oklch(0.7 0.15 80);
+    --sl-color-orange-high: oklch(0.46 0.1 75);
+
+    --sl-color-red-low: color-mix(
+      in oklab,
+      var(--sl-color-red) 14%,
+      var(--paper)
+    );
+    --sl-color-red: oklch(0.58 0.13 25);
+    --sl-color-red-high: oklch(0.42 0.11 25);
+
+    --sl-color-bg-nav: var(--paper);
+    --sl-color-bg-sidebar: var(--paper);
+    --sl-color-bg-inline-code: color-mix(in oklab, var(--ink) 7%, var(--paper));
+    --sl-color-hairline-light: color-mix(
+      in oklab,
+      var(--ink) 12%,
+      var(--paper)
+    );
+    --sl-color-hairline: color-mix(in oklab, var(--ink) 16%, var(--paper));
+    --sl-color-hairline-shade: color-mix(
+      in oklab,
+      var(--ink) 16%,
+      var(--paper)
+    );
+    --sl-color-backdrop-overlay: color-mix(
+      in oklab,
+      var(--ink) 45%,
+      transparent
+    );
+
+    --hint: oklch(from var(--pencil) 0.5 0.09 h);
+    --code-bg: color-mix(in oklab, white 55%, var(--paper));
+    --code-bar: color-mix(in oklab, var(--ink) 4%, var(--paper));
+    --grid: color-mix(in oklab, var(--ink) 5%, transparent);
+  }
+}
+
+:root[data-has-hero] {
+  --sl-content-width: 64rem;
+}
+
+:root {
+  --sl-badge-default-bg: var(--sl-color-accent-low);
+  --sl-badge-default-border: color-mix(
+    in oklab,
+    var(--sl-color-accent) 50%,
+    transparent
+  );
+  --sl-badge-default-text: var(--sl-color-accent-high);
+  --sl-badge-note-bg: var(--sl-color-blue-low);
+  --sl-badge-note-border: color-mix(
+    in oklab,
+    var(--sl-color-blue) 50%,
+    transparent
+  );
+  --sl-badge-note-text: var(--sl-color-blue-high);
+  --sl-badge-tip-bg: var(--sl-color-purple-low);
+  --sl-badge-tip-border: color-mix(
+    in oklab,
+    var(--sl-color-purple) 50%,
+    transparent
+  );
+  --sl-badge-tip-text: var(--sl-color-purple-high);
+  --sl-badge-success-bg: var(--sl-color-green-low);
+  --sl-badge-success-border: color-mix(
+    in oklab,
+    var(--sl-color-green) 50%,
+    transparent
+  );
+  --sl-badge-success-text: var(--sl-color-green-high);
+  --sl-badge-caution-bg: var(--sl-color-orange-low);
+  --sl-badge-caution-border: color-mix(
+    in oklab,
+    var(--sl-color-orange) 50%,
+    transparent
+  );
+  --sl-badge-caution-text: var(--sl-color-orange-high);
+  --sl-badge-danger-bg: var(--sl-color-red-low);
+  --sl-badge-danger-border: color-mix(
+    in oklab,
+    var(--sl-color-red) 50%,
+    transparent
+  );
+  --sl-badge-danger-text: var(--sl-color-red-high);
+}
+
+:root :is(.sl-badge, span[data-shb-badge]) {
+  border-radius: 999px;
+  font-family: var(--sl-font);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding-inline: 0.55em;
+}
+
+::selection {
+  background: var(--marker);
+  color: var(--ink);
+}
+
+:root[data-has-hero] body {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  background-position: center top;
+}
+
+.site-title {
+  color: var(--sl-color-white);
+  font-family: var(--font-display);
+  font-size: clamp(1.0625rem, 0.9rem + 1vw, 1.25rem);
+  font-weight: 800;
+  font-stretch: 78%;
+  letter-spacing: 0.01em;
+}
+
+#_top,
+.sl-markdown-content :is(h1, h2, h3) {
+  font-family: var(--font-display);
+  font-stretch: 85%;
+  font-weight: 750;
+  text-wrap: balance;
+}
+
+.sl-markdown-content :is(p, li) {
+  text-wrap: pretty;
+}
+
+.sl-markdown-content a:not(:where(.not-content *)) {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+}
+
+.sl-markdown-content a:not(:where(.not-content *)):hover {
+  text-decoration-color: currentColor;
+}
+
+.sl-link-button {
+  font-weight: 700;
+  transition: transform var(--hover-duration) ease;
+}
+
+.sl-link-button:hover {
+  transform: translateY(-2px);
+}
+
+.sl-link-button:active {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sl-link-button:is(:hover, :active) {
+    transform: none;
+  }
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  margin: 3rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+:is(.features li, .card) {
+  padding: 1.25rem 0 0;
+  border: 0;
+  border-top: 2px solid var(--sl-color-white);
+  background: none;
+}
+
+:is(.features h2, .card .title) {
+  color: var(--sl-color-white);
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.features h2 {
+  margin-bottom: 0.5rem;
+}
+
+:is(.features p, .card .body) {
+  color: var(--sl-color-gray-3);
+}
+
+.social-icons a {
+  color: var(--sl-color-gray-3);
+}
+
+/* JetBrains Mono runs larger than Hanken Grotesk at the same size. */
+:not(pre) > code:not(.sl-markdown-content *) {
+  font-size: 0.85em;
+}
+
+.card .title {
+  font-family: var(--font-display);
+  font-stretch: 85%;
+}
+
+.card .icon {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--hint);
+}
+
+:is(.pagination-links a, .sl-link-card) {
+  border-color: var(--sl-color-hairline-light);
+  border-radius: 0.75rem;
+  transition: border-color var(--hover-duration) ease;
+}
+
+:is(.pagination-links a, .sl-link-card):hover {
+  border-color: var(--sl-color-text-accent);
+  background: none;
+}
+
+.pagination-links .link-title {
+  font-family: var(--font-display);
+  font-stretch: 85%;
+  font-weight: 700;
+}
+
+starlight-tabs [role="tablist"] {
+  border-bottom-width: 1px;
+  border-color: var(--sl-color-hairline-light);
+}
+
+starlight-tabs .tab > [role="tab"] {
+  --sl-tab-color-border: transparent;
+}
+
+starlight-tabs .tab > [role="tab"][aria-selected="true"] {
+  --sl-tab-color-border: var(--sl-color-text-accent);
+}
+
+:is(.features, .card-grid) {
+  gap: 2.5rem 2rem;
+}
+
+.expressive-code .copy button {
+  border-radius: 0.5rem;
+}
+
+.expressive-code .copy button:is(:hover, :focus-visible)::after {
+  background-color: var(--sl-color-text-accent);
+}
+
+.expressive-code .copy .feedback {
+  border-radius: 0.5rem;
+  font-family: var(--sl-font);
+  font-size: var(--sl-text-xs);
+  font-weight: 600;
+}
+
+.sl-skip-link:focus {
+  top: calc(var(--sl-nav-height) / 2);
+  inset-inline-start: var(--sl-nav-pad-x);
+  translate: 0 -50%;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: var(--sl-text-sm);
+  font-weight: 700;
+  outline: 2px solid var(--sl-color-text-accent);
+  outline-offset: 2px;
+}
+
+@media (min-width: 50rem) {
+  site-search button[data-open-modal] {
+    border-color: var(--sl-color-hairline-light);
+    border-radius: 999px;
+    padding-inline: 1rem 0.5rem;
+    transition: border-color var(--hover-duration) ease;
+  }
+
+  site-search button[data-open-modal]:hover {
+    border-color: var(--sl-color-text-accent);
+  }
+
+  site-search dialog {
+    border-radius: 1rem;
+  }
+}
+
+site-search button[data-open-modal] > kbd {
+  border-radius: 999px;
+  padding-inline: 0.5rem;
+}
+
+site-search dialog {
+  border-color: var(--sl-color-hairline-light);
+}
+
+#starlight__search {
+  --sl-search-corners: 0.75rem;
+}
+
+#starlight__search input {
+  border-radius: 0.75rem;
+}
+
+#starlight__search input:focus {
+  outline: none;
+}
+
+.sl-menu-button {
+  border: 1px solid var(--sl-color-hairline-light);
+  background-color: var(--sl-color-bg-nav);
+  color: var(--sl-color-white);
+}
+
+.sl-menu-button:has(~ :popover-open) {
+  border-color: var(--sl-color-text-accent);
+  background-color: var(--sl-color-bg-nav);
+}
+
+mobile-starlight-toc .toggle {
+  border-color: var(--sl-color-hairline-light);
+  border-radius: 999px;
+  padding-inline-start: 1rem;
+}
+
+mobile-starlight-toc details[open] .toggle {
+  border-color: var(--sl-color-text-accent);
+}

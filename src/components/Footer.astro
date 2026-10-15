@@ -5,25 +5,70 @@ import { siteConfig } from "../site.config";
 ---
 
 <Default />
-<p class="sponsor">
-  <Icon name="heart" /> {siteConfig.name} is free and open source.{" "}
-  <a href={siteConfig.sponsorUrl}>Sponsor it on GitHub</a>.
-</p>
+<div class="site-footer">
+  <p>
+    <span>
+      Released under the{" "}
+      <a href={`${siteConfig.repoUrl}/blob/HEAD/LICENSE`}>MIT License</a>.
+    </span>{" "}
+    <span>
+      Copyright © 2019-present{" "}
+      <a href={siteConfig.author.url}>{siteConfig.author.name}</a>.
+    </span>
+  </p>
+  <a class="sponsor" href={siteConfig.sponsorUrl}>
+    <Icon name="heart" />
+    Sponsor on GitHub
+  </a>
+</div>
 
 <style>
-  .sponsor {
-    margin-top: 2rem;
-    text-align: center;
-    font-size: var(--sl-text-xs);
+  .site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--sl-color-hairline);
     color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
   }
-  .sponsor a {
+
+  p > span {
     white-space: nowrap;
   }
+
+  p a {
+    color: var(--sl-color-gray-2);
+    text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+    text-underline-offset: 0.2em;
+  }
+
+  p a:hover {
+    color: var(--sl-color-white);
+    text-decoration-color: currentColor;
+  }
+
+  .sponsor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em 1em;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+    color: var(--sl-color-white);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color var(--hover-duration) ease;
+  }
+
+  .sponsor:hover {
+    border-color: var(--sl-color-red);
+  }
+
   .sponsor :global(svg) {
-    display: inline-block;
-    margin-inline-end: 0.25em;
-    vertical-align: -0.125em;
     color: var(--sl-color-red);
   }
 </style>

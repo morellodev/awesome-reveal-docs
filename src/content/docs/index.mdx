@@ -1,6 +1,6 @@
 ---
 title: Awesome Reveal
-description: Add scroll reveal animations to React, Vue, Astro or plain JavaScript in a few lines. Zero dependencies, accessible, SSR-ready and built on native browser APIs.
+description: Scroll reveal animations for React, Vue, Astro and plain JavaScript. They use the Intersection Observer and Web Animations APIs and support reduced motion.
 head:
   - tag: title
     content: "Awesome Reveal: Scroll Animations for React, Vue and Astro"
@@ -9,197 +9,54 @@ head:
       property: og:type
       content: website
 template: splash
+editUrl: false
 hero:
-  title: Beautiful scroll reveal animations for React, Vue and Astro
-  tagline: Make content fade, slide and pop in as it scrolls into view. About 2 kB, zero dependencies, and built on native browser APIs that work in every major browser.
+  title: Scroll reveal animations
+  tagline: Reveal elements as they scroll into view, in React, Vue, Astro or plain JavaScript. The core package has no dependencies.
   actions:
-    - text: Get started
-      icon: right-arrow
-      link: /getting-started/
-      variant: primary
     - text: View on GitHub
       icon: github
       link: https://github.com/awesome-reveal/awesome-reveal
-      variant: secondary
-    - text: Migrate from v4
-      link: /migrate-from-v4/
+      variant: primary
+    - text: react-awesome-reveal v4 docs
+      icon: right-arrow
+      link: /v4/
       variant: minimal
 ---
 
-import {
-  CardGrid,
-  Code,
-  LinkCard,
-  TabItem,
-  Tabs,
-} from "@astrojs/starlight/components";
-import {
-  blur,
-  enter,
-  fade,
-  pop,
-  scale,
-  slide,
-} from "@awesome-reveal/astro/keyframes";
-import Demo from "../../components/demos/Demo.astro";
-import DemoGrid from "../../components/demos/DemoGrid.astro";
-import FeatureCard from "../../components/FeatureCard.astro";
-import FeatureGrid from "../../components/FeatureGrid.astro";
-import astroReveal from "../../examples/astro/reveal.astro?raw";
-import jsReveal from "../../examples/javascript/reveal.js?raw";
-import reactReveal from "../../examples/react/reveal.jsx?raw";
-import vueReveal from "../../examples/vue/reveal.vue?raw";
+import { Cascade } from "@awesome-reveal/astro";
 
-## Reveal anything in a few lines of code
+:::tip[In active development]
+The `@awesome-reveal/*` packages are prereleases, and the API can change before version 1.0. These docs show the current prerelease API.
+:::
 
-Wrap an element in `Reveal`, put `v-reveal` on it, or call `reveal()`. It animates as soon as it scrolls into view, with no CSS to write for the animation and no layout shift.
-
-<Tabs syncKey="framework">
-  <TabItem label="React" icon="seti:react">
-    <Code code={reactReveal} lang="jsx" />
-  </TabItem>
-  <TabItem label="Vue" icon="seti:vue">
-    <Code code={vueReveal} lang="vue" />
-  </TabItem>
-  <TabItem label="Astro" icon="astro">
-    <Code code={astroReveal} lang="astro" />
-  </TabItem>
-  <TabItem label="JavaScript" icon="seti:javascript">
-    <Code code={jsReveal} lang="js" />
-  </TabItem>
-</Tabs>
-
-By default, the element fades in and slides up. To use [another animation](/concepts/keyframes/), set one option.
-
-## See it in action
-
-Each tile uses a built-in animation. The caption shows the call that creates its keyframes.
-
-<DemoGrid>
-  <Demo code="fade()" keyframes={fade()} />
-  <Demo code="slide()" keyframes={slide()} />
-  <Demo code="scale()" keyframes={scale()} />
-  <Demo code="blur()" keyframes={blur()} />
-  <Demo code="pop()" keyframes={pop()} />
-  <Demo
-    code="enter({ x: -40, rotate: -10 })"
-    keyframes={enter({ x: -40, rotate: -10 })}
-  />
-</DemoGrid>
-
-## Why Awesome Reveal
-
-<FeatureGrid>
-  <FeatureCard color="orange" title="Tiny and dependency-free" icon="feather">
-    About 2 kB gzipped for `Reveal` with one animation, with zero third-party
-    dependencies. Tree-shaking keeps only the animations that you import.
-  </FeatureCard>
-  <FeatureCard color="orange" title="Smooth, native performance" icon="zap">
-    Intersection Observer detects the reveal, with no scroll listeners. The Web
-    Animations API runs it on the compositor where possible.
-  </FeatureCard>
-  <FeatureCard
-    color="green"
-    title="Works in every major browser"
-    icon="app-window"
-  >
-    Built on [Baseline Widely available](/concepts/browser-support/) web APIs
-    that Chrome, Edge, Firefox and Safari have supported for years.
-  </FeatureCard>
-  <FeatureCard
-    color="green"
-    title="Accessible by default"
-    icon="person-standing"
-  >
-    Respects `prefers-reduced-motion` out of the box. Hidden content stays in
-    the accessibility tree and in find-in-page.
-  </FeatureCard>
-  <FeatureCard
-    color="blue"
-    title="Server rendering with no flash"
-    icon="server"
-  >
-    React, Vue and Astro render content hidden on the server, so it never
-    flashes before the animation. Create keyframes in React Server Components or
-    in the Astro frontmatter.
-  </FeatureCard>
-  <FeatureCard color="blue" title="Built for TypeScript" icon="seti:typescript">
-    Strict types for every option, element and keyframe, with full autocomplete
-    in your editor.
-  </FeatureCard>
-  <FeatureCard color="purple" title="Custom animations" icon="spline">
-    Six built-in animations, spring easing, and custom keyframes from any
-    function of time. See [Keyframes](/concepts/keyframes/).
-  </FeatureCard>
-  <FeatureCard color="purple" title="Ready for AI coding agents" icon="bot">
-    The packages ship [agent skills](/agent-skills/), so Claude Code, Cursor and
-    other agents add animations and migrate v4 code the right way.
-  </FeatureCard>
-</FeatureGrid>
-
-## Packages
-
-<CardGrid>
-  <LinkCard
-    title="@awesome-reveal/react"
-    description="The Reveal component and the useReveal hook for React 18 or later."
-    href="/react/"
-  />
-  <LinkCard
-    title="@awesome-reveal/vue"
-    description="The v-reveal directive and the Reveal component for Vue 3.5 or later."
-    href="/vue/"
-  />
-  <LinkCard
-    title="@awesome-reveal/astro"
-    description="The Reveal component for Astro 6 or 7, with no client framework."
-    href="/astro/"
-  />
-  <LinkCard
-    title="@awesome-reveal/core"
-    description="The framework-independent core, for plain JavaScript and for adapters to other frameworks."
-    href="/core/"
-  />
-</CardGrid>
-
-## Examples
-
-<CardGrid>
-  <LinkCard
-    title="Text animation"
-    description="Reveal a headline word by word or letter by letter."
-    href="/examples/text-animation/"
-  />
-  <LinkCard
-    title="Staggered list"
-    description="Reveal the items of a list or a grid one after the other."
-    href="/examples/staggered-list/"
-  />
-  <LinkCard
-    title="Image reveal"
-    description="Bring an image into focus as it scrolls into view."
-    href="/examples/image-reveal/"
-  />
-  <LinkCard
-    title="Alternating sections"
-    description="Slide each section in from the opposite side."
-    href="/examples/alternating-sections/"
-  />
-</CardGrid>
-
-## Guides
-
-<CardGrid>
-  <LinkCard
-    title="Next.js"
-    description="Use Reveal in the App Router and in Server Components."
-    href="/nextjs/"
-  />
-  <LinkCard
-    title="Reveal after data loads"
-    description="Let your own state decide when an element reveals."
-    href="/reveal-on-data/"
-  />
-</CardGrid>
-
-Have a question? Read the [FAQ](/faq/). Coming from `react-awesome-reveal`? Awesome Reveal is its successor. Read the [migration guide](/migrate-from-v4/).
+<Cascade as="ul" class="features not-content" interval={100}>
+  <li>
+    <h2>Native browser APIs</h2>
+    <p>
+      Intersection Observer detects when an element enters the viewport, and the
+      Web Animations API animates it. No animation library loads in the browser.
+    </p>
+  </li>
+  <li>
+    <h2>No flash of content</h2>
+    <p>
+      The server renders the content hidden, so it does not show before the
+      animation starts. If the script fails, the content shows after 5 seconds.
+    </p>
+  </li>
+  <li>
+    <h2>Reduced motion support</h2>
+    <p>
+      When the operating system asks for reduced motion, the content shows
+      immediately, with no animation.
+    </p>
+  </li>
+  <li>
+    <h2>One core, four packages</h2>
+    <p>
+      The React, Vue, Astro and JavaScript packages share one core and the same
+      options. Each package includes TypeScript types.
+    </p>
+  </li>
+</Cascade>

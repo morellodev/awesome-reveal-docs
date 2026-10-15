@@ -58,7 +58,7 @@ const askLinks = isArchived(id)
         margin-left: 0;
       }
       .actions summary {
-        border-radius: 0.5rem;
+        border-radius: 999px;
       }
       .actions summary::before {
         content: "Page actions";
@@ -72,6 +72,7 @@ const askLinks = isArchived(id)
     margin: 0.5rem 0 0;
   }
   .split {
+    position: relative;
     display: inline-flex;
   }
   .copy,
@@ -81,36 +82,42 @@ const askLinks = isArchived(id)
     gap: 0.35em;
     box-sizing: border-box;
     height: 1.875rem;
-    padding: 0 0.65rem;
-    border: 1px solid var(--sl-color-hairline);
-    background: var(--sl-color-bg-nav);
+    padding: 0 0.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    background: none;
     color: var(--sl-color-gray-2);
     font: inherit;
     font-size: var(--sl-text-xs);
+    font-weight: 600;
     line-height: 1.4;
     cursor: pointer;
+    transition:
+      border-color var(--hover-duration) ease,
+      color var(--hover-duration) ease;
   }
   .copy {
     position: relative;
-    border-radius: 0.5rem 0 0 0.5rem;
+    padding-inline-start: 0.875rem;
+    border-radius: 999px 0 0 999px;
   }
   summary {
     list-style: none;
-    border-radius: 0 0.5rem 0.5rem 0;
+    position: relative;
+    padding-inline: 0.5rem 0.625rem;
+    border-radius: 0 999px 999px 0;
   }
   summary::-webkit-details-marker {
     display: none;
   }
   /* The halves overlap by one border, and the active half sits on top to show its whole outline. */
   .more {
-    position: relative;
     margin-left: -1px;
   }
   .copy:hover,
   .copy:focus-visible,
-  .more:hover,
-  .more:focus-within,
-  .more[open] {
+  summary:hover,
+  summary:focus-visible,
+  .more[open] summary {
     z-index: 1;
   }
   .copy:hover,
@@ -118,7 +125,7 @@ const askLinks = isArchived(id)
   summary:hover,
   summary:focus-visible,
   .more[open] summary {
-    border-color: var(--sl-color-accent);
+    border-color: var(--sl-color-text-accent);
     color: var(--sl-color-white);
   }
   .menu {
@@ -130,10 +137,9 @@ const askLinks = isArchived(id)
     margin: 0;
     padding: 0.25rem;
     list-style: none;
-    border: 1px solid var(--sl-color-hairline);
-    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.75rem;
     background: var(--sl-color-bg-nav);
-    box-shadow: var(--sl-shadow-md);
   }
   .menu li {
     margin: 0;
@@ -141,7 +147,7 @@ const askLinks = isArchived(id)
   .menu a {
     display: block;
     padding: 0.375rem 0.625rem;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     color: var(--sl-color-gray-1);
     font-size: var(--sl-text-sm);
     text-decoration: none;

@@ -6,7 +6,8 @@ The docs site for the `@awesome-reveal/*` packages, at <https://awesome-reveal.d
 
 - `src/content/docs/`: the current docs.
 - `src/content/docs/v4/` and `src/content/versions/v4.json`: the archived docs of `react-awesome-reveal` v4. `starlight-versions` generates them.
-- `src/examples/<framework>/`: code samples that the pages import with `?raw`, inside framework tabs.
+- `src/styles/theme.css`: the theme, on the Starlight tokens. The code colors are in `src/code-themes.ts`.
+- `src/components/`: overrides of Starlight components. A font in `fonts` of `astro.config.mjs` loads only when `Head.astro` renders its `<Font>` tag.
 - `src/content/i18n/en.json`: overrides of the UI strings, such as the notice on archived pages.
 - `astro.config.mjs`: the site URL, the sidebar, the archived versions and the head tags (Open Graph).
 

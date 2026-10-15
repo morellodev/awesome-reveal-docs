@@ -1,0 +1,111 @@
+---
+import { Badge, LinkButton } from "@astrojs/starlight/components";
+import DraftContentNotice from "@astrojs/starlight/components/DraftContentNotice.astro";
+import { Cascade, Reveal } from "@awesome-reveal/astro";
+
+const { id, entry } = Astro.locals.starlightRoute;
+const { data } = entry;
+const { title = data.title, tagline, actions = [] } = data.hero ?? {};
+const words = title.split(" ");
+
+const rise = [
+  {
+    opacity: 0,
+    transform: "translateY(0.35em)",
+    easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+  },
+  { opacity: 1, transform: "none" },
+];
+---
+
+<div class="hero">
+  {id === "" && (
+    <Reveal as="p" class="eyebrow" from={{ opacity: 0 }}>
+      <code>@awesome-reveal/*</code>
+      <Badge text="Prerelease" variant="tip" />
+    </Reveal>
+  )}
+  <Cascade
+    as="h1"
+    id="_top"
+    data-page-title
+    interval={110}
+    duration={900}
+    keyframes={rise}
+  >
+    {words.map((word) => (
+      <>
+        <span set:html={word} />{" "}
+      </>
+    ))}
+  </Cascade>
+  {data.draft && <DraftContentNotice />}
+  {tagline && (
+    <Reveal as="p" class="tagline" delay={250}>
+      <Fragment set:html={tagline} />
+    </Reveal>
+  )}
+  {actions.length > 0 && (
+    <Reveal class="actions" delay={350} from={{ opacity: 0, y: 12 }}>
+      {actions.map(({ attrs, icon, link, text, variant }) => (
+        <LinkButton href={link} variant={variant} icon={icon?.name} {...attrs}>
+          {text}
+          {icon?.html && <Fragment set:html={icon.html} />}
+        </LinkButton>
+      ))}
+    </Reveal>
+  )}
+</div>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.75rem;
+    padding-block: clamp(3rem, 2rem + 12vmin, 9rem)
+      clamp(2rem, 1rem + 6vmin, 5rem);
+  }
+
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--hint);
+    font-weight: 600;
+  }
+
+  .eyebrow code {
+    padding: 0;
+    background: none;
+    color: inherit;
+    font-size: 0.95em;
+  }
+
+  h1 {
+    color: var(--sl-color-white);
+    font-size: clamp(3rem, 1rem + 8vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  h1 span {
+    display: inline-block;
+  }
+
+  .tagline {
+    max-width: 36rem;
+    color: var(--sl-color-gray-2);
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+</style>
