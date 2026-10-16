@@ -20,7 +20,7 @@ Use the Node version in `.nvmrc` and the pnpm version in `packageManager`. A she
 - `pnpm check`: run `astro check`, ESLint and Prettier `--check`. A warning fails it.
 - `pnpm exec prettier --write .` to format.
 
-The repo has no tests and no CI. Before a PR, run `pnpm check` and `pnpm build`, and look at the changed pages in the dev server. The build does not check links or anchors.
+The repo has no tests and no CI. Before a PR, run `pnpm check` and `pnpm build`, and look at the changed pages in the dev server, on a narrow (about 400 px) and a wide viewport. The build does not check links or anchors.
 
 ## Docs lookup
 
