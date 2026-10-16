@@ -151,6 +151,10 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     });
   }
 
+  const supportsSiblingIndex = CSS.supports(
+    "transition-delay: calc(sibling-index() * 1ms)",
+  );
+
   const links = slides.map((slide, index) => {
     const link = document.createElement("a");
     link.href = `#${slide.id}`;
@@ -182,11 +186,13 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     for (const type of ["pointerenter", "focus"])
       link.addEventListener(type, () => delete link.dataset.dismissed);
     const item = document.createElement("li");
+    if (!supportsSiblingIndex)
+      item.style.setProperty("--sibling-index", String(index + 1));
     item.append(link);
     list?.append(item);
     return link;
   });
-  if (nav) nav.hidden = false;
+  nav?.style.setProperty("--dot-count", String(links.length));
 
   // WCAG 1.4.13: Escape closes the label without a move of the pointer or the focus.
   document.addEventListener("keydown", (event) => {
@@ -206,6 +212,8 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
           else link.removeAttribute("aria-current");
         });
       }
+      // The first callback sets the current dot, so the nav shows without a later resize of that dot.
+      if (nav) nav.hidden = false;
     },
     { rootMargin: "-50% 0px -50% 0px" },
   );
@@ -263,6 +271,32 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /* The dots enter one after another, and the step buttons enter last. */
+  ol :global(li),
+  .steps {
+    --stagger: 40ms;
+    transition:
+      opacity 400ms ease-out,
+      translate 400ms ease-out;
+  }
+
+  ol :global(li) {
+    transition-delay: calc(var(--sibling-index) * var(--stagger));
+    transition-delay: calc(sibling-index() * var(--stagger));
+  }
+
+  .steps {
+    transition-delay: calc((var(--dot-count) + 1) * var(--stagger));
+  }
+
+  @starting-style {
+    ol :global(li),
+    .steps {
+      opacity: 0;
+      translate: 0.75rem 0;
+    }
   }
 
   /* The link is the 24px target (WCAG 2.5.8), and the dot inside it is only the visual. */
@@ -377,6 +411,8 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   @media (prefers-reduced-motion: reduce) {
     ol :global(a::before),
     ol :global(.label),
+    ol :global(li),
+    .steps,
     button {
       transition: none;
     }
