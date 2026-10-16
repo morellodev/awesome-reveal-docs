@@ -161,7 +161,8 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     label.className = "label";
     label.textContent = slide.querySelector("h2")?.textContent ?? "";
     link.append(label);
-    // The default jump is prevented, so the script must move the focus for the next Tab and add the hash to the history.
+    // The default jump is prevented, so the focus must move to the slide for the next Tab.
+    // The URL keeps no hash, so a reload opens the page at the top.
     slide.tabIndex = -1;
     link.addEventListener("click", (event) => {
       // A modified click opens the link in a new tab or window, as usual.
@@ -174,7 +175,6 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       )
         return;
       event.preventDefault();
-      if (location.hash !== link.hash) history.pushState(null, "", link.hash);
       slide.focus({ preventScroll: true });
       smoothScrollTo(slideTop(slides.indexOf(slide)));
     });
