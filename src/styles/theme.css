@@ -139,6 +139,11 @@
   --sl-content-width: 64rem;
 }
 
+/* Starlight widens the nav gutter at 50em but the content gutter only at 72rem. With no sidebar, the content must line up with the logo. */
+:root[data-has-hero] .content-panel {
+  --sl-content-pad-x: var(--sl-nav-pad-x);
+}
+
 :root {
   --sl-badge-default-bg: var(--sl-color-accent-low);
   --sl-badge-default-border: color-mix(
