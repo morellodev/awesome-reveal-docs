@@ -320,6 +320,11 @@ starlight-tabs {
 }
 
 .expressive-code .copy {
+  /* A device with no mouse or trackpad is not one to write code on, and there the button always covers the code. */
+  @media (any-hover: none) {
+    display: none;
+  }
+
   button {
     border-radius: var(--radius-sm);
 
@@ -338,6 +343,13 @@ starlight-tabs {
     font-family: var(--sl-font);
     font-size: var(--sl-text-xs);
     font-weight: 600;
+  }
+}
+
+/* Expressive Code keeps space at the end of the first line for the copy button. */
+@media (any-hover: none) {
+  .expressive-code :nth-child(1 of .ec-line) .code {
+    padding-inline-end: var(--ec-codePadInl);
   }
 }
 
