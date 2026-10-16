@@ -93,22 +93,25 @@ reveal("h1", { from: "left" });`,
   .get-started {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    align-content: center;
     gap: 2.5rem;
-    min-block-size: calc(100svh - var(--sl-nav-height));
-    padding-block: 4rem 6rem;
+    padding-block: 3.5rem 6rem;
   }
 
   @media (min-width: 56rem) {
     .get-started {
       grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      align-content: center;
+      min-block-size: calc(100svh - var(--sl-nav-height));
+      padding-block: 4rem 6rem;
+      /* The code also spans the empty last row, which takes its extra height, so the button stays under the lead. */
+      grid-template-rows: min-content min-content auto;
       align-items: start;
-      gap: 2.5rem 4rem;
+      gap: 2rem 4rem;
     }
 
     .code {
       grid-column: 2;
-      grid-row: 1 / span 2;
+      grid-row: 1 / -1;
     }
 
     .actions {
@@ -127,22 +130,27 @@ reveal("h1", { from: "left" });`,
     margin-block-start: 1rem;
   }
 
-  /* The panels share one cell, so the tallest sets the height and a tab change does not move the centered section. */
-  .code :global(starlight-tabs) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
+  /* The panels share one cell, so the tallest sets the height and a tab change does not move the centered section.
+     The stacked layout is not centered, so a tab change moves only the button, and the button stays close to the code. */
+  @media (min-width: 56rem) {
+    .code :global(starlight-tabs) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .code :global(starlight-tabs > [role="tabpanel"]) {
+      grid-area: 2 / 1;
+    }
+
+    .code :global(starlight-tabs > [role="tabpanel"][hidden]) {
+      display: block;
+      visibility: hidden;
+    }
   }
 
-  .code :global(starlight-tabs > [role="tabpanel"]) {
-    grid-area: 2 / 1;
-  }
-
-  .code :global(starlight-tabs > [role="tabpanel"][hidden]) {
-    display: block;
-    visibility: hidden;
-  }
-
+  /* Starlight gives a button in Markdown content a margin. Here the grid gap sets the space. */
   .sl-link-button {
+    margin: 0;
     font-weight: 700;
   }
 
