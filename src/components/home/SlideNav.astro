@@ -253,14 +253,6 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       align-items: center;
       gap: 0.5rem;
       translate: 0 -50%;
-      transition: opacity var(--hover-duration) ease;
-    }
-
-    /* No current dot means that the current slide is not a numbered chapter.
-       The nav stays in the Tab order and the accessibility tree, and it shows while it has the focus. */
-    .slide-nav:not(:has(a[aria-current]), :focus-within) {
-      opacity: 0;
-      pointer-events: none;
     }
   }
 
@@ -383,7 +375,6 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .slide-nav:not([hidden]),
     ol :global(a::before),
     ol :global(.label),
     button {
