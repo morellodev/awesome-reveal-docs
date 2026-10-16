@@ -7,7 +7,7 @@ import { codeThemes, markBackground } from "./src/code-themes";
 import { siteConfig } from "./src/site.config";
 
 const site = "https://awesome-reveal.dev";
-const ogUrl = new URL("og.png?v=4", site).href;
+const ogUrl = new URL("og.png?v=5", site).href;
 const ogImageAlt = `${siteConfig.name}: scroll reveal animations for React, Vue, Astro and JavaScript.`;
 
 // https://astro.build/config
@@ -132,6 +132,10 @@ export default defineConfig({
         {
           tag: "meta",
           attrs: { property: "og:image:alt", content: ogImageAlt },
+        },
+        {
+          tag: "meta",
+          attrs: { property: "og:image:type", content: "image/png" },
         },
         {
           tag: "meta",

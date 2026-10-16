@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Hanken+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..700&display=block"
+    />
+    <style>
+      :root {
+        --ink: #181b36;
+        --paper: #eef0f7;
+        --pencil: #9fd3e6;
+        --marker: #ffd23f;
+        --pad: 80px;
+        --cell: 60px;
+      }
+
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: var(--pad);
+        background-color: var(--ink);
+        background-image:
+          linear-gradient(
+            color-mix(in oklab, var(--pencil) 7%, transparent) 2px,
+            transparent 2px
+          ),
+          linear-gradient(
+            90deg,
+            color-mix(in oklab, var(--pencil) 7%, transparent) 2px,
+            transparent 2px
+          );
+        background-size: var(--cell) var(--cell);
+        background-position: center;
+        color: var(--paper);
+        font-family: "Hanken Grotesk", sans-serif;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      /* The ascenders of the wordmark rise 2px above the cap height. */
+      header {
+        margin-block-start: 2px;
+      }
+
+      header > * {
+        text-box: trim-both cap alphabetic;
+      }
+
+      .brand {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 44px;
+        font-weight: 800;
+        font-stretch: 78%;
+        font-variation-settings: "opsz" 96;
+        letter-spacing: 0.01em;
+      }
+
+      .domain {
+        color: var(--pencil);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 34px;
+        font-weight: 500;
+      }
+
+      main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .mark {
+        width: 340px;
+        color: var(--marker);
+      }
+
+      h1 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 150px;
+        font-weight: 750;
+        font-stretch: 85%;
+        line-height: 0.95;
+        letter-spacing: -0.02em;
+      }
+
+      ul {
+        display: flex;
+        gap: 16px;
+        padding: 0;
+        list-style: none;
+      }
+
+      li {
+        padding: 8px 24px;
+        border: 2px solid color-mix(in oklab, var(--pencil) 30%, var(--ink));
+        border-radius: 999px;
+        color: color-mix(in oklab, var(--paper) 88%, var(--ink));
+        font-size: 36px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">Awesome Reveal</div>
+      <span class="domain">awesome-reveal.dev</span>
+    </header>
+    <main>
+      <h1>Scroll reveal<br />animations</h1>
+      <svg class="mark" viewBox="72 152 368 208" aria-hidden="true">
+        <g fill="currentColor">
+          <circle cx="176" cy="256" r="104" opacity=".25" />
+          <circle cx="256" cy="256" r="104" opacity=".5" />
+          <circle cx="336" cy="256" r="104" />
+        </g>
+      </svg>
+    </main>
+    <ul>
+      <li>React</li>
+      <li>Vue</li>
+      <li>Astro</li>
+      <li>JavaScript</li>
+    </ul>
+  </body>
+</html>
