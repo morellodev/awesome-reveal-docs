@@ -1,7 +1,7 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 import { markdownPath, markdownSlug } from "./lib/markdown-slug";
 import { structuredData } from "./lib/structured-data";
-import { isArchived } from "./site.config";
+import { isArchived } from "./lib/versions";
 
 export const onRequest = defineRouteMiddleware((context) => {
   const { id, head, entry } = context.locals.starlightRoute;
@@ -45,7 +45,6 @@ export const onRequest = defineRouteMiddleware((context) => {
         id: markdownSlug(id),
         title: typeof searchTitle === "string" ? searchTitle : entry.data.title,
         description: entry.data.description,
-        body: entry.body,
         url: new URL(context.url.pathname, context.site).href,
         siteUrl: new URL("/", context.site).href,
       }),

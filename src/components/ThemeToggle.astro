@@ -1,0 +1,105 @@
+---
+import Moon from "@lucide/astro/icons/moon";
+import Sun from "@lucide/astro/icons/sun";
+---
+
+<button type="button" data-theme-toggle>
+  <span class="dark">
+    <Moon />
+    <span class="sr-only">Switch to light theme</span>
+  </span>
+  <span class="light">
+    <Sun />
+    <span class="sr-only">Switch to dark theme</span>
+  </span>
+</button>
+
+<style>
+  button {
+    display: flex;
+    padding: 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--sl-color-gray-2);
+    font-size: 1.125rem;
+    cursor: pointer;
+  }
+
+  button:hover {
+    color: var(--sl-color-white);
+  }
+
+  @media (scripting: none) {
+    button {
+      display: none;
+    }
+  }
+
+  .dark,
+  .light {
+    display: contents;
+  }
+
+  /* Otherwise the borders with a hover transition fade to the new theme, and the rest of the page switches at once. */
+  :global(:root[data-theme-switching] *),
+  :global(:root[data-theme-switching] *::before),
+  :global(:root[data-theme-switching] *::after) {
+    transition: none !important;
+  }
+
+  /* CSS picks the label too, so it stays correct without JavaScript. */
+  :global(:root[data-theme="light"]) .dark,
+  :global(:root:not([data-theme="light"])) .light {
+    display: none;
+  }
+</style>
+
+<script>
+  type Theme = "light" | "dark";
+
+  const storageKey = "starlight-theme";
+  const root = document.documentElement;
+  const systemLight = matchMedia("(prefers-color-scheme: light)");
+  const systemTheme = (): Theme => (systemLight.matches ? "light" : "dark");
+
+  const storedTheme = (): Theme | null => {
+    try {
+      const theme = localStorage.getItem(storageKey);
+      return theme === "light" || theme === "dark" ? theme : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const storeTheme = (theme: Theme | null) => {
+    try {
+      if (theme) localStorage.setItem(storageKey, theme);
+      else localStorage.removeItem(storageKey);
+    } catch {
+      // Blocked storage only loses the choice for the next page.
+    }
+  };
+
+  const applyTheme = (theme = storedTheme() ?? systemTheme()) => {
+    root.dataset.themeSwitching = "";
+    root.dataset.theme = theme;
+    // The forced layout commits the new colors while transitions are off, so removing the attribute starts none.
+    void root.offsetWidth;
+    delete root.dataset.themeSwitching;
+  };
+
+  systemLight.addEventListener("change", () => applyTheme());
+  addEventListener("storage", (event) => {
+    if (event.key === storageKey) applyTheme();
+  });
+
+  document
+    .querySelector("[data-theme-toggle]")
+    ?.addEventListener("click", () => {
+      const theme = root.dataset.theme === "light" ? "dark" : "light";
+      // A choice that matches the system is not stored, so the page follows later system changes again.
+      storeTheme(theme === systemTheme() ? null : theme);
+      applyTheme(theme);
+    });
+</script>

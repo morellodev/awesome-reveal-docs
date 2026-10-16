@@ -2,8 +2,8 @@ allowBuilds:
   esbuild: true
   sharp: true
 minimumReleaseAgeExclude:
-  - "@awesome-reveal/astro@1.0.0-next.4"
-  - "@awesome-reveal/core@1.0.0-next.4"
+  - "@awesome-reveal/astro@1.0.0-next.10"
+  - "@awesome-reveal/core@1.0.0-next.10"
 permissions:
   "@awesome-reveal/astro":
     skills: true

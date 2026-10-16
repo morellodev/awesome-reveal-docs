@@ -2,7 +2,7 @@
 import ChevronDown from "@lucide/astro/icons/chevron-down";
 import Copy from "@lucide/astro/icons/copy";
 import { markdownPath } from "../lib/markdown-slug";
-import { isArchived } from "../site.config";
+import { isArchived } from "../lib/versions";
 
 const { id } = Astro.locals.starlightRoute;
 const markdown = markdownPath(id);
@@ -21,12 +21,12 @@ const askLinks = isArchived(id)
 <div class="actions" data-markdown-ignore data-pagefind-ignore>
   <div class="split">
     <button type="button" class="copy" data-copy={markdown}>
-      <Copy size="1em" />
+      <Copy />
       <span>Copy page</span>
     </button>
     <details class="more">
       <summary aria-label="More page actions">
-        <ChevronDown size="1em" />
+        <ChevronDown />
       </summary>
       <ul class="menu">
         <li>
@@ -58,7 +58,7 @@ const askLinks = isArchived(id)
         margin-left: 0;
       }
       .actions summary {
-        border-radius: 0.5rem;
+        border-radius: 999px;
       }
       .actions summary::before {
         content: "Page actions";
@@ -72,53 +72,53 @@ const askLinks = isArchived(id)
     margin: 0.5rem 0 0;
   }
   .split {
+    position: relative;
     display: inline-flex;
   }
   .copy,
   summary {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.35em;
     box-sizing: border-box;
     height: 1.875rem;
-    padding: 0 0.65rem;
-    border: 1px solid var(--sl-color-hairline);
-    background: var(--sl-color-bg-nav);
+    padding: 0 0.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    background: none;
     color: var(--sl-color-gray-2);
     font: inherit;
     font-size: var(--sl-text-xs);
+    font-weight: 600;
     line-height: 1.4;
     cursor: pointer;
+    transition:
+      border-color var(--hover-duration) ease,
+      color var(--hover-duration) ease;
   }
   .copy {
-    position: relative;
-    border-radius: 0.5rem 0 0 0.5rem;
+    padding-inline-start: 0.875rem;
+    border-radius: 999px 0 0 999px;
   }
   summary {
     list-style: none;
-    border-radius: 0 0.5rem 0.5rem 0;
+    padding-inline: 0.5rem 0.625rem;
+    border-radius: 0 999px 999px 0;
   }
   summary::-webkit-details-marker {
     display: none;
   }
   /* The halves overlap by one border, and the active half sits on top to show its whole outline. */
   .more {
-    position: relative;
     margin-left: -1px;
-  }
-  .copy:hover,
-  .copy:focus-visible,
-  .more:hover,
-  .more:focus-within,
-  .more[open] {
-    z-index: 1;
   }
   .copy:hover,
   .copy:focus-visible,
   summary:hover,
   summary:focus-visible,
   .more[open] summary {
-    border-color: var(--sl-color-accent);
+    z-index: 1;
+    border-color: var(--sl-color-text-accent);
     color: var(--sl-color-white);
   }
   .menu {
@@ -130,24 +130,23 @@ const askLinks = isArchived(id)
     margin: 0;
     padding: 0.25rem;
     list-style: none;
-    border: 1px solid var(--sl-color-hairline);
-    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-md);
     background: var(--sl-color-bg-nav);
-    box-shadow: var(--sl-shadow-md);
   }
-  .menu li {
+  li {
     margin: 0;
   }
-  .menu a {
+  a {
     display: block;
     padding: 0.375rem 0.625rem;
-    border-radius: 0.25rem;
+    border-radius: var(--radius-sm);
     color: var(--sl-color-gray-1);
     font-size: var(--sl-text-sm);
     text-decoration: none;
   }
-  .menu a:hover,
-  .menu a:focus-visible {
+  a:hover,
+  a:focus-visible {
     background: var(--sl-color-gray-6);
     color: var(--sl-color-white);
   }

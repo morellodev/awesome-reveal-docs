@@ -1,7 +1,6 @@
 ---
 paths:
   - "src/content/docs/**/*.mdx"
-  - "src/examples/**"
 ---
 
 # Prettier and code in JSX
@@ -9,7 +8,7 @@ paths:
 Inside a JSX tag, such as `<TabItem>`, write code with the Starlight `<Code>` component, not with a fenced code block:
 
 - For one line, use `<Code code="pnpm add x" lang="shell" />`.
-- For more lines, put the code in a file in `src/examples/<framework>/`. Import it with `?raw`, and use `<Code code={name} lang="jsx" />`. Prettier formats the file as code.
+- For more lines, put the code in a separate file. Import it with `?raw`, and use `<Code code={name} lang="jsx" />`. Prettier formats the file as code.
 
 Prettier 3.9 and the 4.0 alpha still parse MDX with an old MDX parser:
 

@@ -1,0 +1,31 @@
+---
+import SocialIcons from "./SocialIcons.astro";
+import VersionSelect from "./VersionSelect.astro";
+---
+
+<div class="mobile-preferences">
+  <div class="social-icons">
+    <SocialIcons />
+  </div>
+  <VersionSelect />
+</div>
+
+<style>
+  .mobile-preferences {
+    display: flex;
+    padding-block: 0.5rem;
+    border-top: 1px solid var(--sl-color-hairline-light);
+  }
+
+  .social-icons {
+    display: none;
+    margin-inline-end: auto;
+  }
+
+  @media (max-width: 24.99rem) {
+    .social-icons {
+      display: flex;
+      align-items: center;
+    }
+  }
+</style>

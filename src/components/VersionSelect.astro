@@ -1,0 +1,120 @@
+---
+import ChevronDown from "@lucide/astro/icons/chevron-down";
+import Clock from "@lucide/astro/icons/clock";
+import versionsConfig from "virtual:starlight-versions-config";
+import { archivedVersion } from "../lib/versions";
+
+const { id } = Astro.locals.starlightRoute;
+
+// The plugin's select draws Starlight icons and exports no URL helper. Every version redirects to its root, so the URLs are fixed.
+const options = [
+  { label: versionsConfig.current.label, href: "/" },
+  ...versionsConfig.versions.map(({ label, slug }) => ({
+    label: label ?? slug,
+    href: `/${slug}/`,
+  })),
+];
+const archived = archivedVersion(id);
+const selectedHref = archived ? `/${archived.slug}/` : "/";
+---
+
+<starlight-version-select>
+  <label>
+    <span class="sr-only">
+      {Astro.locals.t("starlightVersions.select.accessibleLabel")}
+    </span>
+    <Clock class="icon label-icon" aria-hidden="true" />
+    <select autocomplete="off">
+      {options.map(({ label, href }) => (
+        <option value={href} selected={href === selectedHref}>
+          {label}
+        </option>
+      ))}
+    </select>
+    <ChevronDown class="icon caret-icon" aria-hidden="true" />
+  </label>
+</starlight-version-select>
+
+<style>
+  label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--sl-color-gray-2);
+
+    &:hover {
+      color: var(--sl-color-white);
+    }
+  }
+
+  .icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .label-icon {
+    inset-inline-start: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .caret-icon {
+    inset-inline-end: 0.5rem;
+    font-size: 1rem;
+  }
+
+  select {
+    appearance: none;
+    padding-block: 0.375rem;
+    padding-inline: 1.875rem 1.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    transition: border-color var(--hover-duration) ease;
+
+    &:hover {
+      border-color: var(--sl-color-text-accent);
+    }
+  }
+
+  option {
+    background-color: var(--sl-color-bg-nav);
+    color: var(--sl-color-gray-1);
+  }
+
+  @media (min-width: 50rem) {
+    select {
+      font-size: var(--sl-text-sm);
+    }
+  }
+</style>
+
+<script>
+  class StarlightVersionSelect extends HTMLElement {
+    constructor() {
+      super();
+      const select = this.querySelector("select");
+      if (!select) return;
+
+      select.addEventListener("change", () => {
+        location.pathname = select.value;
+      });
+
+      // A page restored from the back-forward cache can show a stale selection.
+      addEventListener("pageshow", (event) => {
+        if (!event.persisted) return;
+        const index =
+          select.querySelector<HTMLOptionElement>("option[selected]")?.index;
+        select.selectedIndex = index ?? 0;
+      });
+    }
+  }
+
+  customElements.define("starlight-version-select", StarlightVersionSelect);
+</script>

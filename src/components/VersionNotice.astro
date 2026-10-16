@@ -1,0 +1,48 @@
+---
+import Clock from "@lucide/astro/icons/clock";
+import { archivedVersion } from "../lib/versions";
+
+const { id } = Astro.locals.starlightRoute;
+
+const version = archivedVersion(id);
+const outdated = version?.label
+  ? Astro.locals.t("starlightVersions.outdated.label", { label: version.label })
+  : Astro.locals.t("starlightVersions.outdated.slug", { slug: version?.slug });
+const latest = Astro.locals.t("starlightVersions.link.latest", { link: "/" });
+---
+
+{version && (
+  <p>
+    <Clock aria-hidden="true" />
+    <span>
+      <Fragment set:html={outdated} /> <Fragment set:html={latest} />
+    </span>
+  </p>
+)}
+
+<style>
+  p {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    width: max-content;
+    max-width: 100%;
+    padding: 0.75em 1em;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-md);
+    background-color: var(--sl-color-gray-6);
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    line-height: var(--sl-line-height-headings);
+  }
+
+  p :global(a) {
+    color: var(--sl-color-text-accent);
+    font-weight: 600;
+  }
+
+  p :global(svg) {
+    flex-shrink: 0;
+    color: var(--sl-color-text-accent);
+  }
+</style>

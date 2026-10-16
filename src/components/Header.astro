@@ -1,0 +1,159 @@
+---
+import SocialIcons from "./SocialIcons.astro";
+import VersionSelect from "./VersionSelect.astro";
+// The plugin's Search override limits the search to the version of the page.
+import Search from "starlight-versions/overrides/Search.astro";
+import SiteTitle from "./SiteTitle.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<div class="header">
+  <div class="title-wrapper">
+    <SiteTitle />
+  </div>
+  <div class="search print:hidden">
+    <Search />
+  </div>
+  <div class="controls print:hidden">
+    <div class="versions">
+      <VersionSelect />
+    </div>
+    <div class="social-icons">
+      <SocialIcons />
+    </div>
+    <ThemeToggle />
+  </div>
+</div>
+
+<style>
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    height: 100%;
+  }
+
+  /* Keeps a long title from covering the buttons, without clipping its focus ring. */
+  .title-wrapper {
+    display: flex;
+    min-width: 0;
+    margin: -0.25rem;
+    padding: 0.25rem;
+    overflow: clip;
+  }
+
+  .search {
+    display: flex;
+    margin-inline-start: auto;
+  }
+
+  .search :global(button > kbd) {
+    border-radius: 999px;
+    padding-inline: 0.5rem;
+  }
+
+  .search :global(dialog) {
+    border-color: var(--sl-color-hairline-light);
+  }
+
+  .search :global(#starlight__search) {
+    --sl-search-corners: var(--radius-md);
+    --pagefind-ui-border-radius: var(--radius-md);
+  }
+
+  /* The search shows focus with the accent border. Forced colors mode flattens borders, so it shows the transparent outline instead. */
+  .search :global(#starlight__search input:focus) {
+    outline: 2px solid transparent;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .social-icons {
+    display: flex;
+  }
+
+  .social-icons :global(a) {
+    margin: 0;
+    padding: 0.5rem;
+    border-radius: 999px;
+    font-size: 1.125rem;
+  }
+
+  .versions {
+    display: none;
+  }
+
+  /* With the menu button, the title needs this space on narrow phones. The menu footer shows the icons there. */
+  @media (max-width: 24.99rem) {
+    :global(:root[data-has-sidebar]) .social-icons {
+      display: none;
+    }
+  }
+
+  @media (min-width: 50rem) {
+    :global(:root[data-has-sidebar]) {
+      --__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
+    }
+
+    :global(:root:not([data-has-toc])) {
+      --__toc-width: 0rem;
+    }
+
+    /* Starlight's column math: the search starts at the left edge of the content column. */
+    .header {
+      --__sidebar-width: max(
+        0rem,
+        var(--sl-content-inline-start, 0rem) - var(--sl-nav-pad-x)
+      );
+      --__main-column-fr: calc(
+        (
+            100% + var(--__sidebar-pad, 0rem) -
+              var(--__toc-width, var(--sl-sidebar-width)) -
+              (2 * var(--__toc-width, var(--sl-nav-pad-x))) -
+              var(--sl-content-inline-start, 0rem) - var(--sl-content-width)
+          ) /
+          2
+      );
+      display: grid;
+      gap: var(--sl-nav-gap);
+      grid-template-columns:
+        minmax(
+          calc(
+            var(--__sidebar-width) +
+              max(0rem, var(--__main-column-fr) - var(--sl-nav-gap))
+          ),
+          auto
+        )
+        1fr auto;
+    }
+
+    .search {
+      margin-inline-start: 0;
+    }
+
+    .search :global(button[data-open-modal]) {
+      border-color: var(--sl-color-hairline-light);
+      border-radius: 999px;
+      padding-inline: 1rem 0.5rem;
+      transition: border-color var(--hover-duration) ease;
+    }
+
+    .search :global(button[data-open-modal]:hover) {
+      border-color: var(--sl-color-text-accent);
+    }
+
+    .search :global(dialog) {
+      border-radius: 1rem;
+    }
+
+    .versions {
+      display: flex;
+      margin-inline-end: 0.5rem;
+    }
+  }
+</style>
