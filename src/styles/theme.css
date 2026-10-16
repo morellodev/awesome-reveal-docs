@@ -323,6 +323,11 @@ starlight-tabs {
     }
   }
 
+  /* Expressive Code puts the tooltip in a block live region, where its `align-self: center` has no effect. */
+  [aria-live] {
+    display: flex;
+  }
+
   .feedback {
     border-radius: var(--radius-sm);
     font-family: var(--sl-font);
