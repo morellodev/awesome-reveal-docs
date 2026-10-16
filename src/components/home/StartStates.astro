@@ -41,7 +41,11 @@ const control = {
   <div slot="stage" class="tiles">
     {tiles.map(({ name, from }, index) => (
       <Reveal
-        class:list={["tile", { marker: index === 1 || index === 2 }]}
+        class:list={[
+          "tile",
+          "outlined-choice",
+          { marker: index === 1 || index === 2 },
+        ]}
         data-choice={name}
         data-selected={name === selected ? "" : undefined}
         from={from}
@@ -80,13 +84,6 @@ const control = {
     border-radius: var(--radius-md);
     background-color: var(--sl-color-white);
     color: var(--sl-color-black);
-    outline: 3px solid transparent;
-    outline-offset: 4px;
-    transition: outline-color var(--hover-duration) ease;
-  }
-
-  .tile[data-selected] {
-    outline-color: var(--sl-color-white);
   }
 
   /* Each tile is the only child of its host, so `:nth-child` cannot pick it. */

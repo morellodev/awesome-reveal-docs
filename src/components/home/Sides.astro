@@ -36,12 +36,12 @@ const control = {
   <p>
     Choose <code>top</code>, <code>right</code>, <code>bottom</code> or{" "}
     <code>left</code>. The element fades in and slides 24 pixels from that side.
-    One prop, no CSS.
+    You set one prop and write no CSS.
   </p>
   <div slot="stage" class="compass">
     {sides.map(({ side, Arrow }, index) => (
       <Reveal
-        class:list={["side", side]}
+        class:list={["side", "outlined-choice", side]}
         data-choice={side}
         data-selected={side === selected ? "" : undefined}
         from={side}
@@ -78,13 +78,6 @@ const control = {
     background-color: var(--marker);
     color: var(--ink);
     font-size: clamp(1.5rem, 1rem + 2vw, 2rem);
-    outline: 3px solid transparent;
-    outline-offset: 4px;
-    transition: outline-color var(--hover-duration) ease;
-  }
-
-  .side[data-selected] {
-    outline-color: var(--sl-color-white);
   }
 
   .side code {

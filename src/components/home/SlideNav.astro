@@ -21,9 +21,14 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
 </nav>
 
 <script>
-  const desktop = matchMedia(
-    "(min-width: 56rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine)",
-  );
+  // The media query in the styles sets this property, so the query has one source.
+  function keysStepSlides() {
+    return (
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--slide-keys")
+        .trim() === "on"
+    );
+  }
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const directions: Record<string, 1 | -1> = {
     ArrowDown: 1,
@@ -119,8 +124,10 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   }
 
   function smoothScrollTo(top: number) {
-    // A scroll that does not move fires no scrollend, so it must not set a target.
+    // A scroll that does not move fires no scrollend, so it must not keep a target.
+    // It can also stop a smooth scroll, which then fires no scrollend.
     if (reducedMotion.matches || Math.abs(top - scrollY) <= tolerance) {
+      targetTop = undefined;
       scrollTo({ top, behavior: "instant" });
       return;
     }
@@ -132,7 +139,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     const direction = directions[event.key];
     if (
       !direction ||
-      !desktop.matches ||
+      !keysStepSlides() ||
       event.defaultPrevented ||
       hasModifier(event) ||
       (event.target instanceof Element && event.target.closest(keyboardWidgets))
@@ -183,10 +190,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     link.href = `#${slide.id}`;
     const label = document.createElement("span");
     label.className = "label";
-    label.textContent =
-      slide.dataset.slideLabel ??
-      slide.querySelector("h2")?.textContent?.trim() ??
-      "";
+    label.textContent = slide.dataset.slideLabel!;
     link.append(label);
     // A new hover or focus shows the label again after an Escape.
     for (const type of ["pointerenter", "focus"])
@@ -232,8 +236,13 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
 
   @media (min-width: 56rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
     :global(html:has(.slide-nav)) {
+      --slide-keys: on;
       scroll-snap-type: y proximity;
       scroll-padding-top: var(--sl-nav-height);
+    }
+
+    :global(.scroll-cue .keys) {
+      display: inline;
     }
 
     /* The hero gets no snap point, so the page can rest at the top with the banner. */

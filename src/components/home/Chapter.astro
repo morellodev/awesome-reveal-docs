@@ -136,7 +136,6 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
       for (const snippet of snippets) {
         const current = snippet.dataset.snippet === value;
         snippet.hidden = !current;
-        snippet.toggleAttribute("data-markdown-ignore", !current);
       }
       for (const choice of choices) {
         const selected = choice.dataset.choice === value;
@@ -231,6 +230,16 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
       var(--sl-color-gray-6) 70%,
       transparent
     );
+  }
+
+  .stage :global(.outlined-choice) {
+    outline: 3px solid transparent;
+    outline-offset: 4px;
+    transition: outline-color var(--hover-duration) ease;
+  }
+
+  .stage :global(.outlined-choice[data-selected]) {
+    outline-color: var(--sl-color-white);
   }
 
   .demo {
