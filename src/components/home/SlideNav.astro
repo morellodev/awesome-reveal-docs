@@ -162,7 +162,23 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     });
   }
 
+  // A link to a slide, in the nav or in the page, scrolls the same way as a step.
+  document.addEventListener("click", (event) => {
+    // A modified click opens the link in a new tab or window, as usual.
+    if (event.button !== 0 || hasModifier(event)) return;
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>("a[href^='#']");
+    const index = slides.findIndex((slide) => link?.hash === `#${slide.id}`);
+    if (index === -1) return;
+    // The default jump is prevented, so the focus must move to the slide for the next Tab.
+    // The URL keeps no hash, so a reload opens the page at the top.
+    event.preventDefault();
+    slides[index]!.focus({ preventScroll: true });
+    smoothScrollTo(slideTops()[index]!);
+  });
+
   const links = slides.map((slide, index) => {
+    slide.tabIndex = -1;
     const link = document.createElement("a");
     link.href = `#${slide.id}`;
     const label = document.createElement("span");
@@ -172,16 +188,6 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       slide.querySelector("h2")?.textContent?.trim() ??
       "";
     link.append(label);
-    // The default jump is prevented, so the focus must move to the slide for the next Tab.
-    // The URL keeps no hash, so a reload opens the page at the top.
-    slide.tabIndex = -1;
-    link.addEventListener("click", (event) => {
-      // A modified click opens the link in a new tab or window, as usual.
-      if (event.button !== 0 || hasModifier(event)) return;
-      event.preventDefault();
-      slide.focus({ preventScroll: true });
-      smoothScrollTo(slideTops()[index]!);
-    });
     // A new hover or focus shows the label again after an Escape.
     for (const type of ["pointerenter", "focus"])
       link.addEventListener(type, () => delete link.dataset.dismissed);
@@ -241,12 +247,12 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       scroll-snap-align: end;
       scroll-margin-block-end: 100vh;
     }
+  }
 
-    /* A dot moves the focus to its slide only to set the start of the next Tab. */
-    /* `:root` outweighs `:root :focus-visible` in theme.css. */
-    :global(:root [data-slide]:focus) {
-      outline: none;
-    }
+  /* A link moves the focus to its slide only to set the start of the next Tab.
+     `:root` outweighs `:root :focus-visible` in theme.css. */
+  :global(:root [data-slide]:focus) {
+    outline: none;
   }
 
   @media (min-width: 76rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
