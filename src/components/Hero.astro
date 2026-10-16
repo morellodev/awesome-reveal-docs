@@ -2,7 +2,6 @@
 import { LinkButton } from "@astrojs/starlight/components";
 import DraftContentNotice from "@astrojs/starlight/components/DraftContentNotice.astro";
 import { Cascade, Reveal } from "@awesome-reveal/astro";
-import ArrowDown from "@lucide/astro/icons/arrow-down";
 import ArrowRight from "@lucide/astro/icons/arrow-right";
 import ExternalLink from "@lucide/astro/icons/external-link";
 import Github from "../assets/github.svg";
@@ -85,14 +84,10 @@ const heroActions =
       duration={1200}
       data-markdown-ignore
     >
-      <ArrowDown aria-hidden="true" />
-      <span>
-        Scroll down
-        <span class="keys">
-          {" "}
-          or press <kbd>↓</kbd>
-        </span>
-        . Each section is a live demo.
+      Scroll down
+      <span class="keys">
+        {" "}
+        or press <kbd>↓</kbd>
       </span>
     </Reveal>
   )}
@@ -124,9 +119,6 @@ const heroActions =
   }
 
   .scroll-cue {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
     margin-block-start: auto;
     padding-block-start: 2rem;
     color: var(--sl-color-gray-3);
@@ -155,18 +147,6 @@ const heroActions =
     border-radius: var(--radius-sm);
     font-family: var(--sl-font-mono);
     font-size: 0.9em;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .scroll-cue :global(svg) {
-      animation: nudge 1.6s ease-in-out infinite;
-    }
-  }
-
-  @keyframes nudge {
-    50% {
-      translate: 0 0.3em;
-    }
   }
 
   h1 {

@@ -20,6 +20,7 @@ const { id, number, option, title, code, replay = true } = Astro.props;
   class="chapter not-content"
   aria-labelledby={`${id}-title`}
   data-slide
+  data-chapter
 >
   <Cascade class="copy" interval={90} threshold={0.2}>
     <p class="kicker" data-markdown-ignore>

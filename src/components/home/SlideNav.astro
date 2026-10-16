@@ -86,19 +86,37 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     scrollTo({ top, behavior: reducedMotion.matches ? "instant" : "smooth" });
   }
 
+  // Only the numbered chapters get a dot and a digit key. The other slides are an intro or an outro.
+  const chapters = slides.filter((slide) => slide.hasAttribute("data-chapter"));
+
+  function chapterForKey(key: string) {
+    return /^[1-9]$/.test(key) ? chapters[Number(key) - 1] : undefined;
+  }
+
+  function scrollToSlide(slide: HTMLElement) {
+    smoothScrollTo(slideTop(slides.indexOf(slide)));
+  }
+
   document.addEventListener("keydown", (event) => {
-    const direction = directions[event.key];
+    const chapter = chapterForKey(event.key);
+    // Some layouts, such as AZERTY, need Shift for the digits.
+    const direction = event.shiftKey ? undefined : directions[event.key];
     if (
-      !direction ||
+      (!chapter && !direction) ||
       !desktop.matches ||
       event.defaultPrevented ||
       event.altKey ||
       event.ctrlKey ||
       event.metaKey ||
-      event.shiftKey ||
       (event.target instanceof Element && event.target.closest(keyboardWidgets))
     )
       return;
+    if (chapter) {
+      event.preventDefault();
+      scrollToSlide(chapter);
+      return;
+    }
+    if (!direction) return;
     const top = stepTop(direction);
     if (top === undefined || skipsContent(direction, top)) return;
     event.preventDefault();
@@ -114,16 +132,24 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     });
   }
 
-  const links = slides.map((slide, index) => {
+  const links = chapters.map((slide, index) => {
     const link = document.createElement("a");
-    link.href = `#${slide.id || slide.querySelector("h1")?.id || ""}`;
+    link.href = `#${slide.id}`;
     const label = document.createElement("span");
     label.className = "label";
-    label.textContent = slide.querySelector("h1, h2")?.textContent ?? "";
+    label.textContent = slide.querySelector("h2")?.textContent ?? "";
+    const shortcut = String(index + 1);
+    if (chapterForKey(shortcut)) {
+      link.setAttribute("aria-keyshortcuts", shortcut);
+      const kbd = document.createElement("kbd");
+      kbd.ariaHidden = "true";
+      kbd.textContent = shortcut;
+      label.append(kbd);
+    }
     link.append(label);
     link.addEventListener("click", (event) => {
       event.preventDefault();
-      smoothScrollTo(slideTop(index));
+      scrollToSlide(slide);
     });
     const item = document.createElement("li");
     item.append(link);
@@ -137,7 +163,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     (entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
-        const current = slides.indexOf(entry.target as HTMLElement);
+        const current = chapters.indexOf(entry.target as HTMLElement);
         links.forEach((link, index) => {
           if (index === current) link.setAttribute("aria-current", "location");
           else link.removeAttribute("aria-current");
@@ -184,6 +210,15 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       align-items: center;
       gap: 1rem;
       translate: 0 -50%;
+      transition:
+        opacity var(--hover-duration) ease,
+        visibility var(--hover-duration);
+    }
+
+    /* No current dot means that the current slide is not a numbered chapter. */
+    .slide-nav:not(:has(a[aria-current])) {
+      opacity: 0;
+      visibility: hidden;
     }
   }
 
@@ -240,6 +275,13 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     transition: opacity var(--hover-duration) ease;
   }
 
+  ol :global(.label kbd) {
+    margin-inline-start: 0.5rem;
+    color: var(--sl-color-gray-3);
+    font-family: var(--sl-font-mono);
+    font-weight: 400;
+  }
+
   ol :global(a:is(:hover, :focus-visible) .label) {
     opacity: 1;
   }
@@ -277,6 +319,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .slide-nav:not([hidden]),
     ol :global(a),
     ol :global(.label),
     button {
