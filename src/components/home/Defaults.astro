@@ -1,9 +1,9 @@
 ---
 import { Cascade, Reveal } from "@awesome-reveal/astro";
-import Accessibility from "@lucide/astro/icons/accessibility";
+import CirclePause from "@lucide/astro/icons/circle-pause";
 import EyeOff from "@lucide/astro/icons/eye-off";
-import FileCode from "@lucide/astro/icons/file-code";
 import Gauge from "@lucide/astro/icons/gauge";
+import Search from "@lucide/astro/icons/search";
 ---
 
 <section
@@ -17,27 +17,27 @@ import Gauge from "@lucide/astro/icons/gauge";
   </Reveal>
   <Cascade as="ul" class="points" interval={100} threshold={0.2}>
     <li>
-      <FileCode aria-hidden="true" />
-      <h3>Content in the HTML</h3>
+      <Search aria-hidden="true" />
+      <h3>SEO friendly</h3>
       <p>
-        The content is in the HTML before any animation plays, so search engines
-        and screen readers read all of it.
+        Search engines and screen readers read all of your content. It is in the
+        HTML before any animation plays.
       </p>
     </li>
     <li>
       <EyeOff aria-hidden="true" />
-      <h3>No flash of content</h3>
+      <h3>No flicker on load</h3>
       <p>
-        The React, Vue and Astro packages keep the content hidden until its
-        entrance starts. If the script fails, it shows after 5 seconds.
+        With the React, Vue and Astro packages, content does not blink into view
+        before its entrance. If the script fails, it shows after 5 seconds.
       </p>
     </li>
     <li>
-      <Accessibility aria-hidden="true" />
-      <h3>Reduced motion support</h3>
+      <CirclePause aria-hidden="true" />
+      <h3>Respects motion settings</h3>
       <p>
-        When the device asks for reduced motion, the content shows at once, with
-        no animation.
+        Visitors who ask their device for reduced motion see the content at
+        once, with no animation.
       </p>
       <p class="motion" data-markdown-ignore hidden>
         Your device: <strong></strong>
@@ -45,10 +45,10 @@ import Gauge from "@lucide/astro/icons/gauge";
     </li>
     <li>
       <Gauge aria-hidden="true" />
-      <h3>Native browser APIs</h3>
+      <h3>Fast and smooth</h3>
       <p>
-        Intersection Observer and the Web Animations API do the work. No
-        animation library ships to the browser.
+        Pages stay light, and the motion runs smoothly. The browser does the
+        work with its own APIs, so no animation library ships to your visitors.
       </p>
     </li>
   </Cascade>
