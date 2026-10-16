@@ -5,6 +5,7 @@ import { Cascade, Reveal } from "@awesome-reveal/astro";
 import ArrowRight from "@lucide/astro/icons/arrow-right";
 import ExternalLink from "@lucide/astro/icons/external-link";
 import Github from "../assets/github.svg";
+import { markdownSlug } from "../lib/markdown-slug";
 
 // The hero schema of Starlight accepts only its own icon names, so the frontmatter name picks the icon here.
 const icons = {
@@ -15,8 +16,10 @@ const icons = {
 
 const { id, entry } = Astro.locals.starlightRoute;
 const { data } = entry;
+const { scrollCueTarget } = data;
 const { title = data.title, tagline, actions = [] } = data.hero ?? {};
 const words = title.split(" ");
+const isHome = markdownSlug(id) === "index";
 // Starlight's generated 404 page has no actions, so it gives no way back.
 const heroActions =
   id === "404" && actions.length === 0
@@ -32,7 +35,12 @@ const heroActions =
     : actions;
 ---
 
-<div class="hero">
+<div
+  class:list={["hero", { home: isHome }]}
+  id={isHome ? "intro" : undefined}
+  data-slide={isHome ? "" : undefined}
+  data-slide-label={isHome ? "Intro" : undefined}
+>
   <Cascade
     as="h1"
     id="_top"
@@ -69,6 +77,24 @@ const heroActions =
       })}
     </Reveal>
   )}
+  {scrollCueTarget && (
+    <Reveal
+      as="p"
+      class="scroll-cue"
+      delay={300}
+      from={{ opacity: 0 }}
+      duration={1200}
+      data-markdown-ignore
+    >
+      <a href={`#${scrollCueTarget}`}>
+        Scroll down
+        <span class="keys">
+          {" "}
+          or press <kbd>↓</kbd>
+        </span>
+      </a>
+    </Reveal>
+  )}
 </div>
 
 <style>
@@ -86,6 +112,46 @@ const heroActions =
       padding-block: clamp(3rem, 2rem + 12vmin, 9rem)
         clamp(2rem, 1rem + 6vmin, 5rem);
     }
+  }
+
+  .home {
+    min-block-size: calc(100svh - var(--sl-nav-height) - 6rem);
+  }
+
+  .home h1 {
+    margin-block-start: auto;
+  }
+
+  /* The space above is on the paragraph, so the focus ring of the link fits its text. */
+  .scroll-cue {
+    margin-block-start: auto;
+    padding-block-start: 2rem;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+  }
+
+  .scroll-cue a {
+    border-radius: var(--radius-sm);
+    color: var(--sl-color-gray-3);
+    outline-offset: 2px;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--sl-color-white);
+    }
+  }
+
+  /* SlideNav shows the hint where the keys step through the slides. */
+  .keys {
+    display: none;
+  }
+
+  kbd {
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-sm);
+    font-family: var(--sl-font-mono);
+    font-size: 0.9em;
   }
 
   h1 {

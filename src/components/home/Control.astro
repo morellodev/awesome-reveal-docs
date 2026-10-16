@@ -1,0 +1,222 @@
+---
+import { Reveal } from "@awesome-reveal/astro";
+import CircleCheck from "@lucide/astro/icons/circle-check";
+import Chapter from "./Chapter.astro";
+
+const code = `<Reveal
+  when={saved}
+  hidden={!saved}
+>
+  <Toast>Changes saved</Toast>
+</Reveal>`;
+---
+
+<Chapter
+  id="triggers"
+  label="Triggers"
+  title="Trigger animations on demand"
+  code={code}
+  mark="when={saved}"
+  replay={false}
+>
+  <p>
+    Not everything waits for a scroll. Set <code>when</code> to{" "}
+    <code>true</code> to play the entrance, and to <code>false</code> to reset
+    it. Connect it to tabs, steps, toasts or any state you own. Add{" "}
+    <code>hidden</code> to hide the content from screen readers too.
+  </p>
+  <div slot="stage" class="screen">
+    <div role="status">
+      <Reveal class="toast" when={false} hidden duration={500}>
+        <CircleCheck aria-hidden="true" />
+        Changes saved
+      </Reveal>
+    </div>
+    <div class="page" aria-hidden="true">
+      <span class="line title"></span>
+      <span class="line"></span>
+      <span class="line"></span>
+      <span class="line short"></span>
+    </div>
+  </div>
+  <label slot="controls" class="switch">
+    <input
+      type="checkbox"
+      role="switch"
+      aria-label="saved, shows the toast"
+      autocomplete="off"
+    />
+    <span class="track" aria-hidden="true"></span>
+    <code>saved</code>
+    <span class="state" aria-hidden="true">
+      false
+    </span>
+  </label>
+</Chapter>
+
+<script>
+  const chapter = document.getElementById("triggers");
+  const input = chapter?.querySelector<HTMLInputElement>(".switch input");
+  const state = chapter?.querySelector(".switch .state");
+  const toast = chapter?.querySelector<HTMLElement>(".toast");
+  const host = toast?.closest("awesome-reveal");
+
+  function showToast() {
+    if (!input || !state || !toast || !host) return;
+    toast.hidden = !input.checked;
+    host.when = input.checked;
+    state.textContent = String(input.checked);
+  }
+
+  showToast();
+  input?.addEventListener("change", showToast);
+</script>
+
+<style>
+  .screen {
+    position: relative;
+    display: grid;
+    width: min(100%, 22rem);
+    padding: 1.5rem 1.25rem 4.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-md);
+    background-color: var(--sl-color-black);
+  }
+
+  .page {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .line {
+    block-size: 0.6rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-gray-5);
+  }
+
+  .title {
+    inline-size: 45%;
+    block-size: 1rem;
+    margin-block-end: 0.5rem;
+    background-color: var(--sl-color-gray-4);
+  }
+
+  .short {
+    inline-size: 70%;
+  }
+
+  .toast {
+    position: absolute;
+    inset-block-end: 1rem;
+    inset-inline: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--marker);
+    color: var(--ink);
+    font-weight: 700;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-block-size: var(--option-size);
+    padding-inline: 0.25rem;
+    cursor: pointer;
+  }
+
+  input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .track {
+    position: relative;
+    flex: none;
+    inline-size: 2.75rem;
+    block-size: 1.5rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-gray-5);
+    transition: background-color var(--hover-duration) ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 0.1875rem;
+      inset-inline-start: 0.1875rem;
+      inline-size: 1.125rem;
+      block-size: 1.125rem;
+      border-radius: 50%;
+      background-color: var(--sl-color-white);
+      transition:
+        translate var(--hover-duration) ease,
+        background-color var(--hover-duration) ease;
+    }
+  }
+
+  input:checked + .track {
+    background-color: var(--marker);
+
+    &::before {
+      translate: 1.25rem 0;
+      background-color: var(--ink);
+    }
+  }
+
+  input:focus-visible + .track {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 3px;
+  }
+
+  .switch code {
+    color: var(--sl-color-white);
+    font-weight: 700;
+  }
+
+  .state {
+    min-inline-size: 5ch;
+    color: var(--sl-color-gray-3);
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+  }
+
+  /* Forced colors remove backgrounds, so the track needs a border and system colors. */
+  @media (forced-colors: active) {
+    .track {
+      forced-color-adjust: none;
+      border: 1px solid CanvasText;
+      background-color: Canvas;
+
+      &::before {
+        background-color: CanvasText;
+      }
+    }
+
+    input:checked + .track {
+      background-color: Highlight;
+
+      &::before {
+        background-color: HighlightText;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track,
+    .track::before {
+      transition: none;
+    }
+  }
+</style>

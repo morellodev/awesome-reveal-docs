@@ -1,0 +1,141 @@
+---
+import { Cascade, Reveal } from "@awesome-reveal/astro";
+import CirclePause from "@lucide/astro/icons/circle-pause";
+import EyeOff from "@lucide/astro/icons/eye-off";
+import Gauge from "@lucide/astro/icons/gauge";
+import Search from "@lucide/astro/icons/search";
+---
+
+<section
+  id="accessibility-and-seo"
+  class="defaults not-content"
+  data-slide
+  data-slide-label="Accessibility and SEO"
+>
+  <Reveal as="h2" class="slide-title" threshold={0.5}>
+    Accessible and SEO friendly by default
+  </Reveal>
+  <Cascade as="ul" class="points" role="list" interval={100} threshold={0.2}>
+    <li>
+      <Search aria-hidden="true" />
+      <h3>SEO friendly</h3>
+      <p>
+        Search engines and screen readers read all of your content. It is in the
+        HTML before any animation plays.
+      </p>
+    </li>
+    <li>
+      <EyeOff aria-hidden="true" />
+      <h3>No flicker on load</h3>
+      <p>
+        With the React, Vue and Astro packages, content does not blink into view
+        before its entrance. If the script fails, it shows after 5 seconds.
+      </p>
+    </li>
+    <li>
+      <CirclePause aria-hidden="true" />
+      <h3>Respects motion settings</h3>
+      <p>
+        Visitors who ask their device for reduced motion see the content at
+        once, with no animation.
+      </p>
+      <p class="motion" data-markdown-ignore>
+        Your device: <strong class="full-motion">full motion</strong>
+        <strong class="reduced-motion">reduced motion</strong>
+      </p>
+    </li>
+    <li>
+      <Gauge aria-hidden="true" />
+      <h3>Fast and smooth</h3>
+      <p>
+        Pages stay light, and the motion runs smoothly. The browser does the
+        work with its own APIs, so no animation library ships to your visitors.
+      </p>
+    </li>
+  </Cascade>
+</section>
+
+<style>
+  .defaults {
+    display: grid;
+    align-content: center;
+    gap: 3rem;
+    min-block-size: calc(100svh - var(--sl-nav-height));
+    padding-block: 4rem;
+  }
+
+  h2 {
+    max-width: 18ch;
+  }
+
+  .points {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Four points fill one row or two, so no point is left alone on a row. */
+  @media (min-width: 36rem) {
+    .points {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2.5rem 2rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .points {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-block-start: 1.25rem;
+    border-top: 2px solid var(--sl-color-white);
+  }
+
+  li > :global(svg) {
+    margin-block-end: 0.5rem;
+    color: var(--sl-color-text-accent);
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    color: var(--sl-color-white);
+    font-size: 1.375rem;
+    line-height: 1.15;
+  }
+
+  p {
+    color: var(--sl-color-gray-3);
+  }
+
+  .motion {
+    align-self: flex-start;
+    margin-block-start: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+    font-size: var(--sl-text-sm);
+  }
+
+  .reduced-motion {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .full-motion {
+      display: none;
+    }
+
+    .reduced-motion {
+      display: inline;
+    }
+  }
+</style>

@@ -1,0 +1,160 @@
+---
+import { Code, LinkButton, TabItem, Tabs } from "@astrojs/starlight/components";
+import { Reveal } from "@awesome-reveal/astro";
+import Github from "../../assets/github.svg";
+
+const frameworks = [
+  {
+    label: "React",
+    pkg: "@awesome-reveal/react",
+    lang: "jsx",
+    code: `import { Reveal } from "@awesome-reveal/react";
+
+export const Hero = () => (
+  <Reveal from="left">
+    <h1>Hello</h1>
+  </Reveal>
+);`,
+  },
+  {
+    label: "Vue",
+    pkg: "@awesome-reveal/vue",
+    lang: "vue",
+    code: `<script setup>
+import { Reveal } from "@awesome-reveal/vue";
+</script>
+
+<template>
+  <Reveal from="left">
+    <h1>Hello</h1>
+  </Reveal>
+</template>`,
+  },
+  {
+    label: "Astro",
+    pkg: "@awesome-reveal/astro",
+    lang: "astro",
+    // A line that starts with `---` ends the frontmatter for editor parsers, so the fences are interpolated.
+    code: `${"---"}
+import { Reveal } from "@awesome-reveal/astro";
+${"---"}
+
+<Reveal from="left">
+  <h1>Hello</h1>
+</Reveal>`,
+  },
+  {
+    label: "JavaScript",
+    pkg: "@awesome-reveal/core",
+    lang: "js",
+    code: `import { reveal } from "@awesome-reveal/core";
+
+reveal("h1", { from: "left" });`,
+  },
+];
+---
+
+<section
+  id="get-started"
+  class="get-started not-content"
+  data-slide
+  data-slide-label="Get started"
+>
+  <Reveal class="intro" threshold={0.5}>
+    <h2 class="slide-title">Start in under a minute</h2>
+    <p class="slide-lead">
+      Pick your framework, install one package and wrap an element. All four
+      packages share the same core, the same entrance options and TypeScript
+      types.
+    </p>
+  </Reveal>
+  <Reveal class="code slide-code" threshold={0.2} delay={120}>
+    <Tabs syncKey="framework">
+      {frameworks.map(({ label, pkg, lang, code }) => (
+        <TabItem label={label}>
+          <Code code={`npm install ${pkg}`} lang="shell" wrap />
+          <Code code={code} lang={lang} wrap />
+        </TabItem>
+      ))}
+    </Tabs>
+  </Reveal>
+  <Reveal class="actions" threshold={0.5} from={{ opacity: 0, y: 12 }}>
+    <LinkButton
+      href="https://github.com/awesome-reveal/awesome-reveal"
+      variant="primary"
+    >
+      Star on GitHub
+      <Github aria-hidden="true" width="1em" height="1em" />
+    </LinkButton>
+  </Reveal>
+</section>
+
+<style>
+  .get-started {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-block: 3.5rem 6rem;
+  }
+
+  @media (min-width: 56rem) {
+    .get-started {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      align-content: center;
+      min-block-size: calc(100svh - var(--sl-nav-height));
+      padding-block: 4rem 6rem;
+      /* The code also spans the empty last row, which takes its extra height, so the button stays under the lead. */
+      grid-template-rows: min-content min-content auto;
+      align-items: start;
+      gap: 2rem 4rem;
+    }
+
+    .code {
+      grid-column: 2;
+      grid-row: 1 / -1;
+    }
+
+    .actions {
+      grid-column: 1;
+      grid-row: 2;
+    }
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .code :global(.expressive-code + .expressive-code) {
+    margin-block-start: 1rem;
+  }
+
+  /* The panels share one cell, so the tallest sets the height and a tab change does not move the centered section.
+     The stacked layout is not centered, so a tab change moves only the button, and the button stays close to the code. */
+  @media (min-width: 56rem) {
+    .code :global(starlight-tabs) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .code :global(starlight-tabs > [role="tabpanel"]) {
+      grid-area: 2 / 1;
+    }
+
+    .code :global(starlight-tabs > [role="tabpanel"][hidden]) {
+      display: block;
+      visibility: hidden;
+    }
+  }
+
+  /* Starlight gives a button in Markdown content a margin. Here the grid gap sets the space. */
+  .sl-link-button {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .sl-link-button :global(svg) {
+    font-size: 1.5rem;
+  }
+</style>

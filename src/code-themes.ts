@@ -56,6 +56,12 @@ function codeTheme(name: string, type: "dark" | "light", palette: Palette) {
 }
 
 // Backgrounds are the theme.css palette pre-mixed: Expressive Code checks syntax contrast against them, so they cannot be CSS variables.
+// The `--sl-color-accent-low` token of theme.css pre-mixed, for the same reason.
+export const markBackground: [dark: string, light: string] = [
+  "#3c3212",
+  "#f6e4b2",
+];
+
 export const codeThemes = {
   dark: codeTheme("ink", "dark", {
     background: "#202641",

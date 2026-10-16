@@ -1,0 +1,433 @@
+---
+import ArrowDown from "@lucide/astro/icons/arrow-down";
+import ArrowUp from "@lucide/astro/icons/arrow-up";
+---
+
+<nav
+  class="slide-nav not-content"
+  aria-label="Sections"
+  data-markdown-ignore
+  hidden
+>
+  <ol></ol>
+  <div class="steps">
+    <button type="button" data-direction="-1" aria-label="Previous section">
+      <ArrowUp aria-hidden="true" />
+    </button>
+    <button type="button" data-direction="1" aria-label="Next section">
+      <ArrowDown aria-hidden="true" />
+    </button>
+  </div>
+</nav>
+
+<script>
+  // The media query in the styles sets this property, so the query has one source.
+  function keysStepSlides() {
+    return (
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--slide-keys")
+        .trim() === "on"
+    );
+  }
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const directions: Record<string, 1 | -1> = {
+    ArrowDown: 1,
+    ArrowRight: 1,
+    PageDown: 1,
+    ArrowUp: -1,
+    ArrowLeft: -1,
+    PageUp: -1,
+  };
+  // These elements use the arrow keys themselves.
+  const keyboardWidgets =
+    "input, textarea, select, [contenteditable], [role='tablist'], dialog, pre";
+
+  // Scroll positions that differ by less than this many pixels are the same position.
+  const tolerance = 2;
+
+  const nav = document.querySelector<HTMLElement>(".slide-nav");
+  const list = nav?.querySelector("ol");
+  const header = document.querySelector("header");
+  const slides = [...document.querySelectorAll<HTMLElement>("[data-slide]")];
+
+  function headerHeight() {
+    return header?.offsetHeight ?? 0;
+  }
+
+  function bottomTop() {
+    return document.documentElement.scrollHeight - innerHeight;
+  }
+
+  function slideTops() {
+    const offset = headerHeight();
+    // The first slide starts at the top of the page, so the banner above the hero shows.
+    return slides.map((slide, index) =>
+      index === 0 ? 0 : slide.getBoundingClientRect().top + scrollY - offset,
+    );
+  }
+
+  function hasModifier(event: KeyboardEvent | MouseEvent) {
+    return event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+  }
+
+  // A step during a smooth scroll continues from its target, so quick presses do not stop at the same slide.
+  let targetTop: number | undefined;
+
+  addEventListener("scrollend", () => (targetTop = undefined));
+  if (!("onscrollend" in window)) {
+    let timer: ReturnType<typeof setTimeout>;
+    addEventListener("scroll", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => dispatchEvent(new Event("scrollend")), 100);
+    });
+  }
+
+  function currentTop() {
+    return targetTop ?? scrollY;
+  }
+
+  // After the last slide, the next step is the end of the page, where the footer is.
+  function stepTop(direction: 1 | -1, tops: number[]) {
+    const from = currentTop();
+    const top =
+      direction > 0
+        ? (tops.find((top) => top > from + tolerance) ?? bottomTop())
+        : tops.findLast((top) => top < from - tolerance);
+    if (top === undefined || Math.abs(top - from) <= tolerance)
+      return undefined;
+    return top;
+  }
+
+  // The bottom padding holds no content, so a step may hide it.
+  function slideBottom(index: number) {
+    const slide = slides[index]!;
+    const padding = parseFloat(getComputedStyle(slide).paddingBlockEnd);
+    return slide.getBoundingClientRect().bottom - padding + scrollY;
+  }
+
+  // A slide taller than the viewport scrolls normally, so the keys do not skip its content.
+  function skipsContent(direction: 1 | -1, top: number, tops: number[]) {
+    const from = currentTop();
+    if (direction > 0) {
+      const current = tops.findLastIndex(
+        (slideTop) => slideTop <= from + tolerance,
+      );
+      return (
+        current !== -1 && slideBottom(current) > from + innerHeight + tolerance
+      );
+    }
+    const target = tops.findIndex(
+      (slideTop) => Math.abs(slideTop - top) <= tolerance,
+    );
+    const end = Math.min(slideBottom(target), from + headerHeight());
+    return end > top + innerHeight + tolerance;
+  }
+
+  function smoothScrollTo(top: number) {
+    // A scroll that does not move fires no scrollend, so it must not keep a target.
+    // It can also stop a smooth scroll, which then fires no scrollend.
+    if (reducedMotion.matches || Math.abs(top - scrollY) <= tolerance) {
+      targetTop = undefined;
+      scrollTo({ top, behavior: "instant" });
+      return;
+    }
+    targetTop = top;
+    scrollTo({ top, behavior: "smooth" });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    const direction = directions[event.key];
+    if (
+      !direction ||
+      !keysStepSlides() ||
+      event.defaultPrevented ||
+      hasModifier(event) ||
+      (event.target instanceof Element && event.target.closest(keyboardWidgets))
+    )
+      return;
+    // A held key waits for each step to end. Otherwise the key repeat runs to the footer in a moment.
+    if (event.repeat && targetTop !== undefined) {
+      event.preventDefault();
+      return;
+    }
+    const tops = slideTops();
+    const top = stepTop(direction, tops);
+    if (top === undefined || skipsContent(direction, top, tops)) return;
+    event.preventDefault();
+    smoothScrollTo(top);
+  });
+
+  for (const button of nav?.querySelectorAll<HTMLButtonElement>(
+    "[data-direction]",
+  ) ?? []) {
+    button.addEventListener("click", () => {
+      const top = stepTop(
+        Number(button.dataset.direction) as 1 | -1,
+        slideTops(),
+      );
+      if (top !== undefined) smoothScrollTo(top);
+    });
+  }
+
+  // A link to a slide, in the nav or in the page, scrolls the same way as a step.
+  document.addEventListener("click", (event) => {
+    // A modified click opens the link in a new tab or window, as usual.
+    if (event.button !== 0 || hasModifier(event)) return;
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>("a[href^='#']");
+    const index = slides.findIndex((slide) => link?.hash === `#${slide.id}`);
+    if (index === -1) return;
+    // The default jump is prevented, so the focus must move to the slide for the next Tab.
+    // The URL keeps no hash, so a reload opens the page at the top.
+    event.preventDefault();
+    slides[index]!.focus({ preventScroll: true });
+    smoothScrollTo(slideTops()[index]!);
+  });
+
+  const links = slides.map((slide, index) => {
+    slide.tabIndex = -1;
+    const link = document.createElement("a");
+    link.href = `#${slide.id}`;
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = slide.dataset.slideLabel!;
+    link.append(label);
+    // A new hover or focus shows the label again after an Escape.
+    for (const type of ["pointerenter", "focus"])
+      link.addEventListener(type, () => delete link.dataset.dismissed);
+    const item = document.createElement("li");
+    item.style.setProperty("--sibling-index", String(index + 1));
+    item.append(link);
+    list?.append(item);
+    return link;
+  });
+  nav?.style.setProperty("--dot-count", String(links.length));
+
+  // WCAG 1.4.13: Escape closes the label without a move of the pointer or the focus.
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    for (const link of links)
+      if (link.matches(":hover, :focus-visible")) link.dataset.dismissed = "";
+  });
+
+  // A slide is current while it crosses the middle of the viewport.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const current = slides.indexOf(entry.target as HTMLElement);
+        links.forEach((link, index) => {
+          if (index === current) link.setAttribute("aria-current", "location");
+          else link.removeAttribute("aria-current");
+        });
+      }
+      // The first callback sets the current dot, so the nav shows without a later resize of that dot.
+      if (nav) nav.hidden = false;
+    },
+    { rootMargin: "-50% 0px -50% 0px" },
+  );
+  for (const slide of slides) observer.observe(slide);
+</script>
+
+<style>
+  .slide-nav {
+    display: none;
+  }
+
+  @media (min-width: 56rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
+    :global(html:has(.slide-nav)) {
+      --slide-keys: on;
+      scroll-snap-type: y proximity;
+      scroll-padding-top: var(--sl-nav-height);
+    }
+
+    :global(.scroll-cue .keys) {
+      display: inline;
+    }
+
+    /* The hero gets no snap point, so the page can rest at the top with the banner. */
+    :global([data-slide]:not(.hero)) {
+      scroll-snap-align: start;
+    }
+
+    /* Without a snap point at the end, the snap pulls the page back from the footer.
+       The margin puts the point past the page end, so the browser clamps it to the bottom. */
+    :global(.site-footer) {
+      scroll-snap-align: end;
+      scroll-margin-block-end: 100vh;
+    }
+  }
+
+  /* A link moves the focus to its slide only to set the start of the next Tab.
+     `:root` outweighs `:root :focus-visible` in theme.css. */
+  :global(:root [data-slide]:focus) {
+    outline: none;
+  }
+
+  @media (min-width: 76rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
+    .slide-nav:not([hidden]) {
+      position: fixed;
+      inset-block-start: 50%;
+      inset-inline-end: 1.25rem;
+      z-index: var(--sl-z-index-navbar);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      translate: 0 -50%;
+    }
+  }
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The dots enter one after another, and the step buttons enter last. */
+  ol :global(li),
+  .steps {
+    --stagger: 40ms;
+    transition:
+      opacity 400ms ease-out,
+      translate 400ms ease-out;
+  }
+
+  ol :global(li) {
+    transition-delay: calc(var(--sibling-index) * var(--stagger));
+  }
+
+  .steps {
+    transition-delay: calc((var(--dot-count) + 1) * var(--stagger));
+  }
+
+  @starting-style {
+    ol :global(li),
+    .steps {
+      opacity: 0;
+      translate: 0.75rem 0;
+    }
+  }
+
+  /* The link is the 24px target (WCAG 2.5.8), and the dot inside it is only the visual. */
+  ol :global(a) {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-inline-size: 2rem;
+    min-block-size: 1.75rem;
+    border-radius: 999px;
+  }
+
+  /* gray-3 is the lightest gray with 3:1 on paper (WCAG 1.4.11). */
+  ol :global(a::before) {
+    content: "";
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-gray-3);
+    transition:
+      block-size var(--hover-duration) ease,
+      background-color var(--hover-duration) ease;
+  }
+
+  ol :global(a:hover::before) {
+    background-color: var(--sl-color-white);
+  }
+
+  ol :global(a[aria-current]::before) {
+    block-size: 1.5rem;
+    background-color: var(--sl-color-text-accent);
+  }
+
+  /* The ring goes on the dot, so it has the shape of the dot. The class outweighs `:root :focus-visible` in theme.css. */
+  .slide-nav :global(a:focus-visible) {
+    outline: none;
+  }
+
+  ol :global(a:focus-visible::before) {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 2px;
+  }
+
+  /* The label touches the link, so the pointer can move onto it (WCAG 1.4.13). */
+  ol :global(.label) {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: 100%;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+    background-color: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 -50%;
+    transition: opacity var(--hover-duration) ease;
+  }
+
+  ol :global(a:is(:hover, :focus-visible):not([data-dismissed]) .label) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    min-inline-size: 1.5rem;
+    min-block-size: 1.5rem;
+    padding: 0;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-sm);
+    background-color: var(--sl-color-bg);
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    cursor: pointer;
+    transition:
+      color var(--hover-duration) ease,
+      border-color var(--hover-duration) ease;
+  }
+
+  button:hover {
+    border-color: var(--sl-color-white);
+    color: var(--sl-color-white);
+  }
+
+  button:focus-visible {
+    outline-offset: 2px;
+  }
+
+  /* Forced colors remove backgrounds, so the dots need a system color. */
+  @media (forced-colors: active) {
+    ol :global(a::before),
+    ol :global(a:hover::before) {
+      background-color: CanvasText;
+    }
+
+    ol :global(a[aria-current]::before) {
+      background-color: Highlight;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ol :global(a::before),
+    ol :global(.label),
+    ol :global(li),
+    .steps,
+    button {
+      transition: none;
+    }
+  }
+</style>

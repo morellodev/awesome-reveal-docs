@@ -1,0 +1,30 @@
+<slot />
+
+<style is:global>
+  .slide-title {
+    color: var(--sl-color-white);
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .slide-lead {
+    max-width: 32rem;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-lg);
+    line-height: 1.55;
+  }
+
+  /* On a touch screen with a trackpad, the copy button always shows, so the lines wrap before they reach it. */
+  @media (hover: none) and (any-hover: hover) {
+    .slide-code .expressive-code .ec-line .code {
+      padding-inline-end: calc(var(--ec-codePadInl) + 2.5rem);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .slide-code {
+      --ec-codeFontSize: 0.8125rem;
+    }
+  }
+</style>

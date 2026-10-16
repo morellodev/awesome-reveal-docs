@@ -3,7 +3,7 @@ import { defineConfig, fontProviders } from "astro/config";
 import starlightHeadingBadges from "starlight-heading-badges";
 import starlightLlmsTxt from "starlight-llms-txt";
 import starlightVersions from "starlight-versions";
-import { codeThemes } from "./src/code-themes";
+import { codeThemes, markBackground } from "./src/code-themes";
 import { siteConfig } from "./src/site.config";
 
 const site = "https://awesome-reveal.dev";
@@ -98,6 +98,10 @@ export default defineConfig({
         styleOverrides: {
           borderRadius: "var(--radius-md)",
           borderColor: "var(--sl-color-hairline-light)",
+          textMarkers: {
+            markBackground,
+            markBorderColor: "var(--sl-color-text-accent)",
+          },
           frames: {
             frameBoxShadowCssValue: "none",
             inlineButtonForeground: "var(--sl-color-gray-3)",

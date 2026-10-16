@@ -1,0 +1,85 @@
+---
+import { Cascade } from "@awesome-reveal/astro";
+import Chapter from "./Chapter.astro";
+
+const intervals = [20, 40, 80, 160];
+const selected = 40;
+
+const control = {
+  name: "interval",
+  selected: String(selected),
+  options: intervals.map((interval) => ({
+    value: String(interval),
+    code: `<Cascade interval={${interval}}>
+  {tiles.map((tile) => (
+    <Tile key={tile.id} {...tile} />
+  ))}
+</Cascade>`,
+  })),
+};
+
+const columns = 6;
+const tones = ["marker", "pencil", "ink", "paper"] as const;
+const tiles = Array.from({ length: columns * 4 }, (_, index) => {
+  const diagonal = (index % columns) + Math.floor(index / columns);
+  return tones[diagonal % tones.length];
+});
+---
+
+<Chapter
+  id="stagger"
+  label="Stagger"
+  title="Staggered animations in one line"
+  control={control}
+  mark={/interval=\{\d+\}/g}
+>
+  <p>
+    Wrap a list in <code>Cascade</code>, and its children enter one after
+    another. Set the gap with <code>interval</code>, in milliseconds. Use it for
+    grids, menus, logos and feature lists.
+  </p>
+  <Cascade
+    slot="stage"
+    class="mosaic"
+    style={`--columns: ${columns}`}
+    data-controlled-option="interval"
+    interval={selected}
+    duration={500}
+    from={{ opacity: 0, scale: 0.4, rotate: 45 }}
+    threshold={0.5}
+  >
+    {tiles.map((tone) => (
+      <span class={tone} />
+    ))}
+  </Cascade>
+</Chapter>
+
+<style>
+  .mosaic {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    gap: 0.5rem;
+    width: min(100%, 26rem);
+  }
+
+  span {
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+  }
+
+  .marker {
+    background-color: var(--marker);
+  }
+
+  .pencil {
+    background-color: var(--pencil);
+  }
+
+  .ink {
+    background-color: var(--sl-color-white);
+  }
+
+  .paper {
+    border: 2px solid var(--sl-color-gray-4);
+  }
+</style>

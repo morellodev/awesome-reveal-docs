@@ -139,6 +139,11 @@
   --sl-content-width: 64rem;
 }
 
+/* Starlight widens the nav gutter at 50em but the content gutter only at 72rem. With no sidebar, the content must line up with the logo. */
+:root[data-has-hero] .content-panel {
+  --sl-content-pad-x: var(--sl-nav-pad-x);
+}
+
 :root {
   --sl-badge-default-bg: var(--sl-color-accent-low);
   --sl-badge-default-border: color-mix(
@@ -245,37 +250,25 @@
   }
 }
 
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  margin: 3rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-:is(.features, .card-grid) {
+.card-grid {
   gap: 2.5rem 2rem;
 }
 
-:is(.features li, .card) {
+.card {
   padding: 1.25rem 0 0;
   border: 0;
   border-top: 2px solid var(--sl-color-white);
   background: none;
 }
 
-:is(.features h2, .card .title) {
+.card .title {
   color: var(--sl-color-white);
   font-size: 1.375rem;
   font-weight: 700;
   line-height: 1.15;
 }
 
-.features h2 {
-  margin-bottom: 0.5rem;
-}
-
-:is(.features p, .card .body) {
+.card .body {
   color: var(--sl-color-gray-3);
 }
 
@@ -327,6 +320,11 @@ starlight-tabs {
 }
 
 .expressive-code .copy {
+  /* A device with no mouse or trackpad is not one to write code on, and there the button always covers the code. */
+  @media (any-hover: none) {
+    display: none;
+  }
+
   button {
     border-radius: var(--radius-sm);
 
@@ -335,11 +333,23 @@ starlight-tabs {
     }
   }
 
+  /* Expressive Code puts the tooltip in a block live region, where its `align-self: center` has no effect. */
+  [aria-live] {
+    display: flex;
+  }
+
   .feedback {
     border-radius: var(--radius-sm);
     font-family: var(--sl-font);
     font-size: var(--sl-text-xs);
     font-weight: 600;
+  }
+}
+
+/* Expressive Code keeps space at the end of the first line for the copy button. */
+@media (any-hover: none) {
+  .expressive-code :nth-child(1 of .ec-line) .code {
+    padding-inline-end: var(--ec-codePadInl);
   }
 }
 
