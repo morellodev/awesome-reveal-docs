@@ -50,13 +50,11 @@ ${keyframes.map((keyframe) => `  ${objectLiteral(keyframe)},`).join("\n")}
   })),
 };
 
-const decks = presets.map(({ name, property, keyframes }) => ({
-  name,
-  property,
-  keyframes,
-  cards: keyframes.map((keyframe, index) => ({
-    offset: String(keyframe.offset ?? index / (keyframes.length - 1)),
-    value: String(keyframe[property]),
+const decks = presets.map((preset) => ({
+  ...preset,
+  cards: preset.keyframes.map((keyframe, index) => ({
+    offset: String(keyframe.offset ?? index / (preset.keyframes.length - 1)),
+    value: String(keyframe[preset.property]),
   })),
 }));
 ---

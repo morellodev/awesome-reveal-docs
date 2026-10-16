@@ -7,7 +7,7 @@ import Search from "@lucide/astro/icons/search";
 ---
 
 <section id="accessible-by-default" class="defaults not-content" data-slide>
-  <Reveal as="h2" threshold={0.5}>
+  <Reveal as="h2" class="slide-title" threshold={0.5}>
     Accessible and SEO friendly by default
   </Reveal>
   <Cascade as="ul" class="points" role="list" interval={100} threshold={0.2}>
@@ -61,10 +61,6 @@ import Search from "@lucide/astro/icons/search";
 
   h2 {
     max-width: 18ch;
-    color: var(--sl-color-white);
-    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
   }
 
   .points {

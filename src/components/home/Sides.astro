@@ -7,10 +7,10 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
 import Chapter from "./Chapter.astro";
 
 const sides = [
-  { side: "top", Arrow: ArrowDown, delay: 0 },
-  { side: "right", Arrow: ArrowLeft, delay: 90 },
-  { side: "bottom", Arrow: ArrowUp, delay: 180 },
-  { side: "left", Arrow: ArrowRight, delay: 270 },
+  { side: "top", Arrow: ArrowDown },
+  { side: "right", Arrow: ArrowLeft },
+  { side: "bottom", Arrow: ArrowUp },
+  { side: "left", Arrow: ArrowRight },
 ] as const;
 const selected = "left";
 
@@ -40,14 +40,14 @@ const control = {
     One prop, no CSS.
   </p>
   <div slot="stage" class="compass">
-    {sides.map(({ side, Arrow, delay }) => (
+    {sides.map(({ side, Arrow }, index) => (
       <Reveal
         class:list={["side", side]}
         data-choice={side}
         data-selected={side === selected ? "" : undefined}
         from={side}
         duration={800}
-        delay={delay}
+        delay={index * 90}
         threshold={0.6}
       >
         <Arrow aria-hidden="true" />

@@ -37,24 +37,32 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   const keyboardWidgets =
     "input, textarea, select, [contenteditable], [role='tablist'], dialog, pre";
 
+  // Scroll positions that differ by less than this many pixels are the same position.
+  const tolerance = 2;
+
   const nav = document.querySelector<HTMLElement>(".slide-nav");
   const list = nav?.querySelector("ol");
+  const header = document.querySelector("header");
   const slides = [...document.querySelectorAll<HTMLElement>("[data-slide]")];
 
   function headerHeight() {
-    return document.querySelector("header")?.offsetHeight ?? 0;
+    return header?.offsetHeight ?? 0;
   }
 
   function bottomTop() {
     return document.documentElement.scrollHeight - innerHeight;
   }
 
-  function slideTop(index: number) {
+  function slideTops() {
+    const offset = headerHeight();
     // The first slide starts at the top of the page, so the banner above the hero shows.
-    if (index === 0) return 0;
-    return (
-      slides[index]!.getBoundingClientRect().top + scrollY - headerHeight()
+    return slides.map((slide, index) =>
+      index === 0 ? 0 : slide.getBoundingClientRect().top + scrollY - offset,
     );
+  }
+
+  function hasModifier(event: KeyboardEvent | MouseEvent) {
+    return event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
   }
 
   // A step during a smooth scroll continues from its target, so quick presses do not stop at the same slide.
@@ -74,14 +82,14 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   }
 
   // After the last slide, the next step is the end of the page, where the footer is.
-  function stepTop(direction: 1 | -1) {
+  function stepTop(direction: 1 | -1, tops: number[]) {
     const from = currentTop();
-    const tops = slides.map((_, index) => slideTop(index));
     const top =
       direction > 0
-        ? (tops.find((top) => top > from + 2) ?? bottomTop())
-        : tops.findLast((top) => top < from - 2);
-    if (top === undefined || Math.abs(top - from) <= 2) return undefined;
+        ? (tops.find((top) => top > from + tolerance) ?? bottomTop())
+        : tops.findLast((top) => top < from - tolerance);
+    if (top === undefined || Math.abs(top - from) <= tolerance)
+      return undefined;
     return top;
   }
 
@@ -93,24 +101,26 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   }
 
   // A slide taller than the viewport scrolls normally, so the keys do not skip its content.
-  function skipsContent(direction: 1 | -1, top: number) {
+  function skipsContent(direction: 1 | -1, top: number, tops: number[]) {
     const from = currentTop();
     if (direction > 0) {
-      const current = slides.findLastIndex(
-        (_, index) => slideTop(index) <= from + 2,
+      const current = tops.findLastIndex(
+        (slideTop) => slideTop <= from + tolerance,
       );
-      return current !== -1 && slideBottom(current) > from + innerHeight + 2;
+      return (
+        current !== -1 && slideBottom(current) > from + innerHeight + tolerance
+      );
     }
-    const target = slides.findIndex(
-      (_, index) => Math.abs(slideTop(index) - top) <= 2,
+    const target = tops.findIndex(
+      (slideTop) => Math.abs(slideTop - top) <= tolerance,
     );
     const end = Math.min(slideBottom(target), from + headerHeight());
-    return end > top + innerHeight + 2;
+    return end > top + innerHeight + tolerance;
   }
 
   function smoothScrollTo(top: number) {
     // A scroll that does not move fires no scrollend, so it must not set a target.
-    if (reducedMotion.matches || Math.abs(top - scrollY) <= 2) {
+    if (reducedMotion.matches || Math.abs(top - scrollY) <= tolerance) {
       scrollTo({ top, behavior: "instant" });
       return;
     }
@@ -124,10 +134,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       !direction ||
       !desktop.matches ||
       event.defaultPrevented ||
-      event.altKey ||
-      event.ctrlKey ||
-      event.metaKey ||
-      event.shiftKey ||
+      hasModifier(event) ||
       (event.target instanceof Element && event.target.closest(keyboardWidgets))
     )
       return;
@@ -136,8 +143,9 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       event.preventDefault();
       return;
     }
-    const top = stepTop(direction);
-    if (top === undefined || skipsContent(direction, top)) return;
+    const tops = slideTops();
+    const top = stepTop(direction, tops);
+    if (top === undefined || skipsContent(direction, top, tops)) return;
     event.preventDefault();
     smoothScrollTo(top);
   });
@@ -146,14 +154,13 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     "[data-direction]",
   ) ?? []) {
     button.addEventListener("click", () => {
-      const top = stepTop(Number(button.dataset.direction) as 1 | -1);
+      const top = stepTop(
+        Number(button.dataset.direction) as 1 | -1,
+        slideTops(),
+      );
       if (top !== undefined) smoothScrollTo(top);
     });
   }
-
-  const supportsSiblingIndex = CSS.supports(
-    "transition-delay: calc(sibling-index() * 1ms)",
-  );
 
   const links = slides.map((slide, index) => {
     const link = document.createElement("a");
@@ -170,24 +177,16 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     slide.tabIndex = -1;
     link.addEventListener("click", (event) => {
       // A modified click opens the link in a new tab or window, as usual.
-      if (
-        event.button !== 0 ||
-        event.metaKey ||
-        event.ctrlKey ||
-        event.shiftKey ||
-        event.altKey
-      )
-        return;
+      if (event.button !== 0 || hasModifier(event)) return;
       event.preventDefault();
       slide.focus({ preventScroll: true });
-      smoothScrollTo(slideTop(index));
+      smoothScrollTo(slideTops()[index]!);
     });
     // A new hover or focus shows the label again after an Escape.
     for (const type of ["pointerenter", "focus"])
       link.addEventListener(type, () => delete link.dataset.dismissed);
     const item = document.createElement("li");
-    if (!supportsSiblingIndex)
-      item.style.setProperty("--sibling-index", String(index + 1));
+    item.style.setProperty("--sibling-index", String(index + 1));
     item.append(link);
     list?.append(item);
     return link;
@@ -284,7 +283,6 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
 
   ol :global(li) {
     transition-delay: calc(var(--sibling-index) * var(--stagger));
-    transition-delay: calc(sibling-index() * var(--stagger));
   }
 
   .steps {

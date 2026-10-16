@@ -34,18 +34,21 @@ import Control from "../../components/home/Control.astro";
 import Defaults from "../../components/home/Defaults.astro";
 import Events from "../../components/home/Events.astro";
 import GetStarted from "../../components/home/GetStarted.astro";
+import HomeLayout from "../../layouts/HomeLayout.astro";
 import Keyframes from "../../components/home/Keyframes.astro";
 import Sides from "../../components/home/Sides.astro";
 import SlideNav from "../../components/home/SlideNav.astro";
 import Stagger from "../../components/home/Stagger.astro";
 import StartStates from "../../components/home/StartStates.astro";
 
-<Sides />
-<StartStates />
-<Stagger />
-<Keyframes />
-<Control />
-<Events />
-<Defaults />
-<GetStarted />
-<SlideNav />
+<HomeLayout>
+  <Sides />
+  <StartStates />
+  <Stagger />
+  <Keyframes />
+  <Control />
+  <Events />
+  <Defaults />
+  <GetStarted />
+  <SlideNav />
+</HomeLayout>

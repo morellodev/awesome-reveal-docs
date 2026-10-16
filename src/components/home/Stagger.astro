@@ -42,6 +42,7 @@ const tiles = Array.from({ length: columns * 4 }, (_, index) => {
   <Cascade
     slot="stage"
     class="mosaic"
+    style={`--columns: ${columns}`}
     data-controlled-option="interval"
     interval={selected}
     duration={500}
@@ -57,7 +58,7 @@ const tiles = Array.from({ length: columns * 4 }, (_, index) => {
 <style>
   .mosaic {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
     gap: 0.5rem;
     width: min(100%, 26rem);
   }

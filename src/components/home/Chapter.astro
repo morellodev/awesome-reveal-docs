@@ -42,8 +42,10 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
       <span class="number">{number}</span>
       <code>{option}</code>
     </p>
-    <h2 id={`${id}-title`}>{title}</h2>
-    <div class="body">
+    <h2 id={`${id}-title`} class="slide-title">
+      {title}
+    </h2>
+    <div class="body slide-lead">
       <slot />
     </div>
   </Cascade>
@@ -100,7 +102,12 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
       </p>
     )}
   </div>
-  <Reveal class="code" threshold={0.2} delay={150} from={{ opacity: 0 }}>
+  <Reveal
+    class="code slide-code"
+    threshold={0.2}
+    delay={150}
+    from={{ opacity: 0 }}
+  >
     {snippets.map(({ value, code }) => (
       <div
         data-snippet={value}
@@ -121,10 +128,8 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     const stage = chapter.querySelector(".stage");
     const snippets = chapter.querySelectorAll<HTMLElement>("[data-snippet]");
     const choices = stage?.querySelectorAll<HTMLElement>("[data-choice]") ?? [];
-    const controlledElements = [
-      ...(stage?.querySelectorAll<HTMLElement>("[data-controlled-option]") ??
-        []),
-    ];
+    const controlledElements =
+      stage?.querySelectorAll<HTMLElement>("[data-controlled-option]") ?? [];
 
     chapter.querySelector(".options")?.addEventListener("change", (event) => {
       if (!(event.target instanceof HTMLInputElement)) return;
@@ -149,9 +154,12 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     });
 
     chapter.querySelector(".replay")?.addEventListener("click", () => {
-      for (const host of stage?.querySelectorAll("awesome-reveal") ?? [])
-        // A host plays and fires `reveal` also when its content is not displayed.
-        if (host.firstElementChild?.checkVisibility()) replay(host);
+      // A host plays and fires `reveal` also when its content is not displayed.
+      // All checks run before the first replay, so the style recalculates only once.
+      const shownHosts = [
+        ...(stage?.querySelectorAll("awesome-reveal") ?? []),
+      ].filter((host) => host.firstElementChild?.checkVisibility());
+      for (const host of shownHosts) replay(host);
     });
   }
 </script>
@@ -216,18 +224,10 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
   }
 
   h2 {
-    color: var(--sl-color-white);
-    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 
   .body {
-    max-width: 32rem;
-    color: var(--sl-color-gray-2);
-    font-size: var(--sl-text-lg);
-    line-height: 1.55;
     text-wrap: pretty;
   }
 
@@ -237,19 +237,6 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
 
   .code {
     grid-area: code;
-  }
-
-  /* On touch screens, the copy button always shows, so the lines wrap before they reach it. */
-  @media (hover: none) {
-    .code :global(.expressive-code .ec-line .code) {
-      padding-inline-end: calc(var(--ec-codePadInl) + 2.5rem);
-    }
-  }
-
-  @media (max-width: 30rem) {
-    .code {
-      --ec-codeFontSize: 0.8125rem;
-    }
   }
 
   .stage {
@@ -454,8 +441,7 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
       display: block;
     }
 
-    .options span,
-    .replay {
+    .options span {
       transition: none;
     }
   }
