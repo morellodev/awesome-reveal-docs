@@ -98,6 +98,10 @@ export default defineConfig({
         styleOverrides: {
           borderRadius: "var(--radius-md)",
           borderColor: "var(--sl-color-hairline-light)",
+          textMarkers: {
+            markBackground: "var(--sl-color-accent-low)",
+            markBorderColor: "var(--sl-color-text-accent)",
+          },
           frames: {
             frameBoxShadowCssValue: "none",
             inlineButtonForeground: "var(--sl-color-gray-3)",

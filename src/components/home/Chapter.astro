@@ -1,18 +1,39 @@
 ---
 import { Code } from "@astrojs/starlight/components";
-import { Cascade } from "@awesome-reveal/astro";
+import type { ComponentProps } from "astro/types";
+import { Cascade, Reveal } from "@awesome-reveal/astro";
 import RotateCcw from "@lucide/astro/icons/rotate-ccw";
+
+interface Snippet {
+  value: string;
+  label?: string;
+  code: string;
+}
 
 interface Props {
   id: string;
   number: string;
   option: string;
   title: string;
-  code: string;
+  code?: string;
+  control?: { name: string; selected: string; options: Snippet[] };
+  mark?: ComponentProps<typeof Code>["mark"];
   replay?: boolean;
 }
 
-const { id, number, option, title, code, replay = true } = Astro.props;
+const {
+  id,
+  number,
+  option,
+  title,
+  code = "",
+  control,
+  mark,
+  replay = true,
+} = Astro.props;
+const snippets = control?.options ?? [{ value: "", code }];
+const selected = control?.selected ?? "";
+const hasToolbar = control || replay || Astro.slots.has("controls");
 ---
 
 <section
@@ -31,28 +52,79 @@ const { id, number, option, title, code, replay = true } = Astro.props;
     <div class="body">
       <slot />
     </div>
-    <Code code={code} lang="jsx" />
   </Cascade>
   <div class="stage" data-markdown-ignore>
-    <slot name="stage" />
-    {replay && (
-      <button type="button" class="replay">
-        <RotateCcw aria-hidden="true" />
-        Replay
-      </button>
+    <div class="demo">
+      <slot name="stage" />
+    </div>
+    {hasToolbar && (
+      <div class="toolbar">
+        {control && (
+          <div class="control">
+            <span class="legend" id={`${id}-control`}>
+              <code>{control.name}</code>
+            </span>
+            <div
+              class="options"
+              role="radiogroup"
+              aria-labelledby={`${id}-control`}
+            >
+              {control.options.map(({ value, label = value }) => (
+                <label>
+                  <input
+                    type="radio"
+                    name={`${id}-control`}
+                    value={value}
+                    checked={value === selected}
+                    autocomplete="off"
+                  />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+        <slot name="controls" />
+        {replay && (
+          <button type="button" class="replay">
+            <RotateCcw aria-hidden="true" />
+            <span class="replay-label">Replay</span>
+          </button>
+        )}
+      </div>
     )}
   </div>
+  <Reveal class="code" threshold={0.2} delay={150} from={{ opacity: 0 }}>
+    {snippets.map(({ value, code }) => (
+      <div
+        data-snippet={value}
+        hidden={value !== selected}
+        data-markdown-ignore={value !== selected ? "" : undefined}
+      >
+        <Code code={code} lang="jsx" wrap mark={mark} />
+      </div>
+    ))}
+  </Reveal>
 </section>
 
 <script>
-  for (const button of document.querySelectorAll(".chapter .replay")) {
-    button.addEventListener("click", () => {
-      for (const host of button
-        .closest(".stage")
-        ?.querySelectorAll("awesome-reveal") ?? []) {
-        host.when = false;
-        host.when = true;
+  import { replay } from "./demo";
+
+  for (const chapter of document.querySelectorAll(".chapter")) {
+    const snippets = chapter.querySelectorAll<HTMLElement>("[data-snippet]");
+    chapter.querySelector(".options")?.addEventListener("change", (event) => {
+      if (!(event.target instanceof HTMLInputElement)) return;
+      for (const snippet of snippets) {
+        const current = snippet.dataset.snippet === event.target.value;
+        snippet.hidden = !current;
+        snippet.toggleAttribute("data-markdown-ignore", !current);
       }
+    });
+    chapter.querySelector(".replay")?.addEventListener("click", () => {
+      for (const host of chapter
+        .querySelector(".stage")
+        ?.querySelectorAll("awesome-reveal") ?? [])
+        replay(host);
     });
   }
 </script>
@@ -61,25 +133,35 @@ const { id, number, option, title, code, replay = true } = Astro.props;
   .chapter {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    align-content: center;
-    gap: 2.5rem;
-    min-block-size: calc(100svh - var(--sl-nav-height));
-    padding-block: 4rem;
+    grid-template-areas: "copy" "stage" "code";
+    gap: 1.75rem;
+    padding-block: 3.5rem;
   }
 
+  /* The empty rows center the copy and the code beside the stage. */
   @media (min-width: 56rem) {
     .chapter {
       grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-      align-items: center;
-      gap: 4rem;
+      grid-template-rows: 1fr auto auto 1fr;
+      grid-template-areas: ". stage" "copy stage" "code stage" ". stage";
+      align-content: center;
+      gap: 0 4rem;
+      min-block-size: calc(100svh - var(--sl-nav-height));
+      padding-block: 4rem;
     }
 
-    .chapter:nth-of-type(even) .copy {
-      order: 1;
+    .chapter:nth-of-type(even) {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      grid-template-areas: "stage ." "stage copy" "stage code" "stage .";
+    }
+
+    .code {
+      margin-block-start: 1.75rem;
     }
   }
 
   .copy {
+    grid-area: copy;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -111,6 +193,7 @@ const { id, number, option, title, code, replay = true } = Astro.props;
     font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
     line-height: 1;
     letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 
   .body {
@@ -125,12 +208,29 @@ const { id, number, option, title, code, replay = true } = Astro.props;
     font-size: 0.85em;
   }
 
+  .code {
+    grid-area: code;
+  }
+
+  /* On touch screens, the copy button always shows, so the lines wrap before they reach it. */
+  @media (hover: none) {
+    .code :global(.expressive-code .ec-line .code) {
+      padding-inline-end: calc(var(--ec-codePadInl) + 2.5rem);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .code {
+      --ec-codeFontSize: 0.8125rem;
+    }
+  }
+
   .stage {
-    position: relative;
-    display: grid;
-    place-items: center;
-    min-block-size: min(28rem, 70svh);
-    padding: 3.5rem 1.5rem 2rem;
+    grid-area: stage;
+    align-self: center;
+    container: stage / inline-size;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     border: 1px solid var(--sl-color-hairline-light);
     border-radius: var(--radius-md);
@@ -141,14 +241,106 @@ const { id, number, option, title, code, replay = true } = Astro.props;
     );
   }
 
-  .replay {
+  .demo {
+    display: grid;
+    flex: 1;
+    place-items: center;
+    min-block-size: 17rem;
+    padding: 2.5rem 1.25rem;
+  }
+
+  @media (min-width: 56rem) {
+    .demo {
+      min-block-size: min(22rem, 50svh);
+      padding: 2.5rem 2rem;
+    }
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 0.75rem;
+    border-block-start: 1px solid var(--sl-color-hairline-light);
+  }
+
+  .control {
+    display: flex;
+    flex: 1 1 18rem;
+    align-items: center;
+    gap: 0.75rem;
+    min-inline-size: 0;
+  }
+
+  .legend code {
+    padding: 0;
+    background: none;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+
+  .options {
+    display: flex;
+    flex: 1;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+    background-color: var(--sl-color-black);
+  }
+
+  .options label {
+    position: relative;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .options input {
     position: absolute;
-    inset-block-start: 0.75rem;
-    inset-inline-end: 0.75rem;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .options span {
+    display: grid;
+    place-items: center;
+    min-block-size: 2.25rem;
+    padding-inline: 0.6rem;
+    border-radius: 999px;
+    color: var(--sl-color-gray-2);
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+    white-space: nowrap;
+    transition:
+      background-color var(--hover-duration) ease,
+      color var(--hover-duration) ease;
+  }
+
+  .options label:hover span {
+    color: var(--sl-color-white);
+  }
+
+  .options input:checked + span {
+    background-color: var(--marker);
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .options input:focus-visible + span {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 2px;
+  }
+
+  .replay {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.35rem 0.8rem;
+    min-block-size: 2.25rem;
+    margin-inline-start: auto;
+    padding: 0.35rem 0.9rem;
     border: 1px solid var(--sl-color-hairline-light);
     border-radius: 999px;
     background-color: var(--sl-color-black);
@@ -157,7 +349,9 @@ const { id, number, option, title, code, replay = true } = Astro.props;
     font-size: var(--sl-text-sm);
     font-weight: 600;
     cursor: pointer;
-    transition: border-color var(--hover-duration) ease;
+    transition:
+      border-color var(--hover-duration) ease,
+      color var(--hover-duration) ease;
 
     &:hover {
       border-color: var(--sl-color-text-accent);
@@ -165,10 +359,53 @@ const { id, number, option, title, code, replay = true } = Astro.props;
     }
   }
 
+  @media (pointer: coarse) {
+    .options span,
+    .replay {
+      min-block-size: 2.75rem;
+    }
+  }
+
+  /* On a narrow stage, the control and the replay button share one row, so their labels are only for screen readers. */
+  @container stage (max-width: 30rem) {
+    .toolbar {
+      flex-wrap: nowrap;
+    }
+
+    .control {
+      flex-basis: 0;
+    }
+
+    .legend,
+    .replay-label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .options span {
+      padding-inline: 0.25rem;
+    }
+
+    .replay {
+      justify-content: center;
+      min-inline-size: 2.75rem;
+      padding: 0;
+    }
+  }
+
   /* With reduced motion, `when: false` does not reset the entrance, so there is nothing to replay. */
   @media (prefers-reduced-motion: reduce) {
     .replay {
       display: none;
+    }
+
+    .options span,
+    .replay {
+      transition: none;
     }
   }
 </style>

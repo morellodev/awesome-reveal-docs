@@ -1,24 +1,63 @@
 ---
+import type { RevealOptions } from "@awesome-reveal/astro";
 import { Cascade } from "@awesome-reveal/astro";
 import Chapter from "./Chapter.astro";
+import { objectLiteral } from "./object-literal";
 
-const code = `<Cascade keyframes={[
-  { opacity: 0, rotate: "x -80deg", easing: "ease-out" },
-  { opacity: 1, rotate: "x 12deg", offset: 0.6 },
-  { opacity: 1, rotate: "x 0deg" },
+type Keyframes = NonNullable<RevealOptions["keyframes"]>;
+
+const presets: { name: string; property: string; keyframes: Keyframes }[] = [
+  {
+    name: "Flip",
+    property: "rotate",
+    keyframes: [
+      { opacity: 0, rotate: "x -80deg", easing: "ease-out" },
+      { opacity: 1, rotate: "x 12deg", offset: 0.6 },
+      { opacity: 1, rotate: "x 0deg" },
+    ],
+  },
+  {
+    name: "Pop",
+    property: "scale",
+    keyframes: [
+      { opacity: 0, scale: 0.3, easing: "ease-out" },
+      { opacity: 1, scale: 1.12, offset: 0.6 },
+      { opacity: 1, scale: 1 },
+    ],
+  },
+  {
+    name: "Drop",
+    property: "translate",
+    keyframes: [
+      { opacity: 0, translate: "0 -80px", easing: "ease-in" },
+      { opacity: 1, translate: "0 8px", offset: 0.6, easing: "ease-out" },
+      { opacity: 1, translate: "0 0" },
+    ],
+  },
+];
+const selected = "Flip";
+
+const control = {
+  name: "keyframes",
+  selected,
+  options: presets.map(({ name, keyframes }) => ({
+    value: name,
+    code: `<Cascade keyframes={[
+${keyframes.map((keyframe) => `  ${objectLiteral(keyframe)},`).join("\n")}
 ]}>
   {cards}
-</Cascade>`;
+</Cascade>`,
+  })),
+};
 
-const keyframes = [
-  { opacity: 0, rotate: "x -80deg", easing: "ease-out" },
-  { opacity: 1, rotate: "x 12deg", offset: 0.6 },
-  { opacity: 1, rotate: "x 0deg" },
-];
-
-const cards = keyframes.map(({ offset, rotate }, index) => ({
-  offset: String(offset ?? index / (keyframes.length - 1)),
-  rotate,
+const decks = presets.map(({ name, property, keyframes }) => ({
+  name,
+  property,
+  keyframes,
+  cards: keyframes.map((keyframe, index) => ({
+    offset: String(keyframe.offset ?? index / (keyframes.length - 1)),
+    value: String(keyframe[property]),
+  })),
 }));
 ---
 
@@ -27,54 +66,89 @@ const cards = keyframes.map(({ offset, rotate }, index) => ({
   number="04"
   option="keyframes"
   title="Your keyframes, native speed"
-  code={code}
+  control={control}
 >
   <p>
     Need a flip, a bounce or a 3D turn? Pass native Web Animations keyframes.
     The browser can run opacity and transforms off the main thread, so the
     motion stays smooth.
   </p>
-  <Cascade
-    slot="stage"
-    class="deck"
-    keyframes={keyframes}
-    duration={900}
-    interval={150}
-    threshold={0.6}
-  >
-    {cards.map(({ offset, rotate }) => (
-      <div class="flip">
-        <span class="offset">{offset}</span>
-        <code>rotate: {rotate}</code>
-      </div>
+  <div slot="stage" class="decks">
+    {decks.map(({ name, property, keyframes, cards }) => (
+      <Cascade
+        class="deck"
+        data-preset={name}
+        hidden={name !== selected}
+        keyframes={keyframes}
+        duration={900}
+        interval={150}
+        threshold={0.6}
+      >
+        {cards.map(({ offset, value }) => (
+          <div class="keyframe">
+            <span class="offset">{offset}</span>
+            <span class="value">
+              {property}
+              <code>{value}</code>
+            </span>
+          </div>
+        ))}
+      </Cascade>
     ))}
-  </Cascade>
+  </div>
 </Chapter>
 
+<script>
+  import { onControlChange, replay } from "./demo";
+
+  const chapter = document.getElementById("custom-keyframes");
+  const decks = chapter?.querySelectorAll<HTMLElement>("[data-preset]") ?? [];
+
+  onControlChange(chapter, (name) => {
+    for (const deck of decks) {
+      const selected = deck.dataset.preset === name;
+      deck.hidden = !selected;
+      const host = deck.closest("awesome-reveal");
+      if (selected && host) replay(host);
+    }
+  });
+</script>
+
 <style>
+  .decks {
+    display: grid;
+    width: min(100%, 28rem);
+  }
+
   .deck {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75rem;
-    width: min(100%, 30rem);
     perspective: 40rem;
+
+    &[hidden] {
+      display: none;
+    }
   }
 
-  .flip {
+  .keyframe {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 1.5rem;
     aspect-ratio: 3 / 4;
     padding: 0.875rem;
     border-radius: var(--radius-md);
     background-color: var(--pencil);
     color: var(--ink);
-    transform-origin: 50% 0;
   }
 
-  .flip:nth-child(2) {
+  .keyframe:nth-child(2) {
     background-color: var(--marker);
+  }
+
+  [data-preset="Flip"] .keyframe {
+    transform-origin: 50% 0;
   }
 
   .offset {
@@ -85,8 +159,25 @@ const cards = keyframes.map(({ offset, rotate }, index) => ({
     line-height: 1;
   }
 
-  code {
+  .value {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    color: color-mix(in oklab, var(--ink) 70%, transparent);
     font-size: var(--sl-text-xs);
-    overflow-wrap: anywhere;
+    font-weight: 600;
+  }
+
+  .value code {
+    color: var(--ink);
+    font-size: inherit;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 30rem) {
+    .keyframe {
+      padding: 0.625rem;
+    }
   }
 </style>

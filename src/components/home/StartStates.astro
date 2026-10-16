@@ -2,29 +2,28 @@
 import type { StartState } from "@awesome-reveal/astro";
 import { Reveal } from "@awesome-reveal/astro";
 import Chapter from "./Chapter.astro";
+import { objectLiteral } from "./object-literal";
 
-const code = `<Reveal from={{ opacity: 0, scale: 0.6, rotate: -12 }}>
-  <Card />
-</Reveal>`;
-
-const tiles: { name: string; label: string; from: StartState }[] = [
-  { name: "Fade", label: "{ opacity: 0 }", from: { opacity: 0 } },
-  {
-    name: "Zoom",
-    label: "{ opacity: 0, scale: 0.6 }",
-    from: { opacity: 0, scale: 0.6 },
-  },
-  {
-    name: "Swing",
-    label: "{ opacity: 0, rotate: -12, y: 40 }",
-    from: { opacity: 0, rotate: -12, y: 40 },
-  },
-  {
-    name: "Blur",
-    label: "{ opacity: 0, blur: 12 }",
-    from: { opacity: 0, blur: 12 },
-  },
+const tiles: { name: string; from: StartState }[] = [
+  { name: "Fade", from: { opacity: 0 } },
+  { name: "Zoom", from: { opacity: 0, scale: 0.6 } },
+  { name: "Swing", from: { opacity: 0, rotate: -12, y: 40 } },
+  { name: "Blur", from: { opacity: 0, blur: 12 } },
 ];
+const selected = "Zoom";
+
+const control = {
+  name: "from",
+  selected,
+  options: tiles.map(({ name, from }) => ({
+    value: name,
+    code: `<Reveal
+  from={${objectLiteral(from)}}
+>
+  <Card />
+</Reveal>`,
+  })),
+};
 ---
 
 <Chapter
@@ -32,7 +31,8 @@ const tiles: { name: string; label: string; from: StartState }[] = [
   number="02"
   option="from={{ … }}"
   title="Zoom, rotate and blur on scroll"
-  code={code}
+  control={control}
+  mark={2}
 >
   <p>
     Pass an object to set the start state. Mix opacity, offset, scale, rotation
@@ -40,27 +40,51 @@ const tiles: { name: string; label: string; from: StartState }[] = [
     rotation or blur.
   </p>
   <div slot="stage" class="tiles">
-    {tiles.map(({ name, label, from }, index) => (
+    {tiles.map(({ name, from }, index) => (
       <Reveal
         class:list={["tile", { marker: index === 1 || index === 2 }]}
+        data-tile={name}
+        data-selected={name === selected ? "" : undefined}
         from={from}
         duration={900}
         delay={index * 90}
         threshold={0.6}
       >
         <strong>{name}</strong>
-        <code>{label}</code>
+        <code>
+          {Object.entries(from).map(([key, value]) => (
+            <span>
+              {key}: {value}
+            </span>
+          ))}
+        </code>
       </Reveal>
     ))}
   </div>
 </Chapter>
+
+<script>
+  import { onControlChange, replayWithoutDelay } from "./demo";
+
+  const chapter = document.getElementById("zoom-rotate-and-blur-on-scroll");
+  const tiles = chapter?.querySelectorAll<HTMLElement>("[data-tile]") ?? [];
+
+  onControlChange(chapter, (name) => {
+    for (const tile of tiles) {
+      const selected = tile.dataset.tile === name;
+      tile.toggleAttribute("data-selected", selected);
+      const host = tile.closest("awesome-reveal");
+      if (selected && host) replayWithoutDelay(host);
+    }
+  });
+</script>
 
 <style>
   .tiles {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
-    width: min(100%, 30rem);
+    width: min(100%, 28rem);
   }
 
   .tile {
@@ -68,11 +92,18 @@ const tiles: { name: string; label: string; from: StartState }[] = [
     flex-direction: column;
     justify-content: space-between;
     gap: 1.5rem;
-    min-block-size: 9rem;
+    min-block-size: 8.5rem;
     padding: 1rem;
     border-radius: var(--radius-md);
     background-color: var(--sl-color-white);
     color: var(--sl-color-black);
+    outline: 3px solid transparent;
+    outline-offset: 4px;
+    transition: outline-color var(--hover-duration) ease;
+  }
+
+  .tile[data-selected] {
+    outline-color: var(--sl-color-white);
   }
 
   /* Each tile is the only child of its host, so `:nth-child` cannot pick it. */
@@ -88,8 +119,9 @@ const tiles: { name: string; label: string; from: StartState }[] = [
     line-height: 1;
   }
 
-  code {
+  .tile code {
+    display: flex;
+    flex-direction: column;
     font-size: var(--sl-text-xs);
-    overflow-wrap: anywhere;
   }
 </style>

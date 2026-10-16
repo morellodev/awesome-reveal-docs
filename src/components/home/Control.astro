@@ -3,7 +3,10 @@ import { Reveal } from "@awesome-reveal/astro";
 import CircleCheck from "@lucide/astro/icons/circle-check";
 import Chapter from "./Chapter.astro";
 
-const code = `<Reveal from="top" when={saved} hidden={!saved}>
+const code = `<Reveal
+  when={saved}
+  hidden={!saved}
+>
   <Toast>Changes saved</Toast>
 </Reveal>`;
 ---
@@ -14,6 +17,7 @@ const code = `<Reveal from="top" when={saved} hidden={!saved}>
   option="when"
   title="Trigger animations on demand"
   code={code}
+  mark="when={saved}"
   replay={false}
 >
   <p>
@@ -22,93 +26,176 @@ const code = `<Reveal from="top" when={saved} hidden={!saved}>
     it. Connect it to tabs, steps, toasts or any state you own. Add{" "}
     <code>hidden</code> to hide the content from screen readers too.
   </p>
-  <div slot="stage" class="demo">
-    <label class="switch">
-      <input type="checkbox" switch role="switch" autocomplete="off" />
-      <span>
-        Toggle <code>when</code>
-      </span>
-    </label>
-    <div class="screen">
-      <Reveal class="toast" from="top" when={false} hidden duration={500}>
-        <CircleCheck aria-hidden="true" />
-        Changes saved
-      </Reveal>
+  <div slot="stage" class="screen">
+    <Reveal class="toast" when={false} hidden duration={500}>
+      <CircleCheck aria-hidden="true" />
+      Changes saved
+    </Reveal>
+    <div class="page" aria-hidden="true">
+      <span class="line title"></span>
+      <span class="line"></span>
+      <span class="line"></span>
+      <span class="line short"></span>
     </div>
   </div>
+  <label slot="controls" class="switch">
+    <input type="checkbox" role="switch" autocomplete="off" />
+    <span class="track" aria-hidden="true"></span>
+    <code>saved</code>
+    <span class="state" aria-hidden="true">
+      false
+    </span>
+  </label>
 </Chapter>
 
 <script>
-  for (const demo of document.querySelectorAll(".demo")) {
-    const input = demo.querySelector("input");
-    const host = demo.querySelector("awesome-reveal");
-    const toast = demo.querySelector<HTMLElement>(".toast");
-    if (!input || !host || !toast) continue;
-    const showToast = () => {
-      toast.hidden = !input.checked;
-      host.when = input.checked;
-    };
-    showToast();
-    input.addEventListener("change", showToast);
+  const chapter = document.getElementById("trigger-animations-on-demand");
+  const input = chapter?.querySelector<HTMLInputElement>(".switch input");
+  const state = chapter?.querySelector(".switch .state");
+  const toast = chapter?.querySelector<HTMLElement>(".toast");
+  const host = toast?.closest("awesome-reveal");
+
+  function showToast() {
+    if (!input || !state || !toast || !host) return;
+    toast.hidden = !input.checked;
+    host.when = input.checked;
+    state.textContent = String(input.checked);
   }
+
+  showToast();
+  input?.addEventListener("change", showToast);
 </script>
 
 <style>
-  .demo {
-    display: grid;
-    justify-items: center;
-    gap: 2rem;
-    width: min(100%, 24rem);
-  }
-
-  .switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.6rem 1.1rem;
-    border: 1px solid var(--sl-color-hairline-light);
-    border-radius: 999px;
-    background-color: var(--sl-color-black);
-    color: var(--sl-color-white);
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  input {
-    inline-size: 1.25rem;
-    block-size: 1.25rem;
-    margin: 0;
-    accent-color: var(--sl-color-text-accent);
-    cursor: pointer;
-  }
-
-  input:focus-visible {
-    outline-offset: 3px;
-  }
-
   .screen {
+    position: relative;
     display: grid;
-    place-items: start center;
-    width: 100%;
-    min-block-size: 10rem;
-    padding: 1.25rem;
-    border: 2px dashed var(--sl-color-gray-5);
+    width: min(100%, 22rem);
+    padding: 1.5rem 1.25rem 4.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
     border-radius: var(--radius-md);
+    background-color: var(--sl-color-black);
+  }
+
+  .page {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .line {
+    block-size: 0.6rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-gray-5);
+  }
+
+  .title {
+    inline-size: 45%;
+    block-size: 1rem;
+    margin-block-end: 0.5rem;
+    background-color: var(--sl-color-gray-4);
+  }
+
+  .short {
+    inline-size: 70%;
   }
 
   .toast {
-    display: inline-flex;
+    position: absolute;
+    inset-block-end: 1rem;
+    inset-inline: 1rem;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.6rem;
-    padding: 0.8rem 1.2rem;
-    border-radius: var(--radius-md);
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
     background-color: var(--marker);
     color: var(--ink);
-    font-size: var(--sl-text-lg);
     font-weight: 700;
 
     &[hidden] {
       display: none;
+    }
+  }
+
+  .switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-block-size: 2.25rem;
+    padding-inline: 0.25rem;
+    cursor: pointer;
+  }
+
+  @media (pointer: coarse) {
+    .switch {
+      min-block-size: 2.75rem;
+    }
+  }
+
+  input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .track {
+    position: relative;
+    flex: none;
+    inline-size: 2.75rem;
+    block-size: 1.5rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-gray-5);
+    transition: background-color var(--hover-duration) ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 0.1875rem;
+      inset-inline-start: 0.1875rem;
+      inline-size: 1.125rem;
+      block-size: 1.125rem;
+      border-radius: 50%;
+      background-color: var(--sl-color-white);
+      transition:
+        translate var(--hover-duration) ease,
+        background-color var(--hover-duration) ease;
+    }
+  }
+
+  input:checked + .track {
+    background-color: var(--marker);
+
+    &::before {
+      translate: 1.25rem 0;
+      background-color: var(--ink);
+    }
+  }
+
+  input:focus-visible + .track {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 3px;
+  }
+
+  .switch code {
+    color: var(--sl-color-white);
+    font-weight: 700;
+  }
+
+  .state {
+    min-inline-size: 5ch;
+    color: var(--sl-color-gray-3);
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track,
+    .track::before {
+      transition: none;
     }
   }
 </style>
