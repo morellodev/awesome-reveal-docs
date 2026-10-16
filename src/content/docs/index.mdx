@@ -10,9 +10,11 @@ head:
       content: website
 template: splash
 editUrl: false
+banner:
+  content: "The <code>@awesome-reveal/*</code> packages are prereleases. The API can change before version 1.0."
 hero:
   title: Scroll reveal animations
-  tagline: Reveal elements as they scroll into view, in React, Vue, Astro or plain JavaScript. The core package has no dependencies.
+  tagline: Reveal elements when they scroll into view, in React, Vue, Astro or plain JavaScript. The core package has no dependencies.
   actions:
     - text: View on GitHub
       icon: github
@@ -26,37 +28,34 @@ hero:
 
 import { Cascade } from "@awesome-reveal/astro";
 
-:::tip[In active development]
-The `@awesome-reveal/*` packages are prereleases, and the API can change before version 1.0. These docs show the current prerelease API.
-:::
-
 <Cascade as="ul" class="features not-content" interval={100}>
   <li>
     <h2>Native browser APIs</h2>
     <p>
-      Intersection Observer detects when an element enters the viewport, and the
-      Web Animations API animates it. No animation library loads in the browser.
+      Intersection Observer detects when an element enters the viewport. The Web
+      Animations API animates it. The browser loads no animation library.
     </p>
   </li>
   <li>
     <h2>No flash of content</h2>
     <p>
-      The server renders the content hidden, so it does not show before the
-      animation starts. If the script fails, the content shows after 5 seconds.
+      The server renders the content hidden. The content does not show before
+      the animation starts. If the script fails, the content shows after 5
+      seconds.
     </p>
   </li>
   <li>
     <h2>Reduced motion support</h2>
     <p>
-      When the operating system asks for reduced motion, the content shows
-      immediately, with no animation.
+      When the operating system requests reduced motion, the content shows at
+      once, with no animation.
     </p>
   </li>
   <li>
     <h2>One core, four packages</h2>
     <p>
       The React, Vue, Astro and JavaScript packages share one core and the same
-      options. Each package includes TypeScript types.
+      options. Each package has TypeScript types.
     </p>
   </li>
 </Cascade>

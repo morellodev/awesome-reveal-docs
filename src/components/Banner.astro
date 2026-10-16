@@ -3,15 +3,15 @@ import Default from "@astrojs/starlight/components/Banner.astro";
 import VersionBanner from "starlight-versions/components/VersionBanner.astro";
 ---
 
-<div class="version-banner">
+<div class="banners">
   <VersionBanner />
+  <Default>
+    <slot />
+  </Default>
 </div>
-<Default>
-  <slot />
-</Default>
 
 <style>
-  .version-banner :global(div) {
+  .banners :global(div) {
     border-bottom: 1px solid var(--sl-color-hairline-light);
     background-color: var(--sl-color-gray-6);
     color: var(--sl-color-gray-2);
@@ -19,7 +19,7 @@ import VersionBanner from "starlight-versions/components/VersionBanner.astro";
     line-height: 1.4;
   }
 
-  .version-banner :global(a) {
+  .banners :global(a) {
     color: var(--sl-color-text-accent);
     font-weight: 600;
   }
