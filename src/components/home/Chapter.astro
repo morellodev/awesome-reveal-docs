@@ -255,6 +255,15 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     gap: 0.75rem 1rem;
     padding: 0.75rem;
     border-block-start: 1px solid var(--sl-color-hairline-light);
+    --option-size: 2.25rem;
+    /* The options with their padding and border. */
+    --control-size: calc(var(--option-size) + 0.5rem + 2px);
+  }
+
+  @media (pointer: coarse) {
+    .toolbar {
+      --option-size: 2.75rem;
+    }
   }
 
   /* Not a fieldset: Safari puts a legend above the content of a flex fieldset, even when the legend floats. */
@@ -300,7 +309,7 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
   .options span {
     display: grid;
     place-items: center;
-    min-block-size: 2.25rem;
+    min-block-size: var(--option-size);
     padding-inline: 0.6rem;
     border-radius: 999px;
     color: var(--sl-color-gray-2);
@@ -333,7 +342,7 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    min-block-size: 2.25rem;
+    min-block-size: var(--control-size);
     margin-inline-start: auto;
     padding: 0.35rem 0.9rem;
     border: 1px solid var(--sl-color-hairline-light);
@@ -351,13 +360,6 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     &:hover {
       border-color: var(--sl-color-text-accent);
       color: var(--sl-color-white);
-    }
-  }
-
-  @media (pointer: coarse) {
-    .options span,
-    .replay {
-      min-block-size: 2.75rem;
     }
   }
 
@@ -386,8 +388,9 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     }
 
     .replay {
+      flex: none;
       justify-content: center;
-      min-inline-size: 2.75rem;
+      inline-size: var(--control-size);
       padding: 0;
     }
   }
