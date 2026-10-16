@@ -85,8 +85,11 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     return top;
   }
 
+  // The bottom padding holds no content, so a step may hide it.
   function slideBottom(index: number) {
-    return slides[index]!.getBoundingClientRect().bottom + scrollY;
+    const slide = slides[index]!;
+    const padding = parseFloat(getComputedStyle(slide).paddingBlockEnd);
+    return slide.getBoundingClientRect().bottom - padding + scrollY;
   }
 
   // A slide taller than the viewport scrolls normally, so the keys do not skip its content.
@@ -158,7 +161,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     label.className = "label";
     label.textContent = slide.querySelector("h2")?.textContent ?? "";
     link.append(label);
-    // The default jump is prevented, so the focus must move to the slide for the next Tab.
+    // The default jump is prevented, so the script must move the focus for the next Tab and add the hash to the history.
     slide.tabIndex = -1;
     link.addEventListener("click", (event) => {
       // A modified click opens the link in a new tab or window, as usual.
@@ -171,6 +174,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       )
         return;
       event.preventDefault();
+      if (location.hash !== link.hash) history.pushState(null, "", link.hash);
       slide.focus({ preventScroll: true });
       smoothScrollTo(slideTop(slides.indexOf(slide)));
     });
@@ -249,16 +253,14 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       align-items: center;
       gap: 0.5rem;
       translate: 0 -50%;
-      transition:
-        opacity var(--hover-duration) ease,
-        visibility var(--hover-duration);
+      transition: opacity var(--hover-duration) ease;
     }
 
     /* No current dot means that the current slide is not a numbered chapter.
-       A step button keeps the nav visible while it has the focus, so the focus does not go to the body. */
+       The nav stays in the Tab order and the accessibility tree, and it shows while it has the focus. */
     .slide-nav:not(:has(a[aria-current]), :focus-within) {
       opacity: 0;
-      visibility: hidden;
+      pointer-events: none;
     }
   }
 
