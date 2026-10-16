@@ -78,19 +78,20 @@ const heroActions =
   )}
   {isHome && (
     <Reveal
-      as="a"
+      as="p"
       class="scroll-cue"
-      href="#fade-in-from-any-side"
       delay={300}
       from={{ opacity: 0 }}
       duration={1200}
       data-markdown-ignore
     >
-      Scroll down
-      <span class="keys">
-        {" "}
-        or press <kbd>↓</kbd>
-      </span>
+      <a href="#fade-in-from-any-side">
+        Scroll down
+        <span class="keys">
+          {" "}
+          or press <kbd>↓</kbd>
+        </span>
+      </a>
     </Reveal>
   )}
 </div>
@@ -120,12 +121,18 @@ const heroActions =
     margin-block-start: auto;
   }
 
+  /* The space above is on the paragraph, so the focus ring of the link fits its text. */
   .scroll-cue {
     margin-block-start: auto;
     padding-block-start: 2rem;
-    color: var(--sl-color-gray-3);
     font-size: var(--sl-text-sm);
     font-weight: 600;
+  }
+
+  .scroll-cue a {
+    border-radius: var(--radius-sm);
+    color: var(--sl-color-gray-3);
+    outline-offset: 2px;
     text-decoration: none;
 
     &:hover {
