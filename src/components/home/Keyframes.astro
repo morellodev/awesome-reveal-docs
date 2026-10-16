@@ -1,0 +1,92 @@
+---
+import { Cascade } from "@awesome-reveal/astro";
+import Chapter from "./Chapter.astro";
+
+const code = `<Cascade keyframes={[
+  { opacity: 0, rotate: "x -80deg", easing: "ease-out" },
+  { opacity: 1, rotate: "x 12deg", offset: 0.6 },
+  { opacity: 1, rotate: "x 0deg" },
+]}>
+  {cards}
+</Cascade>`;
+
+const keyframes = [
+  { opacity: 0, rotate: "x -80deg", easing: "ease-out" },
+  { opacity: 1, rotate: "x 12deg", offset: 0.6 },
+  { opacity: 1, rotate: "x 0deg" },
+];
+
+const cards = keyframes.map(({ offset, rotate }, index) => ({
+  offset: String(offset ?? index / (keyframes.length - 1)),
+  rotate,
+}));
+---
+
+<Chapter
+  id="custom-keyframes"
+  number="04"
+  option="keyframes"
+  title="Your keyframes, native speed"
+  code={code}
+>
+  <p>
+    Need a flip, a bounce or a 3D turn? Pass native Web Animations keyframes.
+    The browser can run opacity and transforms off the main thread, so the
+    motion stays smooth.
+  </p>
+  <Cascade
+    slot="stage"
+    class="deck"
+    keyframes={keyframes}
+    duration={900}
+    interval={150}
+    threshold={0.6}
+  >
+    {cards.map(({ offset, rotate }) => (
+      <div class="flip">
+        <span class="offset">{offset}</span>
+        <code>rotate: {rotate}</code>
+      </div>
+    ))}
+  </Cascade>
+</Chapter>
+
+<style>
+  .deck {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: min(100%, 30rem);
+    perspective: 40rem;
+  }
+
+  .flip {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+    aspect-ratio: 3 / 4;
+    padding: 0.875rem;
+    border-radius: var(--radius-md);
+    background-color: var(--pencil);
+    color: var(--ink);
+    transform-origin: 50% 0;
+  }
+
+  .flip:nth-child(2) {
+    background-color: var(--marker);
+  }
+
+  .offset {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.25rem + 3vw, 3.25rem);
+    font-stretch: 85%;
+    font-weight: 750;
+    line-height: 1;
+  }
+
+  code {
+    font-size: var(--sl-text-xs);
+    overflow-wrap: anywhere;
+  }
+</style>

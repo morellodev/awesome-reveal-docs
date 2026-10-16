@@ -1,0 +1,114 @@
+---
+import { Reveal } from "@awesome-reveal/astro";
+import CircleCheck from "@lucide/astro/icons/circle-check";
+import Chapter from "./Chapter.astro";
+
+const code = `<Reveal from="top" when={saved} hidden={!saved}>
+  <Toast>Changes saved</Toast>
+</Reveal>`;
+---
+
+<Chapter
+  id="trigger-animations-on-demand"
+  number="05"
+  option="when"
+  title="Trigger animations on demand"
+  code={code}
+  replay={false}
+>
+  <p>
+    Not everything waits for a scroll. Set <code>when</code> to{" "}
+    <code>true</code> to play the entrance, and to <code>false</code> to reset
+    it. Connect it to tabs, steps, toasts or any state you own. Add{" "}
+    <code>hidden</code> to hide the content from screen readers too.
+  </p>
+  <div slot="stage" class="demo">
+    <label class="switch">
+      <input type="checkbox" switch role="switch" autocomplete="off" />
+      <span>
+        Toggle <code>when</code>
+      </span>
+    </label>
+    <div class="screen">
+      <Reveal class="toast" from="top" when={false} hidden duration={500}>
+        <CircleCheck aria-hidden="true" />
+        Changes saved
+      </Reveal>
+    </div>
+  </div>
+</Chapter>
+
+<script>
+  for (const demo of document.querySelectorAll(".demo")) {
+    const input = demo.querySelector("input");
+    const host = demo.querySelector("awesome-reveal");
+    const toast = demo.querySelector<HTMLElement>(".toast");
+    if (!input || !host || !toast) continue;
+    const showToast = () => {
+      toast.hidden = !input.checked;
+      host.when = input.checked;
+    };
+    showToast();
+    input.addEventListener("change", showToast);
+  }
+</script>
+
+<style>
+  .demo {
+    display: grid;
+    justify-items: center;
+    gap: 2rem;
+    width: min(100%, 24rem);
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+    background-color: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  input {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin: 0;
+    accent-color: var(--sl-color-text-accent);
+    cursor: pointer;
+  }
+
+  input:focus-visible {
+    outline-offset: 3px;
+  }
+
+  .screen {
+    display: grid;
+    place-items: start center;
+    width: 100%;
+    min-block-size: 10rem;
+    padding: 1.25rem;
+    border: 2px dashed var(--sl-color-gray-5);
+    border-radius: var(--radius-md);
+  }
+
+  .toast {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius-md);
+    background-color: var(--marker);
+    color: var(--ink);
+    font-size: var(--sl-text-lg);
+    font-weight: 700;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+</style>

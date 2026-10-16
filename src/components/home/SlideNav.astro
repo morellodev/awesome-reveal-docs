@@ -1,0 +1,286 @@
+---
+import ArrowDown from "@lucide/astro/icons/arrow-down";
+import ArrowUp from "@lucide/astro/icons/arrow-up";
+---
+
+<nav class="slide-nav" aria-label="Sections" data-markdown-ignore hidden>
+  <ol></ol>
+  <div class="steps">
+    <button type="button" data-direction="-1" aria-label="Previous section">
+      <ArrowUp aria-hidden="true" />
+    </button>
+    <button type="button" data-direction="1" aria-label="Next section">
+      <ArrowDown aria-hidden="true" />
+    </button>
+  </div>
+</nav>
+
+<script>
+  const desktop = matchMedia(
+    "(min-width: 56rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine)",
+  );
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const directions: Record<string, 1 | -1> = {
+    ArrowDown: 1,
+    ArrowRight: 1,
+    PageDown: 1,
+    ArrowUp: -1,
+    ArrowLeft: -1,
+    PageUp: -1,
+  };
+  // These elements use the arrow keys themselves.
+  const keyboardWidgets =
+    "input, textarea, select, [contenteditable], [role='tablist'], dialog, pre";
+
+  const nav = document.querySelector<HTMLElement>(".slide-nav");
+  const list = nav?.querySelector("ol");
+  const slides = [...document.querySelectorAll<HTMLElement>("[data-slide]")];
+
+  function headerHeight() {
+    return document.querySelector("header")?.offsetHeight ?? 0;
+  }
+
+  function bottomTop() {
+    return document.documentElement.scrollHeight - innerHeight;
+  }
+
+  function slideTop(index: number) {
+    // The first slide starts at the top of the page, so the banner above the hero shows.
+    if (index === 0) return 0;
+    return (
+      slides[index]!.getBoundingClientRect().top + scrollY - headerHeight()
+    );
+  }
+
+  // After the last slide, the next step is the end of the page, where the footer is.
+  function stepTop(direction: 1 | -1) {
+    const tops = slides.map((_, index) => slideTop(index));
+    const top =
+      direction > 0
+        ? (tops.find((top) => top > scrollY + 2) ?? bottomTop())
+        : tops.findLast((top) => top < scrollY - 2);
+    if (top === undefined || Math.abs(top - scrollY) <= 2) return undefined;
+    return top;
+  }
+
+  function slideBottom(index: number) {
+    return slides[index]!.getBoundingClientRect().bottom + scrollY;
+  }
+
+  // A slide taller than the viewport scrolls normally, so the keys do not skip its content.
+  function skipsContent(direction: 1 | -1, top: number) {
+    if (direction > 0) {
+      const current = slides.findLastIndex(
+        (_, index) => slideTop(index) <= scrollY + 2,
+      );
+      return current !== -1 && slideBottom(current) > scrollY + innerHeight + 2;
+    }
+    const target = slides.findIndex(
+      (_, index) => Math.abs(slideTop(index) - top) <= 2,
+    );
+    const end = Math.min(slideBottom(target), scrollY + headerHeight());
+    return end > top + innerHeight + 2;
+  }
+
+  function smoothScrollTo(top: number) {
+    scrollTo({ top, behavior: reducedMotion.matches ? "instant" : "smooth" });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    const direction = directions[event.key];
+    if (
+      !direction ||
+      !desktop.matches ||
+      event.defaultPrevented ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      (event.target instanceof Element && event.target.closest(keyboardWidgets))
+    )
+      return;
+    const top = stepTop(direction);
+    if (top === undefined || skipsContent(direction, top)) return;
+    event.preventDefault();
+    smoothScrollTo(top);
+  });
+
+  for (const button of nav?.querySelectorAll<HTMLButtonElement>(
+    "[data-direction]",
+  ) ?? []) {
+    button.addEventListener("click", () => {
+      const top = stepTop(Number(button.dataset.direction) as 1 | -1);
+      if (top !== undefined) smoothScrollTo(top);
+    });
+  }
+
+  const links = slides.map((slide, index) => {
+    const link = document.createElement("a");
+    link.href = `#${slide.id || slide.querySelector("h1")?.id || ""}`;
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = slide.querySelector("h1, h2")?.textContent ?? "";
+    link.append(label);
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      smoothScrollTo(slideTop(index));
+    });
+    const item = document.createElement("li");
+    item.append(link);
+    list?.append(item);
+    return link;
+  });
+  if (nav) nav.hidden = false;
+
+  // A slide is current while it crosses the middle of the viewport.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const current = slides.indexOf(entry.target as HTMLElement);
+        links.forEach((link, index) => {
+          if (index === current) link.setAttribute("aria-current", "location");
+          else link.removeAttribute("aria-current");
+        });
+      }
+    },
+    { rootMargin: "-50% 0px -50% 0px" },
+  );
+  for (const slide of slides) observer.observe(slide);
+</script>
+
+<style>
+  .slide-nav {
+    display: none;
+  }
+
+  @media (min-width: 56rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
+    :global(html:has(.slide-nav)) {
+      scroll-snap-type: y proximity;
+      scroll-padding-top: var(--sl-nav-height);
+    }
+
+    /* The hero gets no snap point, so the page can rest at the top with the banner. */
+    :global([data-slide]:not(.hero)) {
+      scroll-snap-align: start;
+    }
+
+    /* Without a snap point at the end, the snap pulls the page back from the footer.
+       The margin puts the point past the page end, so the browser clamps it to the bottom. */
+    :global(.site-footer) {
+      scroll-snap-align: end;
+      scroll-margin-block-end: 100vh;
+    }
+  }
+
+  @media (min-width: 76rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
+    .slide-nav:not([hidden]) {
+      position: fixed;
+      inset-block-start: 50%;
+      inset-inline-end: 1.5rem;
+      z-index: var(--sl-z-index-navbar);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      translate: 0 -50%;
+    }
+  }
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  ol :global(a) {
+    position: relative;
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-gray-4);
+    transition:
+      height var(--hover-duration) ease,
+      background-color var(--hover-duration) ease;
+  }
+
+  ol :global(a:hover) {
+    background-color: var(--sl-color-white);
+  }
+
+  ol :global(a[aria-current]) {
+    height: 1.5rem;
+    background-color: var(--sl-color-text-accent);
+  }
+
+  ol :global(a:focus-visible) {
+    outline-offset: 4px;
+  }
+
+  ol :global(.label) {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: calc(100% + 0.75rem);
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+    background-color: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 -50%;
+    transition: opacity var(--hover-duration) ease;
+  }
+
+  ol :global(a:is(:hover, :focus-visible) .label) {
+    opacity: 1;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-sm);
+    background-color: var(--sl-color-bg);
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    cursor: pointer;
+    transition:
+      color var(--hover-duration) ease,
+      border-color var(--hover-duration) ease;
+  }
+
+  button:hover {
+    border-color: var(--sl-color-white);
+    color: var(--sl-color-white);
+  }
+
+  button:focus-visible {
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ol :global(a),
+    ol :global(.label),
+    button {
+      transition: none;
+    }
+  }
+</style>

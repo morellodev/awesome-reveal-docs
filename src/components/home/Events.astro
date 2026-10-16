@@ -1,0 +1,123 @@
+---
+import { Reveal } from "@awesome-reveal/astro";
+import Chapter from "./Chapter.astro";
+
+const code = `<Reveal onReveal={() => track("pricing_seen")}>
+  <Pricing />
+</Reveal>`;
+---
+
+<Chapter
+  id="react-to-every-reveal"
+  number="06"
+  option="onReveal"
+  title="Know the moment it shows"
+  code={code}
+  replay={false}
+>
+  <p>
+    Each reveal calls <code>onReveal</code>, also with reduced motion. Send an
+    analytics event, load more data or start a counter. Like this one. In Astro,
+    listen for the <code>reveal</code> event.
+  </p>
+  <Reveal slot="stage" class="counter" from={{ opacity: 0, scale: 0.9 }}>
+    <output aria-live="off">0</output>
+    <p class="caption">reveals on this page so far</p>
+    <ol class="log"></ol>
+  </Reveal>
+</Chapter>
+
+<script>
+  const counter = document.querySelector(".counter");
+  const output = counter?.querySelector("output");
+  const log = counter?.querySelector(".log");
+  const motion = matchMedia("(prefers-reduced-motion: no-preference)");
+
+  // The hero can reveal before this script runs, so the count starts from the hosts that already revealed.
+  let count = [...document.querySelectorAll("awesome-reveal")].filter(
+    (host) => host.revealed,
+  ).length;
+
+  function describe(element: Element) {
+    const className = [...element.classList].find(
+      (name) => !name.startsWith("astro-"),
+    );
+    const heading = element.matches("h1, h2, h3")
+      ? element
+      : element.querySelector("h1, h2, h3");
+    const tag = `<${element.localName}${className ? `.${className}` : ""}>`;
+    return `${tag} ${heading?.textContent ?? ""}`.trim();
+  }
+
+  if (output && log) {
+    output.value = String(count);
+    document.addEventListener("reveal", (event) => {
+      if (!(event.target instanceof Element)) return;
+      count += 1;
+      output.value = String(count);
+      if (motion.matches)
+        output.animate([{ scale: 1.2 }, { scale: 1 }], {
+          duration: 300,
+          easing: "ease-out",
+        });
+
+      const item = document.createElement("li");
+      item.textContent = describe(event.target);
+      log.prepend(item);
+      while (log.children.length > 3) log.lastElementChild?.remove();
+    });
+  }
+</script>
+
+<style>
+  .counter {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    width: min(100%, 24rem);
+    text-align: center;
+  }
+
+  output {
+    color: var(--sl-color-text-accent);
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 3rem + 8vw, 8rem);
+    font-stretch: 85%;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .caption {
+    color: var(--sl-color-gray-2);
+    font-weight: 600;
+  }
+
+  .log {
+    display: grid;
+    gap: 0.35rem;
+    width: 100%;
+    min-block-size: 6.5rem;
+    margin-block-start: 1rem;
+    padding: 0;
+    list-style: none;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+  }
+
+  .log :global(li) {
+    overflow: hidden;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-sm);
+    color: var(--sl-color-gray-3);
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .log :global(li:first-child) {
+    border-color: var(--sl-color-text-accent);
+    color: var(--sl-color-white);
+  }
+</style>

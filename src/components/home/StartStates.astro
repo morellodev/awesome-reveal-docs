@@ -1,0 +1,95 @@
+---
+import type { StartState } from "@awesome-reveal/astro";
+import { Reveal } from "@awesome-reveal/astro";
+import Chapter from "./Chapter.astro";
+
+const code = `<Reveal from={{ opacity: 0, scale: 0.6, rotate: -12 }}>
+  <Card />
+</Reveal>`;
+
+const tiles: { name: string; label: string; from: StartState }[] = [
+  { name: "Fade", label: "{ opacity: 0 }", from: { opacity: 0 } },
+  {
+    name: "Zoom",
+    label: "{ opacity: 0, scale: 0.6 }",
+    from: { opacity: 0, scale: 0.6 },
+  },
+  {
+    name: "Swing",
+    label: "{ opacity: 0, rotate: -12, y: 40 }",
+    from: { opacity: 0, rotate: -12, y: 40 },
+  },
+  {
+    name: "Blur",
+    label: "{ opacity: 0, blur: 12 }",
+    from: { opacity: 0, blur: 12 },
+  },
+];
+---
+
+<Chapter
+  id="zoom-rotate-and-blur-on-scroll"
+  number="02"
+  option="from={{ … }}"
+  title="Zoom, rotate and blur on scroll"
+  code={code}
+>
+  <p>
+    Pass an object to set the start state. Mix opacity, offset, scale, rotation
+    and blur. The entrance ends at full opacity and size, with no offset,
+    rotation or blur.
+  </p>
+  <div slot="stage" class="tiles">
+    {tiles.map(({ name, label, from }, index) => (
+      <Reveal
+        class:list={["tile", { marker: index === 1 || index === 2 }]}
+        from={from}
+        duration={900}
+        delay={index * 90}
+        threshold={0.6}
+      >
+        <strong>{name}</strong>
+        <code>{label}</code>
+      </Reveal>
+    ))}
+  </div>
+</Chapter>
+
+<style>
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: min(100%, 30rem);
+  }
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-block-size: 9rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background-color: var(--sl-color-white);
+    color: var(--sl-color-black);
+  }
+
+  /* Each tile is the only child of its host, so `:nth-child` cannot pick it. */
+  .marker {
+    background-color: var(--marker);
+    color: var(--ink);
+  }
+
+  strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.25rem + 2vw, 2.5rem);
+    font-stretch: 85%;
+    line-height: 1;
+  }
+
+  code {
+    font-size: var(--sl-text-xs);
+    overflow-wrap: anywhere;
+  }
+</style>

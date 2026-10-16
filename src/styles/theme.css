@@ -245,37 +245,25 @@
   }
 }
 
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  margin: 3rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-:is(.features, .card-grid) {
+.card-grid {
   gap: 2.5rem 2rem;
 }
 
-:is(.features li, .card) {
+.card {
   padding: 1.25rem 0 0;
   border: 0;
   border-top: 2px solid var(--sl-color-white);
   background: none;
 }
 
-:is(.features h2, .card .title) {
+.card .title {
   color: var(--sl-color-white);
   font-size: 1.375rem;
   font-weight: 700;
   line-height: 1.15;
 }
 
-.features h2 {
-  margin-bottom: 0.5rem;
-}
-
-:is(.features p, .card .body) {
+.card .body {
   color: var(--sl-color-gray-3);
 }
 

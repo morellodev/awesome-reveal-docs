@@ -1,0 +1,135 @@
+---
+import { Cascade, Reveal } from "@awesome-reveal/astro";
+import Accessibility from "@lucide/astro/icons/accessibility";
+import EyeOff from "@lucide/astro/icons/eye-off";
+import FileCode from "@lucide/astro/icons/file-code";
+import Gauge from "@lucide/astro/icons/gauge";
+---
+
+<section
+  id="accessible-by-default"
+  class="defaults not-content"
+  aria-labelledby="accessible-by-default-title"
+  data-slide
+>
+  <Reveal as="h2" id="accessible-by-default-title" threshold={0.5}>
+    Accessible and SEO friendly by default
+  </Reveal>
+  <Cascade as="ul" class="points" interval={100} threshold={0.2}>
+    <li>
+      <FileCode aria-hidden="true" />
+      <h3>Content in the HTML</h3>
+      <p>
+        The content is in the HTML before any animation plays, so search engines
+        and screen readers read all of it.
+      </p>
+    </li>
+    <li>
+      <EyeOff aria-hidden="true" />
+      <h3>No flash of content</h3>
+      <p>
+        The React, Vue and Astro packages keep the content hidden until its
+        entrance starts. If the script fails, it shows after 5 seconds.
+      </p>
+    </li>
+    <li>
+      <Accessibility aria-hidden="true" />
+      <h3>Reduced motion support</h3>
+      <p>
+        When the device asks for reduced motion, the content shows at once, with
+        no animation.
+      </p>
+      <p class="motion" data-markdown-ignore hidden>
+        Your device: <strong></strong>
+      </p>
+    </li>
+    <li>
+      <Gauge aria-hidden="true" />
+      <h3>Native browser APIs</h3>
+      <p>
+        Intersection Observer and the Web Animations API do the work. No
+        animation library ships to the browser.
+      </p>
+    </li>
+  </Cascade>
+</section>
+
+<script>
+  const badge = document.querySelector<HTMLElement>(".motion");
+  const label = badge?.querySelector("strong");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+
+  function showMotionPreference() {
+    if (!badge || !label) return;
+    label.textContent = reduced.matches ? "reduced motion" : "full motion";
+    badge.hidden = false;
+  }
+
+  showMotionPreference();
+  reduced.addEventListener("change", showMotionPreference);
+</script>
+
+<style>
+  .defaults {
+    display: grid;
+    align-content: center;
+    gap: 3rem;
+    min-block-size: calc(100svh - var(--sl-nav-height));
+    padding-block: 4rem;
+  }
+
+  h2 {
+    max-width: 18ch;
+    color: var(--sl-color-white);
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .points {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: 2.5rem 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-block-start: 1.25rem;
+    border-top: 2px solid var(--sl-color-white);
+  }
+
+  li > :global(svg) {
+    margin-block-end: 0.5rem;
+    color: var(--sl-color-text-accent);
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    color: var(--sl-color-white);
+    font-size: 1.375rem;
+    line-height: 1.15;
+  }
+
+  p {
+    color: var(--sl-color-gray-3);
+  }
+
+  .motion {
+    align-self: flex-start;
+    margin-block-start: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+    font-size: var(--sl-text-sm);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+</style>

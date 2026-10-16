@@ -2,9 +2,11 @@
 import { LinkButton } from "@astrojs/starlight/components";
 import DraftContentNotice from "@astrojs/starlight/components/DraftContentNotice.astro";
 import { Cascade, Reveal } from "@awesome-reveal/astro";
+import ArrowDown from "@lucide/astro/icons/arrow-down";
 import ArrowRight from "@lucide/astro/icons/arrow-right";
 import ExternalLink from "@lucide/astro/icons/external-link";
 import Github from "../assets/github.svg";
+import { markdownSlug } from "../lib/markdown-slug";
 
 // The hero schema of Starlight accepts only its own icon names, so the frontmatter name picks the icon here.
 const icons = {
@@ -17,6 +19,7 @@ const { id, entry } = Astro.locals.starlightRoute;
 const { data } = entry;
 const { title = data.title, tagline, actions = [] } = data.hero ?? {};
 const words = title.split(" ");
+const isHome = markdownSlug(id) === "index";
 // Starlight's generated 404 page has no actions, so it gives no way back.
 const heroActions =
   id === "404" && actions.length === 0
@@ -32,7 +35,10 @@ const heroActions =
     : actions;
 ---
 
-<div class="hero">
+<div
+  class:list={["hero", { home: isHome }]}
+  data-slide={isHome ? "" : undefined}
+>
   <Cascade
     as="h1"
     id="_top"
@@ -69,6 +75,27 @@ const heroActions =
       })}
     </Reveal>
   )}
+  {isHome && (
+    <Reveal
+      as="a"
+      class="scroll-cue"
+      href="#fade-in-from-any-side"
+      delay={300}
+      from={{ opacity: 0 }}
+      duration={1200}
+      data-markdown-ignore
+    >
+      <ArrowDown aria-hidden="true" />
+      <span>
+        Scroll down
+        <span class="keys">
+          {" "}
+          or press <kbd>↓</kbd>
+        </span>
+        . Each section is a live demo.
+      </span>
+    </Reveal>
+  )}
 </div>
 
 <style>
@@ -85,6 +112,60 @@ const heroActions =
       gap: 1.75rem;
       padding-block: clamp(3rem, 2rem + 12vmin, 9rem)
         clamp(2rem, 1rem + 6vmin, 5rem);
+    }
+  }
+
+  .home {
+    min-block-size: calc(100svh - var(--sl-nav-height) - 6rem);
+  }
+
+  .home h1 {
+    margin-block-start: auto;
+  }
+
+  .scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-block-start: auto;
+    padding-block-start: 2rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--sl-color-white);
+    }
+  }
+
+  .keys {
+    display: none;
+  }
+
+  @media (min-width: 56rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
+    .keys {
+      display: inline;
+    }
+  }
+
+  kbd {
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: var(--radius-sm);
+    font-family: var(--sl-font-mono);
+    font-size: 0.9em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-cue :global(svg) {
+      animation: nudge 1.6s ease-in-out infinite;
+    }
+  }
+
+  @keyframes nudge {
+    50% {
+      translate: 0 0.3em;
     }
   }
 
