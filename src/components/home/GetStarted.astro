@@ -147,6 +147,21 @@ reveal("h1", { from: "left" });`,
     margin-block-start: 1rem;
   }
 
+  /* The panels share one cell, so the tallest sets the height and a tab change does not move the centered section. */
+  .code :global(starlight-tabs) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .code :global(starlight-tabs > [role="tabpanel"]) {
+    grid-area: 2 / 1;
+  }
+
+  .code :global(starlight-tabs > [role="tabpanel"][hidden]) {
+    display: block;
+    visibility: hidden;
+  }
+
   /* On touch screens, the copy button always shows, so the lines wrap before they reach it. */
   @media (hover: none) {
     .code :global(.expressive-code .ec-line .code) {
