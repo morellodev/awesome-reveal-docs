@@ -52,14 +52,31 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     );
   }
 
+  // A step during a smooth scroll continues from its target, so quick presses do not stop at the same slide.
+  let targetTop: number | undefined;
+
+  addEventListener("scrollend", () => (targetTop = undefined));
+  if (!("onscrollend" in window)) {
+    let timer: ReturnType<typeof setTimeout>;
+    addEventListener("scroll", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => dispatchEvent(new Event("scrollend")), 100);
+    });
+  }
+
+  function currentTop() {
+    return targetTop ?? scrollY;
+  }
+
   // After the last slide, the next step is the end of the page, where the footer is.
   function stepTop(direction: 1 | -1) {
+    const from = currentTop();
     const tops = slides.map((_, index) => slideTop(index));
     const top =
       direction > 0
-        ? (tops.find((top) => top > scrollY + 2) ?? bottomTop())
-        : tops.findLast((top) => top < scrollY - 2);
-    if (top === undefined || Math.abs(top - scrollY) <= 2) return undefined;
+        ? (tops.find((top) => top > from + 2) ?? bottomTop())
+        : tops.findLast((top) => top < from - 2);
+    if (top === undefined || Math.abs(top - from) <= 2) return undefined;
     return top;
   }
 
@@ -69,21 +86,28 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
 
   // A slide taller than the viewport scrolls normally, so the keys do not skip its content.
   function skipsContent(direction: 1 | -1, top: number) {
+    const from = currentTop();
     if (direction > 0) {
       const current = slides.findLastIndex(
-        (_, index) => slideTop(index) <= scrollY + 2,
+        (_, index) => slideTop(index) <= from + 2,
       );
-      return current !== -1 && slideBottom(current) > scrollY + innerHeight + 2;
+      return current !== -1 && slideBottom(current) > from + innerHeight + 2;
     }
     const target = slides.findIndex(
       (_, index) => Math.abs(slideTop(index) - top) <= 2,
     );
-    const end = Math.min(slideBottom(target), scrollY + headerHeight());
+    const end = Math.min(slideBottom(target), from + headerHeight());
     return end > top + innerHeight + 2;
   }
 
   function smoothScrollTo(top: number) {
-    scrollTo({ top, behavior: reducedMotion.matches ? "instant" : "smooth" });
+    // A scroll that does not move fires no scrollend, so it must not set a target.
+    if (reducedMotion.matches || Math.abs(top - scrollY) <= 2) {
+      scrollTo({ top, behavior: "instant" });
+      return;
+    }
+    targetTop = top;
+    scrollTo({ top, behavior: "smooth" });
   }
 
   document.addEventListener("keydown", (event) => {
@@ -99,6 +123,11 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       (event.target instanceof Element && event.target.closest(keyboardWidgets))
     )
       return;
+    // A held key waits for each step to end. Otherwise the key repeat runs to the footer in a moment.
+    if (event.repeat && targetTop !== undefined) {
+      event.preventDefault();
+      return;
+    }
     const top = stepTop(direction);
     if (top === undefined || skipsContent(direction, top)) return;
     event.preventDefault();
