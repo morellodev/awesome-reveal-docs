@@ -3,7 +3,12 @@ import ArrowDown from "@lucide/astro/icons/arrow-down";
 import ArrowUp from "@lucide/astro/icons/arrow-up";
 ---
 
-<nav class="slide-nav" aria-label="Sections" data-markdown-ignore hidden>
+<nav
+  class="slide-nav not-content"
+  aria-label="Sections"
+  data-markdown-ignore
+  hidden
+>
   <ol></ol>
   <div class="steps">
     <button type="button" data-direction="-1" aria-label="Previous section">
@@ -153,16 +158,38 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     label.className = "label";
     label.textContent = slide.querySelector("h2")?.textContent ?? "";
     link.append(label);
+    // The default jump is prevented, so the focus must move to the slide for the next Tab.
+    slide.tabIndex = -1;
     link.addEventListener("click", (event) => {
+      // A modified click opens the link in a new tab or window, as usual.
+      if (
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      )
+        return;
       event.preventDefault();
+      slide.focus({ preventScroll: true });
       smoothScrollTo(slideTop(slides.indexOf(slide)));
     });
+    // A new hover or focus shows the label again after an Escape.
+    for (const type of ["pointerenter", "focus"])
+      link.addEventListener(type, () => delete link.dataset.dismissed);
     const item = document.createElement("li");
     item.append(link);
     list?.append(item);
     return link;
   });
   if (nav) nav.hidden = false;
+
+  // WCAG 1.4.13: Escape closes the label without a move of the pointer or the focus.
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    for (const link of links)
+      if (link.matches(":hover, :focus-visible")) link.dataset.dismissed = "";
+  });
 
   // A slide is current while it crosses the middle of the viewport.
   const observer = new IntersectionObserver(
@@ -203,26 +230,33 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       scroll-snap-align: end;
       scroll-margin-block-end: 100vh;
     }
+
+    /* A dot moves the focus to its chapter only to set the start of the next Tab. */
+    /* `:root` outweighs `:root :focus-visible` in theme.css. */
+    :global(:root [data-chapter]:focus) {
+      outline: none;
+    }
   }
 
   @media (min-width: 76rem) and (min-height: 36rem) and (hover: hover) and (pointer: fine) {
     .slide-nav:not([hidden]) {
       position: fixed;
       inset-block-start: 50%;
-      inset-inline-end: 1.5rem;
+      inset-inline-end: 1.25rem;
       z-index: var(--sl-z-index-navbar);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 0.5rem;
       translate: 0 -50%;
       transition:
         opacity var(--hover-duration) ease,
         visibility var(--hover-duration);
     }
 
-    /* No current dot means that the current slide is not a numbered chapter. */
-    .slide-nav:not(:has(a[aria-current])) {
+    /* No current dot means that the current slide is not a numbered chapter.
+       A step button keeps the nav visible while it has the focus, so the focus does not go to the body. */
+    .slide-nav:not(:has(a[aria-current]), :focus-within) {
       opacity: 0;
       visibility: hidden;
     }
@@ -232,41 +266,57 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
+  /* The link is the 24px target (WCAG 2.5.8), and the dot inside it is only the visual. */
   ol :global(a) {
     position: relative;
-    display: block;
-    width: 0.5rem;
-    height: 0.5rem;
+    display: grid;
+    place-items: center;
+    min-inline-size: 2rem;
+    min-block-size: 1.75rem;
     border-radius: 999px;
-    background-color: var(--sl-color-gray-4);
+  }
+
+  /* gray-3 is the lightest gray with 3:1 on paper (WCAG 1.4.11). */
+  ol :global(a::before) {
+    content: "";
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-gray-3);
     transition:
-      height var(--hover-duration) ease,
+      block-size var(--hover-duration) ease,
       background-color var(--hover-duration) ease;
   }
 
-  ol :global(a:hover) {
+  ol :global(a:hover::before) {
     background-color: var(--sl-color-white);
   }
 
-  ol :global(a[aria-current]) {
-    height: 1.5rem;
+  ol :global(a[aria-current]::before) {
+    block-size: 1.5rem;
     background-color: var(--sl-color-text-accent);
   }
 
-  ol :global(a:focus-visible) {
-    outline-offset: 4px;
+  /* The ring goes on the dot, so it has the shape of the dot. The class outweighs `:root :focus-visible` in theme.css. */
+  .slide-nav :global(a:focus-visible) {
+    outline: none;
   }
 
+  ol :global(a:focus-visible::before) {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 2px;
+  }
+
+  /* The label touches the link, so the pointer can move onto it (WCAG 1.4.13). */
   ol :global(.label) {
     position: absolute;
     inset-block-start: 50%;
-    inset-inline-end: calc(100% + 0.75rem);
+    inset-inline-end: 100%;
     padding: 0.25rem 0.6rem;
     border: 1px solid var(--sl-color-hairline-light);
     border-radius: 999px;
@@ -281,8 +331,9 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     transition: opacity var(--hover-duration) ease;
   }
 
-  ol :global(a:is(:hover, :focus-visible) .label) {
+  ol :global(a:is(:hover, :focus-visible):not([data-dismissed]) .label) {
     opacity: 1;
+    pointer-events: auto;
   }
 
   .steps {
@@ -294,8 +345,8 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
   button {
     display: grid;
     place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
+    min-inline-size: 1.5rem;
+    min-block-size: 1.5rem;
     padding: 0;
     border: 1px solid var(--sl-color-hairline-light);
     border-radius: var(--radius-sm);
@@ -317,9 +368,21 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     outline-offset: 2px;
   }
 
+  /* Forced colors remove backgrounds, so the dots need a system color. */
+  @media (forced-colors: active) {
+    ol :global(a::before),
+    ol :global(a:hover::before) {
+      background-color: CanvasText;
+    }
+
+    ol :global(a[aria-current]::before) {
+      background-color: Highlight;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .slide-nav:not([hidden]),
-    ol :global(a),
+    ol :global(a::before),
     ol :global(.label),
     button {
       transition: none;
