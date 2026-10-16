@@ -6,16 +6,11 @@ import Gauge from "@lucide/astro/icons/gauge";
 import Search from "@lucide/astro/icons/search";
 ---
 
-<section
-  id="accessible-by-default"
-  class="defaults not-content"
-  aria-labelledby="accessible-by-default-title"
-  data-slide
->
-  <Reveal as="h2" id="accessible-by-default-title" threshold={0.5}>
+<section id="accessible-by-default" class="defaults not-content" data-slide>
+  <Reveal as="h2" threshold={0.5}>
     Accessible and SEO friendly by default
   </Reveal>
-  <Cascade as="ul" class="points" interval={100} threshold={0.2}>
+  <Cascade as="ul" class="points" role="list" interval={100} threshold={0.2}>
     <li>
       <Search aria-hidden="true" />
       <h3>SEO friendly</h3>
@@ -39,8 +34,9 @@ import Search from "@lucide/astro/icons/search";
         Visitors who ask their device for reduced motion see the content at
         once, with no animation.
       </p>
-      <p class="motion" data-markdown-ignore hidden>
-        Your device: <strong></strong>
+      <p class="motion" data-markdown-ignore>
+        Your device: <strong class="full-motion">full motion</strong>
+        <strong class="reduced-motion">reduced motion</strong>
       </p>
     </li>
     <li>
@@ -53,21 +49,6 @@ import Search from "@lucide/astro/icons/search";
     </li>
   </Cascade>
 </section>
-
-<script>
-  const badge = document.querySelector<HTMLElement>(".motion");
-  const label = badge?.querySelector("strong");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-
-  function showMotionPreference() {
-    if (!badge || !label) return;
-    label.textContent = reduced.matches ? "reduced motion" : "full motion";
-    badge.hidden = false;
-  }
-
-  showMotionPreference();
-  reduced.addEventListener("change", showMotionPreference);
-</script>
 
 <style>
   .defaults {
@@ -127,9 +108,19 @@ import Search from "@lucide/astro/icons/search";
     background-color: var(--sl-color-accent-low);
     color: var(--sl-color-accent-high);
     font-size: var(--sl-text-sm);
+  }
 
-    &[hidden] {
+  .reduced-motion {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .full-motion {
       display: none;
+    }
+
+    .reduced-motion {
+      display: inline;
     }
   }
 </style>

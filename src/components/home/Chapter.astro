@@ -36,13 +36,7 @@ const selected = control?.selected ?? "";
 const hasToolbar = control || replay || Astro.slots.has("controls");
 ---
 
-<section
-  id={id}
-  class="chapter not-content"
-  aria-labelledby={`${id}-title`}
-  data-slide
-  data-chapter
->
+<section id={id} class="chapter not-content" data-slide data-chapter>
   <Cascade class="copy" interval={90} threshold={0.2}>
     <p class="kicker" data-markdown-ignore>
       <span class="number">{number}</span>
@@ -60,15 +54,11 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     {hasToolbar && (
       <div class="toolbar">
         {control && (
-          <div class="control">
-            <span class="legend" id={`${id}-control`}>
+          <fieldset class="control">
+            <legend class="legend">
               <code>{control.name}</code>
-            </span>
-            <div
-              class="options"
-              role="radiogroup"
-              aria-labelledby={`${id}-control`}
-            >
+            </legend>
+            <div class="options">
               {control.options.map(({ value, label = value }) => (
                 <label>
                   <input
@@ -82,16 +72,28 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
         )}
         <slot name="controls" />
         {replay && (
-          <button type="button" class="replay">
+          <button
+            type="button"
+            class="replay"
+            aria-labelledby={`${id}-replay ${id}-title`}
+          >
             <RotateCcw aria-hidden="true" />
-            <span class="replay-label">Replay</span>
+            <span class="replay-label" id={`${id}-replay`}>
+              Replay
+            </span>
           </button>
         )}
       </div>
+    )}
+    {replay && (
+      <p class="motion-note">
+        Your device asks for reduced motion, so the demo shows the content at
+        once, with no animation.
+      </p>
     )}
   </div>
   <Reveal class="code" threshold={0.2} delay={150} from={{ opacity: 0 }}>
@@ -108,23 +110,44 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
 </section>
 
 <script>
-  import { replay } from "./demo";
+  import { replay, replayWithoutDelay, setRevealOption } from "./demo";
 
+  // One script runs all the demos, so the page loads no module per chapter.
   for (const chapter of document.querySelectorAll(".chapter")) {
+    const stage = chapter.querySelector(".stage");
     const snippets = chapter.querySelectorAll<HTMLElement>("[data-snippet]");
+    const choices = stage?.querySelectorAll<HTMLElement>("[data-choice]") ?? [];
+    const controlledElements = [
+      ...(stage?.querySelectorAll<HTMLElement>("[data-controlled-option]") ??
+        []),
+    ];
+
     chapter.querySelector(".options")?.addEventListener("change", (event) => {
       if (!(event.target instanceof HTMLInputElement)) return;
+      const { value } = event.target;
       for (const snippet of snippets) {
-        const current = snippet.dataset.snippet === event.target.value;
+        const current = snippet.dataset.snippet === value;
         snippet.hidden = !current;
         snippet.toggleAttribute("data-markdown-ignore", !current);
       }
+      for (const choice of choices) {
+        const selected = choice.dataset.choice === value;
+        choice.toggleAttribute("data-selected", selected);
+        const host = choice.closest("awesome-reveal");
+        if (selected && host) replayWithoutDelay(host);
+      }
+      for (const element of controlledElements) {
+        const host = element.closest("awesome-reveal");
+        if (!host) continue;
+        setRevealOption(host, element.dataset.controlledOption!, Number(value));
+        replayWithoutDelay(host);
+      }
     });
+
     chapter.querySelector(".replay")?.addEventListener("click", () => {
-      for (const host of chapter
-        .querySelector(".stage")
-        ?.querySelectorAll("awesome-reveal") ?? [])
-        replay(host);
+      for (const host of stage?.querySelectorAll("awesome-reveal") ?? [])
+        // A host plays and fires `reveal` also when its content is not displayed.
+        if (host.firstElementChild?.checkVisibility()) replay(host);
     });
   }
 </script>
@@ -271,6 +294,15 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     align-items: center;
     gap: 0.75rem;
     min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* A floated legend is a flex item, not a caption in the fieldset border. */
+  .legend {
+    float: left;
+    padding: 0;
   }
 
   .legend code {
@@ -323,8 +355,10 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     color: var(--sl-color-white);
   }
 
+  /* The marker has less than 3:1 on paper, so the ink ring marks the selected option (WCAG 1.4.11). */
   .options input:checked + span {
     background-color: var(--marker);
+    box-shadow: inset 0 0 0 1px var(--ink);
     color: var(--ink);
     font-weight: 700;
   }
@@ -397,10 +431,31 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     }
   }
 
+  .motion-note {
+    display: none;
+    padding: 0.75rem;
+    border-block-start: 1px solid var(--sl-color-hairline-light);
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+
+  /* Forced colors remove backgrounds, so the selected option needs a system color. */
+  @media (forced-colors: active) {
+    .options input:checked + span {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+  }
+
   /* With reduced motion, `when: false` does not reset the entrance, so there is nothing to replay. */
   @media (prefers-reduced-motion: reduce) {
     .replay {
       display: none;
+    }
+
+    .motion-note {
+      display: block;
     }
 
     .options span,

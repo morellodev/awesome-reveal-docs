@@ -42,6 +42,7 @@ const tiles = Array.from({ length: columns * 4 }, (_, index) => {
   <Cascade
     slot="stage"
     class="mosaic"
+    data-controlled-option="interval"
     interval={selected}
     duration={500}
     from={{ opacity: 0, scale: 0.4, rotate: 45 }}
@@ -52,19 +53,6 @@ const tiles = Array.from({ length: columns * 4 }, (_, index) => {
     ))}
   </Cascade>
 </Chapter>
-
-<script>
-  import { onControlChange, replay, setRevealOption } from "./demo";
-
-  const chapter = document.getElementById("staggered-animations");
-  const host = chapter?.querySelector(".mosaic")?.closest("awesome-reveal");
-
-  onControlChange(chapter, (interval) => {
-    if (!host) return;
-    setRevealOption(host, "interval", Number(interval));
-    replay(host);
-  });
-</script>
 
 <style>
   .mosaic {

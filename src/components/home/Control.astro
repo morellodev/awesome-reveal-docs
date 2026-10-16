@@ -27,10 +27,12 @@ const code = `<Reveal
     <code>hidden</code> to hide the content from screen readers too.
   </p>
   <div slot="stage" class="screen">
-    <Reveal class="toast" when={false} hidden duration={500}>
-      <CircleCheck aria-hidden="true" />
-      Changes saved
-    </Reveal>
+    <div role="status">
+      <Reveal class="toast" when={false} hidden duration={500}>
+        <CircleCheck aria-hidden="true" />
+        Changes saved
+      </Reveal>
+    </div>
     <div class="page" aria-hidden="true">
       <span class="line title"></span>
       <span class="line"></span>
@@ -39,7 +41,12 @@ const code = `<Reveal
     </div>
   </div>
   <label slot="controls" class="switch">
-    <input type="checkbox" role="switch" autocomplete="off" />
+    <input
+      type="checkbox"
+      role="switch"
+      aria-label="saved, shows the toast"
+      autocomplete="off"
+    />
     <span class="track" aria-hidden="true"></span>
     <code>saved</code>
     <span class="state" aria-hidden="true">
@@ -190,6 +197,27 @@ const code = `<Reveal
     color: var(--sl-color-gray-3);
     font-family: var(--sl-font-mono);
     font-size: var(--sl-text-sm);
+  }
+
+  /* Forced colors remove backgrounds, so the track needs a border and system colors. */
+  @media (forced-colors: active) {
+    .track {
+      forced-color-adjust: none;
+      border: 1px solid CanvasText;
+      background-color: Canvas;
+
+      &::before {
+        background-color: CanvasText;
+      }
+    }
+
+    input:checked + .track {
+      background-color: Highlight;
+
+      &::before {
+        background-color: HighlightText;
+      }
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

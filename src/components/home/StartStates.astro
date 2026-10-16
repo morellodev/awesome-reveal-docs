@@ -43,7 +43,7 @@ const control = {
     {tiles.map(({ name, from }, index) => (
       <Reveal
         class:list={["tile", { marker: index === 1 || index === 2 }]}
-        data-tile={name}
+        data-choice={name}
         data-selected={name === selected ? "" : undefined}
         from={from}
         duration={900}
@@ -62,22 +62,6 @@ const control = {
     ))}
   </div>
 </Chapter>
-
-<script>
-  import { onControlChange, replayWithoutDelay } from "./demo";
-
-  const chapter = document.getElementById("zoom-rotate-and-blur-on-scroll");
-  const tiles = chapter?.querySelectorAll<HTMLElement>("[data-tile]") ?? [];
-
-  onControlChange(chapter, (name) => {
-    for (const tile of tiles) {
-      const selected = tile.dataset.tile === name;
-      tile.toggleAttribute("data-selected", selected);
-      const host = tile.closest("awesome-reveal");
-      if (selected && host) replayWithoutDelay(host);
-    }
-  });
-</script>
 
 <style>
   .tiles {

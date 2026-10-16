@@ -23,7 +23,7 @@ const code = `<Reveal onReveal={() => track("pricing_seen")}>
   <Reveal slot="stage" class="counter" from={{ opacity: 0, scale: 0.9 }}>
     <output aria-live="off">0</output>
     <p class="caption">reveals on this page so far</p>
-    <ol class="log"></ol>
+    <ol class="log" role="list"></ol>
   </Reveal>
 </Chapter>
 

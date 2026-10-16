@@ -43,7 +43,7 @@ const control = {
     {sides.map(({ side, Arrow, delay }) => (
       <Reveal
         class:list={["side", side]}
-        data-side={side}
+        data-choice={side}
         data-selected={side === selected ? "" : undefined}
         from={side}
         duration={800}
@@ -57,22 +57,6 @@ const control = {
     <span class="center">from</span>
   </div>
 </Chapter>
-
-<script>
-  import { onControlChange, replayWithoutDelay } from "./demo";
-
-  const chapter = document.getElementById("fade-in-from-any-side");
-  const tiles = chapter?.querySelectorAll<HTMLElement>("[data-side]") ?? [];
-
-  onControlChange(chapter, (side) => {
-    for (const tile of tiles) {
-      const selected = tile.dataset.side === side;
-      tile.toggleAttribute("data-selected", selected);
-      const host = tile.closest("awesome-reveal");
-      if (selected && host) replayWithoutDelay(host);
-    }
-  });
-</script>
 
 <style>
   .compass {

@@ -22,12 +22,3 @@ export function replayWithoutDelay(host: RevealElement) {
   replay(host);
   setRevealOption(host, "delay", delay);
 }
-
-export function onControlChange(
-  chapter: Element | null,
-  listener: (value: string) => void,
-) {
-  chapter?.querySelector(".options")?.addEventListener("change", (event) => {
-    if (event.target instanceof HTMLInputElement) listener(event.target.value);
-  });
-}
