@@ -54,10 +54,14 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     {hasToolbar && (
       <div class="toolbar">
         {control && (
-          <fieldset class="control">
-            <legend class="legend">
-              <code>{control.name}</code>
-            </legend>
+          <div
+            class="control"
+            role="radiogroup"
+            aria-labelledby={`${id}-control-name`}
+          >
+            <code class="control-name" id={`${id}-control-name`}>
+              {control.name}
+            </code>
             <div class="options">
               {control.options.map(({ value, label = value }) => (
                 <label>
@@ -72,7 +76,7 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
                 </label>
               ))}
             </div>
-          </fieldset>
+          </div>
         )}
         <slot name="controls" />
         {replay && (
@@ -288,24 +292,16 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
     border-block-start: 1px solid var(--sl-color-hairline-light);
   }
 
+  /* Not a fieldset: Safari puts a legend above the content of a flex fieldset, even when the legend floats. */
   .control {
     display: flex;
     flex: 1 1 18rem;
     align-items: center;
     gap: 0.75rem;
     min-inline-size: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
   }
 
-  /* A floated legend is a flex item, not a caption in the fieldset border. */
-  .legend {
-    float: left;
-    padding: 0;
-  }
-
-  .legend code {
+  .control-name {
     padding: 0;
     background: none;
     color: var(--sl-color-gray-3);
@@ -410,7 +406,7 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
       flex-basis: 0;
     }
 
-    .legend,
+    .control-name,
     .replay-label {
       position: absolute;
       inline-size: 1px;
