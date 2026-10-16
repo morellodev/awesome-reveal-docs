@@ -36,7 +36,9 @@ const heroActions =
 
 <div
   class:list={["hero", { home: isHome }]}
+  id={isHome ? "intro" : undefined}
   data-slide={isHome ? "" : undefined}
+  data-slide-label={isHome ? "Intro" : undefined}
 >
   <Cascade
     as="h1"

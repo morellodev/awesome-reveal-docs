@@ -151,15 +151,15 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     });
   }
 
-  // Only the numbered chapters get a dot. The other slides are an intro or an outro.
-  const chapters = slides.filter((slide) => slide.hasAttribute("data-chapter"));
-
-  const links = chapters.map((slide) => {
+  const links = slides.map((slide, index) => {
     const link = document.createElement("a");
     link.href = `#${slide.id}`;
     const label = document.createElement("span");
     label.className = "label";
-    label.textContent = slide.querySelector("h2")?.textContent ?? "";
+    label.textContent =
+      slide.dataset.slideLabel ??
+      slide.querySelector("h2")?.textContent?.trim() ??
+      "";
     link.append(label);
     // The default jump is prevented, so the focus must move to the slide for the next Tab.
     // The URL keeps no hash, so a reload opens the page at the top.
@@ -176,7 +176,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
         return;
       event.preventDefault();
       slide.focus({ preventScroll: true });
-      smoothScrollTo(slideTop(slides.indexOf(slide)));
+      smoothScrollTo(slideTop(index));
     });
     // A new hover or focus shows the label again after an Escape.
     for (const type of ["pointerenter", "focus"])
@@ -200,7 +200,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     (entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
-        const current = chapters.indexOf(entry.target as HTMLElement);
+        const current = slides.indexOf(entry.target as HTMLElement);
         links.forEach((link, index) => {
           if (index === current) link.setAttribute("aria-current", "location");
           else link.removeAttribute("aria-current");
@@ -235,9 +235,9 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       scroll-margin-block-end: 100vh;
     }
 
-    /* A dot moves the focus to its chapter only to set the start of the next Tab. */
+    /* A dot moves the focus to its slide only to set the start of the next Tab. */
     /* `:root` outweighs `:root :focus-visible` in theme.css. */
-    :global(:root [data-chapter]:focus) {
+    :global(:root [data-slide]:focus) {
       outline: none;
     }
   }

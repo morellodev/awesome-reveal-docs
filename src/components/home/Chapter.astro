@@ -36,7 +36,7 @@ const selected = control?.selected ?? "";
 const hasToolbar = control || replay || Astro.slots.has("controls");
 ---
 
-<section id={id} class="chapter not-content" data-slide data-chapter>
+<section id={id} class="chapter not-content" data-slide>
   <Cascade class="copy" interval={90} threshold={0.2}>
     <p class="kicker" data-markdown-ignore>
       <span class="number">{number}</span>
