@@ -39,13 +39,14 @@ const control = {
     You set one prop and write no CSS.
   </p>
   <div slot="stage" class="compass">
-    {sides.map(({ side, Arrow }) => (
+    {sides.map(({ side, Arrow }, index) => (
       <Reveal
         class:list={["side", "outlined-choice", side]}
         data-choice={side}
         data-selected={side === selected ? "" : undefined}
         from={side}
         duration={800}
+        delay={index * 90}
         threshold={0.6}
       >
         <Arrow aria-hidden="true" />
