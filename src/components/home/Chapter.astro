@@ -120,15 +120,18 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
 </section>
 
 <script>
-  import { replay, replayWithoutDelay, setRevealOption } from "./demo";
+  import type { RevealElement } from "@awesome-reveal/astro";
+
+  function replay(host: RevealElement) {
+    host.when = false;
+    host.when = true;
+  }
 
   // One script runs all the demos, so the page loads no module per chapter.
   for (const chapter of document.querySelectorAll(".chapter")) {
     const stage = chapter.querySelector(".stage");
     const snippets = chapter.querySelectorAll<HTMLElement>("[data-snippet]");
     const choices = stage?.querySelectorAll<HTMLElement>("[data-choice]") ?? [];
-    const controlledElements =
-      stage?.querySelectorAll<HTMLElement>("[data-controlled-option]") ?? [];
 
     chapter.querySelector(".options")?.addEventListener("change", (event) => {
       if (!(event.target instanceof HTMLInputElement)) return;
@@ -141,13 +144,7 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
         const selected = choice.dataset.choice === value;
         choice.toggleAttribute("data-selected", selected);
         const host = choice.closest("awesome-reveal");
-        if (selected && host) replayWithoutDelay(host);
-      }
-      for (const element of controlledElements) {
-        const host = element.closest("awesome-reveal");
-        if (!host) continue;
-        setRevealOption(host, element.dataset.controlledOption!, Number(value));
-        replayWithoutDelay(host);
+        if (selected && host) replay(host);
       }
     });
 
@@ -240,6 +237,10 @@ const hasToolbar = control || replay || Astro.slots.has("controls");
 
   .stage :global(.outlined-choice[data-selected]) {
     outline-color: var(--sl-color-white);
+  }
+
+  .stage :global(.swapped-choice:not([data-selected])) {
+    display: none;
   }
 
   .demo {
