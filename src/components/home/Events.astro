@@ -66,9 +66,12 @@ const code = `<Reveal
           easing: "ease-out",
         });
 
-      for (let index = logRows.length - 1; index > 0; index -= 1)
-        logRows[index]!.textContent = logRows[index - 1]!.textContent;
-      if (logRows[0]) logRows[0].textContent = describe(event.target);
+      const texts = [
+        describe(event.target),
+        ...logRows.map((row) => row.textContent),
+      ];
+      for (const [index, row] of logRows.entries())
+        row.textContent = texts[index] ?? "";
     });
   }
 </script>
@@ -110,8 +113,6 @@ const code = `<Reveal
 
   /* The class outweighs the `text-wrap` of `.sl-markdown-content li` in theme.css. */
   .log li {
-    box-sizing: border-box;
-    min-block-size: calc(1lh + 0.8rem + 2px);
     overflow: hidden;
     padding: 0.4rem 0.7rem;
     border: 1px solid var(--sl-color-hairline-light);
@@ -124,6 +125,10 @@ const code = `<Reveal
 
   .log li:empty {
     visibility: hidden;
+
+    &::before {
+      content: "\200b";
+    }
   }
 
   .log li:first-child {
