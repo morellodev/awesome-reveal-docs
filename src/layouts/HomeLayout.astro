@@ -1,6 +1,11 @@
 <slot />
 
 <style is:global>
+  /* Safari 27 scroll anchoring jumps the page when an entrance starts. */
+  html:has([data-slide]) {
+    overflow-anchor: none;
+  }
+
   .slide-title {
     color: var(--sl-color-white);
     font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
