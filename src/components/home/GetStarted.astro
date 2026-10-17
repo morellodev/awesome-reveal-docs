@@ -54,55 +54,69 @@ reveal("h1", { from: "left" });`,
 ];
 ---
 
-<section
+{/* The credits in the slot belong to the page, so they stay outside the section. */}
+<div
   id="get-started"
   class="get-started not-content"
   data-slide
   data-slide-label="Get started"
 >
-  <Reveal class="intro" threshold={0.5}>
-    <h2 class="slide-title">Start in under a minute</h2>
-    <p class="slide-lead">
-      Pick your framework, install one package and wrap an element. All four
-      packages share the same core, the same entrance options and TypeScript
-      types.
-    </p>
-  </Reveal>
-  <Reveal class="code slide-code" threshold={0.2} delay={120}>
-    <Tabs syncKey="framework">
-      {frameworks.map(({ label, pkg, lang, code }) => (
-        <TabItem label={label}>
-          <Code code={`npm install ${pkg}`} lang="shell" wrap />
-          <Code code={code} lang={lang} wrap />
-        </TabItem>
-      ))}
-    </Tabs>
-  </Reveal>
-  <Reveal class="actions" threshold={0.5} from={{ opacity: 0, y: 12 }}>
-    <LinkButton
-      href="https://github.com/awesome-reveal/awesome-reveal"
-      variant="primary"
-    >
-      Star on GitHub
-      <Github aria-hidden="true" width="1em" height="1em" />
-    </LinkButton>
-  </Reveal>
-</section>
+  <section>
+    <Reveal class="intro" threshold={0.5}>
+      <h2 class="slide-title">Start in under a minute</h2>
+      <p class="slide-lead">
+        Pick your framework, install one package and wrap an element. All four
+        packages share the same core, the same entrance options and TypeScript
+        types.
+      </p>
+    </Reveal>
+    <Reveal class="code slide-code" threshold={0.2} delay={120}>
+      <Tabs syncKey="framework">
+        {frameworks.map(({ label, pkg, lang, code }) => (
+          <TabItem label={label}>
+            <Code code={`npm install ${pkg}`} lang="shell" wrap />
+            <Code code={code} lang={lang} wrap />
+          </TabItem>
+        ))}
+      </Tabs>
+    </Reveal>
+    <Reveal class="actions" threshold={0.5} from={{ opacity: 0, y: 12 }}>
+      <LinkButton
+        href="https://github.com/awesome-reveal/awesome-reveal"
+        variant="primary"
+      >
+        Star on GitHub
+        <Github aria-hidden="true" width="1em" height="1em" />
+      </LinkButton>
+    </Reveal>
+  </section>
+  <slot />
+</div>
 
 <style>
   .get-started {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5rem;
+    padding-block: 3.5rem 2rem;
+  }
+
+  .get-started > section {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 2.5rem;
-    padding-block: 3.5rem 6rem;
   }
 
   @media (min-width: 56rem) {
     .get-started {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-      align-content: center;
       min-block-size: calc(100svh - var(--sl-nav-height));
-      padding-block: 4rem 6rem;
+      padding-block-start: 4rem;
+    }
+
+    /* The auto margins center the content above the credits. */
+    .get-started > section {
+      margin-block: auto;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
       /* The code also spans the empty last row, which takes its extra height, so the button stays under the lead. */
       grid-template-rows: min-content min-content auto;
       align-items: start;

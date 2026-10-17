@@ -11,6 +11,7 @@ head:
 template: splash
 scrollCueTarget: directions
 editUrl: false
+footer: false
 banner:
   content: "The <code>@awesome-reveal/*</code> packages are prereleases. The API can change before version 1.0."
 hero:
@@ -38,6 +39,7 @@ import GetStarted from "../../components/home/GetStarted.astro";
 import HomeLayout from "../../layouts/HomeLayout.astro";
 import Keyframes from "../../components/home/Keyframes.astro";
 import Sides from "../../components/home/Sides.astro";
+import SiteCredits from "../../components/SiteCredits.astro";
 import SlideNav from "../../components/home/SlideNav.astro";
 import Stagger from "../../components/home/Stagger.astro";
 import StartStates from "../../components/home/StartStates.astro";
@@ -50,6 +52,8 @@ import StartStates from "../../components/home/StartStates.astro";
   <Control />
   <Events />
   <AccessibilityAndSeo />
-  <GetStarted />
+  <GetStarted>
+    <SiteCredits />
+  </GetStarted>
   <SlideNav />
 </HomeLayout>
