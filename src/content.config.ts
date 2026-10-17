@@ -15,6 +15,12 @@ export const collections = {
           .describe(
             'The id of the section that the "Scroll down" link of the hero opens.',
           ),
+        footer: z
+          .boolean()
+          .default(true)
+          .describe(
+            "Show the page footer: the edit link, the last-updated date, the pagination and the site credits.",
+          ),
       }),
     }),
   }),

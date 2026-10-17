@@ -86,7 +86,6 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     return targetTop ?? scrollY;
   }
 
-  // After the last slide, the next step is the end of the page, where the footer is.
   function stepTop(direction: 1 | -1, tops: number[]) {
     const from = currentTop();
     const top =
@@ -145,7 +144,7 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       (event.target instanceof Element && event.target.closest(keyboardWidgets))
     )
       return;
-    // A held key waits for each step to end. Otherwise the key repeat runs to the footer in a moment.
+    // A held key waits for each step to end. Otherwise the key repeat runs to the end in a moment.
     if (event.repeat && targetTop !== undefined) {
       event.preventDefault();
       return;
@@ -239,6 +238,12 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
       --slide-keys: on;
       scroll-snap-type: y proximity;
       scroll-padding-top: var(--sl-nav-height);
+      /* The page ends at the snap point of the last slide. */
+      --sl-main-pad: 0;
+    }
+
+    :global(html:has(.slide-nav) .content-panel) {
+      padding-block-end: 0;
     }
 
     :global(.scroll-cue .keys) {
@@ -248,13 +253,6 @@ import ArrowUp from "@lucide/astro/icons/arrow-up";
     /* The hero gets no snap point, so the page can rest at the top with the banner. */
     :global([data-slide]:not(.hero)) {
       scroll-snap-align: start;
-    }
-
-    /* Without a snap point at the end, the snap pulls the page back from the footer.
-       The margin puts the point past the page end, so the browser clamps it to the bottom. */
-    :global(.site-footer) {
-      scroll-snap-align: end;
-      scroll-margin-block-end: 100vh;
     }
   }
 
