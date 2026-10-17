@@ -17,6 +17,7 @@ Do not change `og.png` without `render.sh`: a new image with an old `?v=` stays 
 ## Constraints
 
 - Keep 1200×630 PNG, under 1 MB. Meta and LinkedIn show 1.91:1, and Meta does not list WebP for `og:image`.
-- Keep all content inside the padding, with equal space on each side. Measure it: `magick public/og.png -fuzz 12% -trim -format '%wx%h%O' info:`. X shows the card at 2:1 and crops about 15 px at the top and the bottom.
+- Keep the text inside the padding, with equal space on each side. Only the mark can bleed off the right edge. Measure the text: `magick public/og.png -crop 760x630+0+0 -fuzz 12% -trim -format '%wx%h%O' info:`. X shows the card at 2:1 and crops about 15 px at the top and the bottom.
+- Keep the text above about y 520. X shows the post title in a dark box on the bottom left of the image.
 - Keep the text large: a phone shows the card at about 30% of its size. X shows no title under the card, so the image must give the name and what the packages do.
 - If you change the size, also change `og:image:width` and `og:image:height` in `astro.config.mjs`.
