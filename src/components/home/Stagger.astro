@@ -38,28 +38,35 @@ const tiles = Array.from({ length: columns * 4 }, (_, index) => {
     another. Set the gap with <code>interval</code>, in milliseconds. Use it for
     grids, menus, logos and feature lists.
   </p>
-  <Cascade
-    slot="stage"
-    class="mosaic"
-    style={`--columns: ${columns}`}
-    data-controlled-option="interval"
-    interval={selected}
-    duration={500}
-    from={{ opacity: 0, scale: 0.4, rotate: 45 }}
-    threshold={0.5}
-  >
-    {tiles.map((tone) => (
-      <span class={tone} />
+  <div slot="stage" class="mosaics" style={`--columns: ${columns}`}>
+    {intervals.map((interval) => (
+      <Cascade
+        class="mosaic swapped-choice"
+        data-choice={String(interval)}
+        data-selected={interval === selected ? "" : undefined}
+        interval={interval}
+        duration={500}
+        from={{ opacity: 0, scale: 0.4, rotate: 45 }}
+        threshold={0.5}
+      >
+        {tiles.map((tone) => (
+          <span class={tone} />
+        ))}
+      </Cascade>
     ))}
-  </Cascade>
+  </div>
 </Chapter>
 
 <style>
+  .mosaics {
+    display: grid;
+    width: min(100%, 26rem);
+  }
+
   .mosaic {
     display: grid;
     grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
     gap: 0.5rem;
-    width: min(100%, 26rem);
   }
 
   span {

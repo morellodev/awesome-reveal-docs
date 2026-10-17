@@ -73,7 +73,7 @@ const decks = presets.map((preset) => ({
   <div slot="stage" class="decks">
     {decks.map(({ name, property, keyframes, cards }) => (
       <Cascade
-        class="deck"
+        class="deck swapped-choice"
         data-choice={name}
         data-selected={name === selected ? "" : undefined}
         keyframes={keyframes}
@@ -106,10 +106,6 @@ const decks = presets.map((preset) => ({
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75rem;
     perspective: 40rem;
-
-    &:not([data-selected]) {
-      display: none;
-    }
   }
 
   .keyframe {
