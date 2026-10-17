@@ -11,7 +11,7 @@ description: Renders the Open Graph image `public/og.png` and the GitHub social 
 2. Run `${CLAUDE_SKILL_DIR}/scripts/render.sh`. It needs Google Chrome, `pngquant` and network access for the Google Fonts. When the PNG changes, the script increases the `?v=` query of the image URL in `astro.config.mjs`. Social sites cache the image by its URL, so each new image needs a new version.
 3. Look at `public/og.png` and `.github/social-preview.png` at full size. Then look at `public/og.png` at phone size: `sips -Z 360 public/og.png --out <scratchpad>/og-mobile.png`. All text must be readable at 360 px.
 4. Run `pnpm build`. Make sure that `og:image` in `dist/index.html` has the new `?v=`.
-5. If `.github/social-preview.png` changed, tell the user after the merge to upload `.github/social-preview.png` in Settings > General > Social preview of `awesome-reveal/awesome-reveal` and `awesome-reveal/website`.
+5. If `.github/social-preview.png` changed, tell the user after the merge to upload `.github/social-preview.png` in Settings > General > Social preview of `awesome-reveal/awesome-reveal`. The website repo keeps the default card of GitHub.
 
 Do not change `og.png` without `render.sh`: a new image with an old `?v=` stays hidden behind the cached image.
 
