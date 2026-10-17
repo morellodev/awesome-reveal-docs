@@ -24,14 +24,18 @@ const code = `<Reveal
   <Reveal slot="stage" class="counter" from={{ opacity: 0, scale: 0.9 }}>
     <output aria-live="off">0</output>
     <p class="caption">reveals on this page so far</p>
-    <ol class="log" role="list"></ol>
+    <ol class="log" role="list">
+      <li></li>
+      <li></li>
+      <li></li>
+    </ol>
   </Reveal>
 </Chapter>
 
 <script>
   const counter = document.querySelector(".counter");
   const output = counter?.querySelector("output");
-  const log = counter?.querySelector(".log");
+  const logRows = [...(counter?.querySelectorAll(".log li") ?? [])];
   const motion = matchMedia("(prefers-reduced-motion: no-preference)");
 
   // The hero can reveal before this script runs, so the count starts from the hosts that already revealed.
@@ -50,7 +54,7 @@ const code = `<Reveal
     return `${tag} ${heading?.textContent ?? ""}`.trim();
   }
 
-  if (output && log) {
+  if (output) {
     output.value = String(count);
     document.addEventListener("reveal", (event) => {
       if (!(event.target instanceof Element)) return;
@@ -62,10 +66,9 @@ const code = `<Reveal
           easing: "ease-out",
         });
 
-      const item = document.createElement("li");
-      item.textContent = describe(event.target);
-      log.prepend(item);
-      while (log.children.length > 3) log.lastElementChild?.remove();
+      for (let index = logRows.length - 1; index > 0; index -= 1)
+        logRows[index]!.textContent = logRows[index - 1]!.textContent;
+      if (logRows[0]) logRows[0].textContent = describe(event.target);
     });
   }
 </script>
@@ -98,7 +101,6 @@ const code = `<Reveal
     display: grid;
     gap: 0.35rem;
     width: 100%;
-    min-block-size: 6.5rem;
     margin-block-start: 1rem;
     padding: 0;
     list-style: none;
@@ -106,7 +108,10 @@ const code = `<Reveal
     font-size: var(--sl-text-xs);
   }
 
-  .log :global(li) {
+  /* The class outweighs the `text-wrap` of `.sl-markdown-content li` in theme.css. */
+  .log li {
+    box-sizing: border-box;
+    min-block-size: calc(1lh + 0.8rem + 2px);
     overflow: hidden;
     padding: 0.4rem 0.7rem;
     border: 1px solid var(--sl-color-hairline-light);
@@ -117,7 +122,11 @@ const code = `<Reveal
     white-space: nowrap;
   }
 
-  .log :global(li:first-child) {
+  .log li:empty {
+    visibility: hidden;
+  }
+
+  .log li:first-child {
     border-color: var(--sl-color-text-accent);
     color: var(--sl-color-white);
   }
