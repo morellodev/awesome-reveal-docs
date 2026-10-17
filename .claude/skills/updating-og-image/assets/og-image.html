@@ -90,6 +90,20 @@
         translate: 0 -50%;
         color: var(--marker);
       }
+
+      /* render.sh renders the GitHub social preview at 1280×640: the same card, scaled to the 2:1 frame. */
+      @media (width: 1280px) {
+        html {
+          width: 1280px;
+          height: 640px;
+        }
+
+        body {
+          width: 1200px;
+          height: 600px;
+          zoom: calc(1280 / 1200);
+        }
+      }
     </style>
   </head>
   <body>
