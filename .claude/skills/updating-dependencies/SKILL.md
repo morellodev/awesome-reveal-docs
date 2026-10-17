@@ -22,12 +22,15 @@ Do the update on a branch, for example `build/update-dependencies`.
    (sleep 15; printf '\r') | script -q /dev/null pnpm dlx @astrojs/upgrade
    ```
 
+   The tool can write exact versions in `package.json`. To set the `^` range again, run `pnpm add <package>@^<version>`.
+
 3. Update the other packages with `pnpm update --latest <package>...`, and keep the TypeScript limit above. Do not edit the versions in `package.json` by hand.
 4. pnpm runs no build script that `allowBuilds` in `pnpm-workspace.yaml` does not list, and the install fails with `ERR_PNPM_IGNORED_BUILDS`. Approve a new one with `pnpm approve-builds <package>` only when the package needs it, such as `esbuild` and `sharp`.
+5. Run `pnpm dedupe`. The updates can keep old versions of transitive packages in the lockfile next to the new versions. `pnpm dedupe --check` must then pass.
 
 ## Check
 
-1. `pnpm peers check`, `pnpm check` and `pnpm build`.
+1. `pnpm dedupe --check`, `pnpm peers check`, `pnpm check` and `pnpm build`.
 2. Compare the home page, one guide and one archived page with production, for example with screenshots. A Starlight update can change the layout a little.
 3. Push, open a PR, and wait for the "Workers Builds" check in `gh pr checks`. Then open the preview URL, `https://<branch>-awesome-reveal-website.morellodev.workers.dev`, with `-` in place of `/` in the branch name. Wrangler cannot read the build log, so ask the user for the Node and pnpm versions and the new build warnings in the log. These warnings are known, and have no fix in this repo:
    - `[starlight-versions-plugin] A <PageTitle> component override is already defined`: `src/components/PageTitle.astro` already renders `VersionNotice`.
