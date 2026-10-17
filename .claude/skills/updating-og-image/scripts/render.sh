@@ -39,7 +39,7 @@ before=$(shasum "$out" 2>/dev/null || true)
 render_png 1200 630 "$out"
 mkdir -p "$(dirname "$github_out")"
 render_png 1280 640 "$github_out"
-echo "Rendered .github/social-preview.png. Upload it by hand in Settings > General > Social preview of each repo."
+echo "Rendered .github/social-preview.png. Upload it by hand in Settings > General > Social preview of awesome-reveal/awesome-reveal."
 
 if [[ $(shasum "$out") == "$before" ]]; then
 	echo "public/og.png did not change. The cache version stays the same."
